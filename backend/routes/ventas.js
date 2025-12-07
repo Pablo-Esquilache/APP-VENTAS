@@ -59,4 +59,47 @@ router.delete("/:id", async (req, res) => {
   res.status(204).end();
 });
 
+// PUT actualizar venta por id
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      fecha,
+      cliente_id,
+      producto_id,
+      cantidad,
+      precio,
+      descuento = 0,
+      metodo_pago,
+    } = req.body;
+
+    const subtotal = Number(cantidad) * Number(precio);
+    const total = subtotal - (subtotal * (Number(descuento) || 0)) / 100;
+
+    const q = `UPDATE ventas
+               SET fecha=$1, cliente_id=$2, producto_id=$3, cantidad=$4, precio=$5, descuento=$6, metodo_pago=$7, total=$8
+               WHERE id=$9
+               RETURNING *`;
+
+    const { rows } = await db.query(q, [
+      fecha,
+      cliente_id,
+      producto_id,
+      cantidad,
+      precio,
+      descuento,
+      metodo_pago,
+      total,
+      id,
+    ]);
+
+    if (!rows[0]) return res.status(404).json({ error: "Venta no encontrada" });
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error updating venta:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 export default router;
