@@ -1,0 +1,182 @@
+/* =====================
+   CLIENTES.CSS (v1)
+   ===================== */
+
+body {
+  background: #1f1f1f;
+  color: #e6e6e6;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+/* NAVBAR */
+.c-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.c-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+.c-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.c-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+.c-active,
+.c-navbar-menu a:hover {
+  color: #3fd18c !important;
+}
+
+/* CONTENEDOR */
+.c-container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding-bottom: 40px;
+}
+.c-title {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+/* CONTROLES */
+.c-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.c-input {
+  background: #1b1b1b;
+  border: 1px solid #444;
+  color: #ededed;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.c-input:focus {
+  outline: none;
+  border-color: #3fd18c;
+}
+
+/* LISTA */
+.c-lista-clientes {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+.c-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+.c-tabla th {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+.c-tabla td {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  color: #e6e6e6;
+}
+
+/* ACCIONES */
+.c-btn-primary {
+  background: #3fd18c;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.c-btn-primary:hover {
+  background: #35b97a;
+}
+.c-btn-edit {
+  background: #00c6ff;
+  color: #0f0f0f;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.c-btn-delete {
+  background: #ff4a4a;
+  color: #fff;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* FORMULARIO MODAL */
+.c-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.c-modal-content {
+  background: #2a2a2a;
+  padding: 18px;
+  border-radius: 10px;
+  width: 92%;
+  max-width: 520px;
+  position: relative;
+}
+.c-close {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  font-size: 20px;
+  color: #c8c8c8;
+  cursor: pointer;
+}
+.c-subtitle {
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+/* FORM ROWS */
+.c-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.c-form-row {
+  display: flex;
+  gap: 10px;
+}
+.c-col {
+  flex: 1;
+}
+
+/* TEXTAREA */
+.c-input[rows] {
+  resize: vertical;
+}
+
+/* small adjustments */
+.c-btn-delete:hover {
+  opacity: 0.95;
+}
+/* customers.css */

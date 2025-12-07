@@ -1,0 +1,113 @@
+/* =====================
+   REPORTES.CSS (v1 unificado con CLIENTES)
+   ===================== */
+
+/* GENERAL */
+body {
+  background: #1f1f1f;
+  color: #e6e6e6;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+/* NAVBAR */
+.r-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.r-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+.r-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.r-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.r-navbar-menu a:hover,
+.r-active {
+  color: #3fd18c !important;
+}
+
+/* CONTENEDOR */
+.r-container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding-bottom: 40px;
+}
+
+.r-title {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+/* FILTROS */
+.r-filtros {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.r-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.r-input {
+  background: #1b1b1b;
+  border: 1px solid #444;
+  color: #ededed;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.r-input:focus {
+  outline: none;
+  border-color: #3fd18c;
+}
+
+/* BOTÓN PRINCIPAL */
+.r-btn-primary {
+  background: #3fd18c;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.r-btn-primary:hover {
+  background: #35b97a;
+}
+
+/* TARJETAS DE REPORTES */
+.r-card {
+  background: #2a2a2a;
+  padding: 22px;
+  border-radius: 10px;
+  margin-bottom: 26px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.r-subtitle {
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  color: #fff;
+}

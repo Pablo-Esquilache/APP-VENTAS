@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Ventas</title>
+    <link rel="stylesheet" href="/css/normalize.css" />
+    <link rel="stylesheet" href="/css/ventas.css" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="v-navbar">
+      <div class="v-navbar-logo">Mi Librería</div>
+
+      <ul class="v-navbar-menu">
+        <li><a href="ventas.html" class="v-active">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li><a href="reportes.html">Reportes</a></li>
+        <li><a id="logout-btn">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="v-container">
+      <h1 class="v-title">Gestión de Ventas</h1>
+
+      <!-- CONTROLES SUPERIORES -->
+      <div class="v-controls">
+        <input
+          type="text"
+          id="buscarVenta"
+          class="v-input"
+          placeholder="Buscar venta..."
+        />
+
+        <input type="date" id="filtroDesde" class="v-input" />
+        <input type="date" id="filtroHasta" class="v-input" />
+
+        <button id="btnNuevaVenta" class="v-btn-primary">
+          Registrar venta
+        </button>
+
+        <button id="btnVerVentas" class="v-btn-secondary">Ver todas</button>
+      </div>
+
+      <!-- TABLA -->
+      <div class="v-tabla-container">
+        <table class="v-tabla">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Desc. (%)</th>
+              <th>Método de pago</th>
+              <th>Total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody id="tablaVentasBody">
+            <!-- filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL NUEVA VENTA -->
+    <div id="modalVenta" class="v-modal">
+      <div class="v-modal-content">
+        <span class="v-close">&times;</span>
+
+        <h2 class="v-subtitle" id="tituloModalVenta">Registrar venta</h2>
+
+        <form class="v-form-venta">
+          <div class="v-form-group">
+            <label for="fechaVenta">Fecha</label>
+            <input type="date" id="fechaVenta" class="v-input" />
+          </div>
+
+          <div class="v-form-group">
+            <label for="clienteVenta">Cliente</label>
+            <select id="clienteVenta" class="v-input">
+              <option value="">Seleccionar cliente</option>
+            </select>
+          </div>
+
+          <div class="v-form-group">
+            <label for="productoVenta">Producto</label>
+            <select id="productoVenta" class="v-input">
+              <option value="">Seleccionar producto</option>
+            </select>
+          </div>
+
+          <div class="v-form-group">
+            <label for="cantidadVenta">Cantidad</label>
+            <input type="number" id="cantidadVenta" min="1" class="v-input" />
+          </div>
+
+          <div class="v-form-group">
+            <label for="descuentoVenta">Descuento (%)</label>
+            <select id="descuentoVenta" class="v-input">
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="10">10%</option>
+              <option value="15">15%</option>
+              <option value="20">20%</option>
+            </select>
+          </div>
+
+          <div class="v-form-group">
+            <label for="metodoPagoVenta">Método de pago</label>
+            <select id="metodoPagoVenta" class="v-input">
+              <option value="">Seleccionar método</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="debito">Débito</option>
+              <option value="qr">QR</option>
+              <option value="transferencia">Transferencia</option>
+            </select>
+          </div>
+
+          <div class="v-form-group">
+            <label for="totalVenta">Total</label>
+            <input type="number" id="totalVenta" class="v-input" readonly />
+          </div>
+
+          <button type="submit" class="v-btn-primary">Guardar venta</button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/ventas.js"></script>
+  </body>
+</html>
