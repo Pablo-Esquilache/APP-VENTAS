@@ -78,7 +78,7 @@ body {
 }
 
 .v-btn-primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: #000;
 }
 
@@ -118,6 +118,14 @@ body {
   background: #222;
   font-weight: bold;
 }
+
+.v-tabla thead {
+  position: sticky;
+  top: 0;
+  background: #222;
+  z-index: 10;
+}
+
 .btn-eliminar {
   background: #ff4a4a;
   color: white;
@@ -163,12 +171,12 @@ body {
 
 .acciones-venta {
   display: flex;
-  gap: 8px;      /* separación entre botones */
+  gap: 8px; /* separación entre botones */
   align-items: center;
 }
 
 .btn-editar {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 6px 12px;
   border: none;
@@ -214,5 +222,3 @@ body {
   font-size: 1.6rem;
   cursor: pointer;
 }
-
-

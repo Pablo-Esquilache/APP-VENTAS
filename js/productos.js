@@ -1,5 +1,3 @@
-// products.js// productos.js
-
 // ------------------------------
 // ELEMENTOS DEL DOM
 // ------------------------------
@@ -19,21 +17,65 @@ const precioProducto = document.getElementById("precioProducto");
 
 const tablaProductosBody = document.getElementById("tablaProductosBody");
 
+// Estado
 let modoEdicion = false;
 let productoEditandoId = null;
 
-// API BASE (por ahora simulado)
-const API_URL = "http://localhost:3000/api"; // no se usa todavía
+// API
+const API_URL = "http://localhost:4000/api/productos";
+
+let productos = [];
 
 
-// --------------------------------------
-// LISTA LOCAL TEMPORAL PARA SIMULAR
-// --------------------------------------
-let productos = [
-    { id: 1, nombre: "El Principito", categoria: "Ficción", stock: 12, precio: 2500 },
-    { id: 2, nombre: "Introducción a SQL", categoria: "Académicos", stock: 5, precio: 8900 },
-    { id: 3, nombre: "Cuentos para dormir", categoria: "Infantil", stock: 20, precio: 3500 },
-];
+// ------------------------------
+// CARGAR PRODUCTOS
+// ------------------------------
+async function cargarProductos() {
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        productos = data.map(p => ({
+            ...p,
+            precio: parseFloat(p.precio),
+            stock: parseInt(p.stock)
+        }));
+
+        renderTablaProductos();
+    } catch (error) {
+        console.error("Error cargando productos:", error);
+    }
+}
+
+
+// ------------------------------
+// CARGAR CATEGORÍAS
+// ------------------------------
+async function cargarCategorias() {
+    try {
+        const res = await fetch(`${API_URL}/categorias/lista`);
+        const categorias = await res.json();
+
+        // RESET selects
+        categoriaProducto.innerHTML = `<option value="">Seleccionar categoría</option>`;
+        filtroCategoria.innerHTML = `<option value="">Todas las categorías</option>`;
+
+        categorias.forEach(cat => {
+            const op1 = document.createElement("option");
+            op1.value = cat;
+            op1.textContent = cat;
+            categoriaProducto.appendChild(op1);
+
+            const op2 = document.createElement("option");
+            op2.value = cat;
+            op2.textContent = cat;
+            filtroCategoria.appendChild(op2);
+        });
+
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+}
 
 
 // ------------------------------
@@ -57,9 +99,7 @@ btnCerrarModal.addEventListener("click", () => {
 });
 
 window.addEventListener("click", (e) => {
-    if (e.target === modalProducto) {
-        modalProducto.style.display = "none";
-    }
+    if (e.target === modalProducto) modalProducto.style.display = "none";
 });
 
 
@@ -75,28 +115,41 @@ function limpiarFormulario() {
 
 
 // ------------------------------
-// EVENTO GUARDAR PRODUCTO
+// GUARDAR PRODUCTO
 // ------------------------------
-document.querySelector(".p-form-producto").addEventListener("submit", (e) => {
+document.querySelector(".p-form-producto").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nuevoProducto = {
-        id: modoEdicion ? productoEditandoId : Date.now(),
+    const data = {
         nombre: nombreProducto.value.trim(),
         categoria: categoriaProducto.value,
         stock: parseInt(stockProducto.value),
         precio: parseFloat(precioProducto.value)
     };
 
-    if (!modoEdicion) {
-        productos.push(nuevoProducto);
-    } else {
-        const index = productos.findIndex(p => p.id === productoEditandoId);
-        productos[index] = nuevoProducto;
+    try {
+        if (!modoEdicion) {
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        } else {
+            await fetch(`${API_URL}/${productoEditandoId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+        }
+
+    } catch (error) {
+        console.error("Error guardando producto:", error);
     }
 
     modalProducto.style.display = "none";
-    renderTablaProductos();
+
+    await cargarProductos();
+    await cargarCategorias();
 });
 
 
@@ -128,7 +181,7 @@ function renderTablaProductos() {
         tr.innerHTML = `
             <td>${prod.id}</td>
             <td>${prod.nombre}</td>
-            <td>${prod.categoria}</td>
+            <td>${prod.categoria || "-"}</td>
             <td>${prod.stock}</td>
             <td>$${prod.precio.toFixed(2)}</td>
             <td>
@@ -147,33 +200,24 @@ function renderTablaProductos() {
 
 
 // ------------------------------
-// ACCIONES EDITAR / ELIMINAR
+// BOTONES EDITAR / ELIMINAR
 // ------------------------------
 function agregarEventosAcciones() {
-    const botonesEditar = document.querySelectorAll(".p-btn-edit");
-    const botonesEliminar = document.querySelectorAll(".p-btn-delete");
+    document.querySelectorAll(".p-btn-edit").forEach(btn =>
+        btn.addEventListener("click", () => editarProducto(btn.dataset.id))
+    );
 
-    botonesEditar.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const id = parseInt(btn.dataset.id);
-            editarProducto(id);
-        });
-    });
-
-    botonesEliminar.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const id = parseInt(btn.dataset.id);
-            eliminarProducto(id);
-        });
-    });
+    document.querySelectorAll(".p-btn-delete").forEach(btn =>
+        btn.addEventListener("click", () => eliminarProducto(btn.dataset.id))
+    );
 }
 
 
 // ------------------------------
-// EDITAR PRODUCTO
+// EDITAR
 // ------------------------------
 function editarProducto(id) {
-    const prod = productos.find(p => p.id === id);
+    const prod = productos.find(p => p.id == id);
 
     modoEdicion = true;
     productoEditandoId = id;
@@ -181,7 +225,7 @@ function editarProducto(id) {
     tituloModal.textContent = "Editar producto";
 
     nombreProducto.value = prod.nombre;
-    categoriaProducto.value = prod.categoria;
+    categoriaProducto.value = prod.categoria || "";
     stockProducto.value = prod.stock;
     precioProducto.value = prod.precio;
 
@@ -190,15 +234,24 @@ function editarProducto(id) {
 
 
 // ------------------------------
-// ELIMINAR PRODUCTO
+// ELIMINAR
 // ------------------------------
-function eliminarProducto(id) {
-    productos = productos.filter(p => p.id !== id);
-    renderTablaProductos();
+async function eliminarProducto(id) {
+    if (!confirm("¿Eliminar producto?")) return;
+
+    try {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    } catch (error) {
+        console.error("Error eliminando producto:", error);
+    }
+
+    await cargarProductos();
+    await cargarCategorias();
 }
 
 
 // ------------------------------
-// INICIALIZAR
+// INICIALIZAR APP
 // ------------------------------
-renderTablaProductos();
+cargarProductos();
+cargarCategorias();

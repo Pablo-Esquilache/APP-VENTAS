@@ -80,27 +80,52 @@ body {
   background: #6bb4ff;
 }
 
+.p-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
 /* ---------- TABLA ---------- */
-.p-tabla {
-  width: 100%;
-  border-collapse: collapse;
-  background: #1a1a1a;
+/* 🔥 CONTENEDOR QUE DEFINE LAS 10 FILAS Y EL SCROLL */
+.tabla-productos-container {
+    max-height: 420px; /* altura aprox para 10 filas */
+    overflow-y: auto;
+    border: 1px solid #333;
+    border-radius: 4px;
 }
 
-.p-tabla th,
-.p-tabla td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #333;
+/* 🔥 Encabezado fijo */
+#tablaProductos thead {
+    position: sticky;
+    top: 0;
+    background: #222;
+    z-index: 10;
 }
 
-.p-tabla th {
-  background: #222;
-  font-weight: bold;
+#tablaProductos {
+    width: 100%;
+    border-collapse: collapse;
 }
 
+#tablaProductos th,
+#tablaProductos td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #333;
+}
+
+#tablaProductos th {
+    background: #222;
+    font-weight: bold;
+}
+
+/* ---------- ACCIONES ---------- */
 .acciones-productos {
     display: flex;
-    gap: 8px;      /* separación entre botones */
+    gap: 8px;
     align-items: center;
 }
 

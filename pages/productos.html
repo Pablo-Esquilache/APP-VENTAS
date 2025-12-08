@@ -38,11 +38,11 @@
 
         <select id="filtroCategoria" class="p-input">
           <option value="">Todas las categorías</option>
-          <option value="Ficción">Ficción</option>
-          <option value="No ficción">No ficción</option>
-          <option value="Infantil">Infantil</option>
-          <option value="Académicos">Académicos</option>
         </select>
+
+        <button id="btnLimpiarFiltrosProd" class="p-btn-secondary">
+          Limpiar filtros
+        </button>
 
         <button id="btnNuevoProducto" class="p-btn-primary">
           Crear nuevo producto
@@ -50,22 +50,21 @@
       </div>
 
       <!-- TABLA -->
-      <table class="p-tabla">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody id="tablaProductosBody">
-          <!-- filas dinámicas -->
-        </tbody>
-      </table>
+      <div class="tabla-productos-container">
+        <table id="tablaProductos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Precio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductosBody"></tbody>
+        </table>
+      </div>
     </main>
 
     <!-- MODAL NUEVO / EDITAR PRODUCTO -->
@@ -75,43 +74,49 @@
 
         <h2 class="p-subtitle" id="tituloModalProducto">Nuevo producto</h2>
 
-        <form class="p-form-producto">
+        <form id="formProducto" class="p-form-producto">
           <div class="p-form-group">
-            <label for="nombreProducto">Nombre</label>
-            <input type="text" id="nombreProducto" class="p-input" />
+            <label>Nombre</label>
+            <input type="text" id="nombreProducto" class="p-input" required />
           </div>
 
           <div class="p-form-group">
-            <label for="categoriaProducto">Categoría</label>
-            <select id="categoriaProducto" class="p-input">
+            <label>Categoría</label>
+            <select id="categoriaProducto" class="p-input" required>
               <option value="">Seleccionar categoría</option>
-              <option value="Ficción">Ficción</option>
-              <option value="No ficción">No ficción</option>
-              <option value="Infantil">Infantil</option>
-              <option value="Académicos">Académicos</option>
             </select>
           </div>
 
           <div class="p-form-group">
-            <label for="stockProducto">Stock</label>
-            <input type="number" id="stockProducto" min="0" class="p-input" />
+            <label>Stock inicial</label>
+            <input
+              type="number"
+              id="stockProducto"
+              min="0"
+              class="p-input"
+              required
+            />
           </div>
 
           <div class="p-form-group">
-            <label for="precioProducto">Precio</label>
+            <label>Precio</label>
             <input
               type="number"
               id="precioProducto"
               min="0"
               step="0.01"
               class="p-input"
+              required
             />
           </div>
 
-          <button type="submit" class="p-btn-primary">Guardar</button>
+          <button type="submit" id="btnGuardarProducto" class="p-btn-primary">
+            Guardar
+          </button>
         </form>
       </div>
     </div>
+
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/productos.js"></script>
   </body>
