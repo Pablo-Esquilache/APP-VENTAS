@@ -78,7 +78,7 @@ body {
 }
 
 .v-btn-primary {
-  background: #3fd18c;
+  background-color: #4CAF50;
   color: #000;
 }
 
@@ -160,3 +160,59 @@ body {
 .v-subtitle {
   margin-bottom: 1rem;
 }
+
+.acciones-venta {
+  display: flex;
+  gap: 8px;      /* separación entre botones */
+  align-items: center;
+}
+
+.btn-editar {
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-eliminar {
+  background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* -------- MODAL VER TODAS -------- */
+.v-modal-grande {
+  width: 85%;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+.v-filtros-ver {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.v-tabla-modal-container {
+  max-height: 65vh;
+  overflow-y: auto;
+  background: #161616;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.v-close-ver {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+

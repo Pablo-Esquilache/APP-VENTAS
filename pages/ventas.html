@@ -27,26 +27,26 @@
     <main class="v-container">
       <h1 class="v-title">Gestión de Ventas</h1>
 
-      <!-- CONTROLES SUPERIORES -->
-      <div class="v-controls">
+      <!-- CONTROLES + FILTROS PRINCIPALES -->
+      <div class="v-controls v-filtros-ver">
+        <!-- FILTROS PRINCIPALES -->
         <input
           type="text"
           id="buscarVenta"
           class="v-input"
-          placeholder="Buscar venta..."
+          placeholder="Buscar..."
         />
-
         <input type="date" id="filtroDesde" class="v-input" />
         <input type="date" id="filtroHasta" class="v-input" />
+        <button id="btnLimpiarFiltros" class="v-btn-secondary">Limpiar</button>
 
         <button id="btnNuevaVenta" class="v-btn-primary">
           Registrar venta
         </button>
-
         <button id="btnVerVentas" class="v-btn-secondary">Ver todas</button>
       </div>
 
-      <!-- TABLA -->
+      <!-- TABLA PRINCIPAL -->
       <div class="v-tabla-container">
         <table class="v-tabla">
           <thead>
@@ -64,9 +64,7 @@
             </tr>
           </thead>
 
-          <tbody id="tablaVentasBody">
-            <!-- filas dinámicas -->
-          </tbody>
+          <tbody id="tablaVentasBody"></tbody>
         </table>
       </div>
     </main>
@@ -132,6 +130,32 @@
 
           <button type="submit" class="v-btn-primary">Guardar venta</button>
         </form>
+      </div>
+    </div>
+
+    <!-- MODAL VER TODAS LAS VENTAS -->
+    <div id="modalVerVentas" class="v-modal">
+      <div class="v-modal-content v-modal-grande">
+        <span class="v-close-ver">&times;</span>
+
+        <h2 class="v-subtitle">Todas las ventas</h2>
+
+        <div class="v-tabla-modal-container">
+          <table class="v-tabla">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Total</th>
+                <th>Método</th>
+              </tr>
+            </thead>
+
+            <tbody id="tablaVerVentasBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 

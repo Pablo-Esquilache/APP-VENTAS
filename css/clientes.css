@@ -97,7 +97,7 @@ body {
 
 /* ACCIONES */
 .c-btn-primary {
-  background: #3fd18c;
+  background-color: #4CAF50;
   color: #0f0f0f;
   border: none;
   padding: 10px 14px;
@@ -107,22 +107,28 @@ body {
 .c-btn-primary:hover {
   background: #35b97a;
 }
+
+.acciones-clientes {
+  display: flex;
+  gap: 8px; /* separación entre botones */
+  align-items: center;
+}
+
 .c-btn-edit {
-  background: #00c6ff;
-  color: #0f0f0f;
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
   border: none;
-  padding: 6px 8px;
-  border-radius: 6px;
   cursor: pointer;
+  border-radius: 4px;
 }
 .c-btn-delete {
-  background: #ff4a4a;
-  color: #fff;
+  background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
   border: none;
-  padding: 6px 8px;
-  border-radius: 6px;
-  margin-left: 8px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 /* FORMULARIO MODAL */

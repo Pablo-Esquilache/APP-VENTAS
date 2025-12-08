@@ -132,8 +132,10 @@ function renderTablaProductos() {
             <td>${prod.stock}</td>
             <td>$${prod.precio.toFixed(2)}</td>
             <td>
-                <button class="p-btn-action p-btn-edit" data-id="${prod.id}">Editar</button>
-                <button class="p-btn-action p-btn-delete" data-id="${prod.id}">Eliminar</button>
+                <div class="acciones-productos">
+                    <button class="p-btn-action p-btn-edit" data-id="${prod.id}">Editar</button>
+                    <button class="p-btn-action p-btn-delete" data-id="${prod.id}">Eliminar</button>
+                </div>
             </td>
         `;
 

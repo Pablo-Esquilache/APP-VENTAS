@@ -140,8 +140,10 @@ function renderTabla() {
             <td>${g.tipo}</td>
             <td>$ ${g.importe.toLocaleString()}</td>
             <td>
-                <button class="g-btn-edit" data-id="${g.id}">Editar</button>
-                <button class="g-btn-delete" data-id="${g.id}">Eliminar</button>
+                <div class="acciones-gastos">
+                    <button class="g-btn-edit" data-id="${g.id}">Editar</button>
+                    <button class="g-btn-delete" data-id="${g.id}">Eliminar</button>
+                </div>
             </td>
         `;
 
