@@ -384,8 +384,8 @@ const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
 btnLimpiarFiltros.addEventListener("click", () => {
   buscarVenta.value = "";
-filtroDesde.value = "";
-filtroHasta.value = "";
+  filtroDesde.value = "";
+  filtroHasta.value = "";
 
   cargarVentas(); // recarga la tabla principal sin filtros
 });
