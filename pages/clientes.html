@@ -1,4 +1,5 @@
-<!-- customers.html --><!DOCTYPE html>
+<!-- clientes.html -->
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -15,7 +16,7 @@
         <li><a href="ventas.html">Ventas</a></li>
         <li><a href="productos.html">Productos</a></li>
         <li><a href="clientes.html" class="c-active">Clientes</a></li>
-        <li><a href="gastos.html" class="g-active">Gastos</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
         <li><a href="reportes.html">Reportes</a></li>
         <li><a id="logout-btn">Cerrar Sesión</a></li>
       </ul>
@@ -25,7 +26,7 @@
     <main class="c-container">
       <h1 class="c-title">Gestión de Clientes</h1>
 
-      <!-- BARRA DE CONTROLES -->
+      <!-- BARRA CONTROLES -->
       <div class="c-controls">
         <input
           id="c-buscar"
@@ -35,15 +36,13 @@
         />
         <select id="c-filtro-localidad" class="c-input">
           <option value="">Todas las localidades</option>
-          <option value="CABA">CABA</option>
-          <option value="Zona Norte">Zona Norte</option>
-          <option value="Zona Sur">Zona Sur</option>
-          <option value="Interior">Interior</option>
         </select>
+        <button id="c-btn-limpiar" class="c-btn-secondary">Limpiar filtros</button>
+
         <button id="c-btn-nuevo" class="c-btn-primary">Crear cliente</button>
       </div>
 
-      <!-- LISTA (scroll, muestra 10 visibles) -->
+      <!-- TABLA -->
       <div class="c-lista-clientes">
         <table class="c-tabla">
           <thead>
@@ -55,92 +54,48 @@
               <th>Teléfono</th>
               <th>Email</th>
               <th>Localidad</th>
-              <th>Descripción</th>
+              <th>Comentarios</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="c-tabla-body">
-            <!-- Mock: 10 filas de ejemplo -->
-            <!-- <tr>
-            <td>#0001</td><td>Ana Pérez</td><td>34</td><td>Femenino</td><td>11-4567-8901</td><td>ana@mail.com</td><td>CABA</td><td>Cliente frecuente</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0002</td><td>Carlos Gómez</td><td>42</td><td>Masculino</td><td>11-2233-4455</td><td>carlos@mail.com</td><td>Zona Norte</td><td>Compra mensual</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0003</td><td>María López</td><td>27</td><td>Femenino</td><td>11-7788-9900</td><td>maria@mail.com</td><td>CABA</td><td>Interesada en infantil</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0004</td><td>Javier Ruiz</td><td>50</td><td>Masculino</td><td>11-3344-5566</td><td>javier@mail.com</td><td>Interior</td><td>Compra por mayor</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0005</td><td>Laura Díaz</td><td>31</td><td>Femenino</td><td>11-9988-7766</td><td>laura@mail.com</td><td>Zona Sur</td><td>Cliente nuevo</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0006</td><td>Matías Blanco</td><td>29</td><td>Masculino</td><td>11-1212-3434</td><td>matias@mail.com</td><td>CABA</td><td>Compra frecuente</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0007</td><td>Verónica Ruiz</td><td>45</td><td>Femenino</td><td>11-5656-7878</td><td>veronica@mail.com</td><td>Zona Norte</td><td>Pago con tarjeta</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0008</td><td>Sergio Torres</td><td>38</td><td>Masculino</td><td>11-9090-1212</td><td>sergio@mail.com</td><td>Interior</td><td>Cliente corporativo</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0009</td><td>Romina Vega</td><td>23</td><td>Femenino</td><td>11-4545-6767</td><td>romina@mail.com</td><td>CABA</td><td>Interesada en novedades</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr>
-          <tr>
-            <td>#0010</td><td>Diego Fernández</td><td>55</td><td>Masculino</td><td>11-7878-4545</td><td>diego@mail.com</td><td>Zona Sur</td><td>Compra esporádica</td>
-            <td><button class="c-btn-edit">Editar</button><button class="c-btn-delete">Eliminar</button></td>
-          </tr> -->
-
-            <!-- filas adicionales se mostrarán al scrollear -->
-          </tbody>
+          <tbody id="tablaClientes"></tbody>
         </table>
       </div>
     </main>
 
-    <!-- MODAL CREAR/EDITAR CLIENTE -->
+    <!-- MODAL -->
     <div id="c-modal" class="c-modal">
       <div class="c-modal-content">
         <span class="c-close">&times;</span>
 
         <h2 class="c-subtitle">Nuevo cliente</h2>
 
-        <form id="c-form" class="c-form">
+        <form id="formCliente" class="c-form">
           <div class="c-form-group">
             <label>ID (generado)</label>
             <input
               type="text"
-              id="c-id"
+              id="idCliente"
               class="c-input"
               readonly
-              value="AUTO"
+              value=""
             />
           </div>
 
           <div class="c-form-group">
             <label>Nombre</label>
-            <input type="text" id="c-nombre" class="c-input" required />
+            <input type="text" id="nombre" class="c-input" required />
           </div>
 
           <div class="c-form-row">
             <div class="c-form-group c-col">
               <label>Edad</label>
-              <input type="number" id="c-edad" class="c-input" min="0" />
+              <input type="number" id="edad" class="c-input" min="0" />
             </div>
 
             <div class="c-form-group c-col">
               <label>Género</label>
-              <select id="c-genero" class="c-input">
+              <select id="genero" class="c-input">
                 <option value="">Seleccionar</option>
                 <option value="Femenino">Femenino</option>
                 <option value="Masculino">Masculino</option>
@@ -151,28 +106,29 @@
 
           <div class="c-form-group">
             <label>Teléfono</label>
-            <input type="text" id="c-telefono" class="c-input" />
+            <input type="text" id="telefono" class="c-input" />
           </div>
 
           <div class="c-form-group">
             <label>Email</label>
-            <input type="email" id="c-email" class="c-input" />
+            <input type="email" id="email" class="c-input" />
           </div>
 
           <div class="c-form-group">
             <label>Localidad</label>
-            <input type="text" id="c-localidad" class="c-input" />
+            <input type="text" id="localidad" class="c-input" />
           </div>
 
           <div class="c-form-group">
-            <label>Descripción</label>
-            <textarea id="c-descripcion" class="c-input" rows="3"></textarea>
+            <label>Comentarios</label>
+            <textarea id="comentarios" class="c-input" rows="3"></textarea>
           </div>
 
           <button type="submit" class="c-btn-primary">Guardar cliente</button>
         </form>
       </div>
     </div>
+
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/clientes.js"></script>
   </body>

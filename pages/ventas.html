@@ -78,31 +78,31 @@
         <form class="v-form-venta">
           <div class="v-form-group">
             <label for="fechaVenta">Fecha</label>
-            <input type="date" id="fechaVenta" class="v-input" />
+            <input type="date" id="fechaVenta" class="v-input"  required/>
           </div>
 
           <div class="v-form-group">
             <label for="clienteVenta">Cliente</label>
-            <select id="clienteVenta" class="v-input">
+            <select id="clienteVenta" class="v-input" required>
               <option value="">Seleccionar cliente</option>
             </select>
           </div>
 
           <div class="v-form-group">
             <label for="productoVenta">Producto</label>
-            <select id="productoVenta" class="v-input">
+            <select id="productoVenta" class="v-input" required>
               <option value="">Seleccionar producto</option>
             </select>
           </div>
 
           <div class="v-form-group">
             <label for="cantidadVenta">Cantidad</label>
-            <input type="number" id="cantidadVenta" min="1" class="v-input" />
+            <input type="number" id="cantidadVenta" min="1" class="v-input" required/>
           </div>
 
           <div class="v-form-group">
             <label for="descuentoVenta">Descuento (%)</label>
-            <select id="descuentoVenta" class="v-input">
+            <select id="descuentoVenta" class="v-input" required>
               <option value="0">0%</option>
               <option value="5">5%</option>
               <option value="10">10%</option>
@@ -113,12 +113,13 @@
 
           <div class="v-form-group">
             <label for="metodoPagoVenta">Método de pago</label>
-            <select id="metodoPagoVenta" class="v-input">
-              <option value="">Seleccionar método</option>
+            <select id="metodoPagoVenta" class="v-input" required>
+              <option value="">Seleccionar método </option>
               <option value="efectivo">Efectivo</option>
               <option value="debito">Débito</option>
-              <option value="qr">QR</option>
+              <option value="QR">QR</option>
               <option value="transferencia">Transferencia</option>
+              <option value="Cuenta Corriente">Cuenta Corriente</option>
             </select>
           </div>
 

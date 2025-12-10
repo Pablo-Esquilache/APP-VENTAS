@@ -1,197 +1,266 @@
-// clientes.js
-
-// ---------------------------------------------
-// ELEMENTOS DEL DOM
-// ---------------------------------------------
-const buscarInput = document.getElementById("c-buscar");
+// ===========================================================
+// DOM
+// ===========================================================
+const buscarCliente = document.getElementById("c-buscar");
 const filtroLocalidad = document.getElementById("c-filtro-localidad");
 const btnNuevoCliente = document.getElementById("c-btn-nuevo");
 
-const modal = document.getElementById("c-modal");
-const modalClose = document.querySelector(".c-close");
-const form = document.getElementById("c-form");
+const modalCliente = document.getElementById("c-modal");
+const btnCerrarModal = document.querySelector(".c-close");
 
-const campoId = document.getElementById("c-id");
-const campoNombre = document.getElementById("c-nombre");
-const campoEdad = document.getElementById("c-edad");
-const campoGenero = document.getElementById("c-genero");
-const campoTelefono = document.getElementById("c-telefono");
-const campoEmail = document.getElementById("c-email");
-const campoLocalidad = document.getElementById("c-localidad");
-const campoDescripcion = document.getElementById("c-descripcion");
+const tituloModal = document.querySelector(".c-subtitle");
 
-const tablaBody = document.getElementById("c-tabla-body");
+const campoId = document.getElementById("idCliente");
+const campoNombre = document.getElementById("nombre");
+const campoEdad = document.getElementById("edad");
+const campoGenero = document.getElementById("genero");
+const campoTelefono = document.getElementById("telefono");
+const campoEmail = document.getElementById("email");
+const campoLocalidad = document.getElementById("localidad");
+const campoComentarios = document.getElementById("comentarios");
 
-let editando = false;
+const tablaClientesBody = document.getElementById("tablaClientes");
+
+// ===========================================================
+// ESTADO
+// ===========================================================
+let modoEdicion = false;
 let clienteEditandoId = null;
 
-// --------------------------------------------------
-// LISTADO TEMPORAL PARA SIMULAR LA TABLA
-// --------------------------------------------------
-let clientes = [
-  {
-    id: 1,
-    nombre: "Ana Pérez",
-    edad: 34,
-    genero: "Femenino",
-    telefono: "11-4567-8901",
-    email: "ana@mail.com",
-    localidad: "CABA",
-    descripcion: "Cliente frecuente",
-  },
-  {
-    id: 2,
-    nombre: "Carlos Gómez",
-    edad: 42,
-    genero: "Masculino",
-    telefono: "11-2233-4455",
-    email: "carlos@mail.com",
-    localidad: "Zona Norte",
-    descripcion: "Compra mensual",
-  },
-];
+// API
+const API_URL = "http://localhost:4000/api/clientes";
 
-// --------------------------------------------------
-// ABRIR MODAL (NUEVO)
-// --------------------------------------------------
+let clientes = [];
+let localidades = [];
+
+// ===========================================================
+// CARGAR CLIENTES
+// ===========================================================
+async function cargarClientes() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    clientes = Array.isArray(data) ? data : [];
+    renderTablaClientes();
+    await cargarLocalidades(); // actualizar select dinámicamente
+  } catch (error) {
+    console.error("Error cargando clientes:", error);
+    clientes = [];
+    renderTablaClientes();
+  }
+}
+
+// ===========================================================
+// CARGAR LOCALIDADES DESDE DB
+// ===========================================================
+async function cargarLocalidades() {
+  try {
+    const res = await fetch(`${API_URL}/localidades/lista`);
+    const data = await res.json();
+    localidades = Array.isArray(data) ? data : [];
+
+    // Limpiar select y agregar opción por defecto
+    filtroLocalidad.innerHTML = `<option value="">Todas las localidades</option>`;
+
+    localidades.forEach((loc) => {
+      const op = document.createElement("option");
+      op.value = loc;
+      op.textContent = loc;
+      filtroLocalidad.appendChild(op);
+    });
+  } catch (error) {
+    console.error("Error cargando localidades:", error);
+    localidades = [];
+  }
+}
+
+// ===========================================================
+// ABRIR/CERRAR MODAL
+// ===========================================================
 btnNuevoCliente.addEventListener("click", () => {
-  editando = false;
+  modoEdicion = false;
   clienteEditandoId = null;
 
-  form.reset();
-  campoId.value = "AUTO";
-
-  document.querySelector(".c-subtitle").textContent = "Nuevo cliente";
-  modal.style.display = "flex";
+  tituloModal.textContent = "Nuevo cliente";
+  limpiarFormulario();
+  modalCliente.style.display = "block";
 });
 
-// --------------------------------------------------
-// CERRAR MODAL
-// --------------------------------------------------
-modalClose.addEventListener("click", () => {
-  modal.style.display = "none";
+btnCerrarModal.addEventListener("click", () => {
+  modalCliente.style.display = "none";
 });
 
 window.addEventListener("click", (e) => {
-  if (e.target === modal) modal.style.display = "none";
+  if (e.target === modalCliente) modalCliente.style.display = "none";
 });
 
-// --------------------------------------------------
-// GUARDAR CLIENTE
-// --------------------------------------------------
-form.addEventListener("submit", (e) => {
+// ===========================================================
+// LIMPIAR FORMULARIO
+// ===========================================================
+function limpiarFormulario() {
+  campoId.value = "";
+  campoNombre.value = "";
+  campoEdad.value = "";
+  campoGenero.value = "";
+  campoTelefono.value = "";
+  campoEmail.value = "";
+  campoLocalidad.value = "";
+  campoComentarios.value = "";
+}
+
+// ===========================================================
+// GUARDAR CLIENTE (POST / PUT)
+// ===========================================================
+document.getElementById("formCliente").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const datos = {
-    id: editando ? clienteEditandoId : Date.now(),
+  const data = {
     nombre: campoNombre.value.trim(),
-    edad: parseInt(campoEdad.value) || null,
-    genero: campoGenero.value,
-    telefono: campoTelefono.value.trim(),
-    email: campoEmail.value.trim(),
-    localidad: campoLocalidad.value.trim(),
-    descripcion: campoDescripcion.value.trim(),
+    edad: campoEdad.value ? parseInt(campoEdad.value) : null,
+    genero: campoGenero.value || "",
+    telefono: campoTelefono.value.trim() || "",
+    email: campoEmail.value.trim() || "",
+    localidad: campoLocalidad.value.trim() || "",
+    comentarios: campoComentarios.value.trim() || "",
   };
 
-  if (!editando) {
-    clientes.push(datos);
-  } else {
-    const i = clientes.findIndex((c) => c.id === clienteEditandoId);
-    clientes[i] = datos;
+  try {
+    if (!modoEdicion) {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } else {
+      await fetch(`${API_URL}/${clienteEditandoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    }
+  } catch (error) {
+    console.error("Error guardando cliente:", error);
   }
 
-  modal.style.display = "none";
-  renderTabla();
+  modalCliente.style.display = "none";
+
+  await cargarClientes();
 });
 
-// --------------------------------------------------
-// FILTROS
-// --------------------------------------------------
-buscarInput.addEventListener("input", renderTabla);
-filtroLocalidad.addEventListener("change", renderTabla);
+// ===========================================================
+// BUSCAR / FILTRAR
+// ===========================================================
+buscarCliente.addEventListener("input", renderTablaClientes);
+filtroLocalidad.addEventListener("change", renderTablaClientes);
 
-// --------------------------------------------------
-// RENDERIZAR TABLA
-// --------------------------------------------------
-function renderTabla() {
-  const texto = buscarInput.value.toLowerCase();
-  const filtroLoc = filtroLocalidad.value;
+// ===========================================================
+// RENDER TABLA
+// ===========================================================
+function renderTablaClientes() {
+  const texto = buscarCliente.value.toLowerCase();
+  const localidadSeleccionada = filtroLocalidad.value;
 
-  const filtrados = clientes.filter((c) => {
-    const coincideNombre = c.nombre.toLowerCase().includes(texto);
-    const coincideLoc = filtroLoc === "" || c.localidad === filtroLoc;
+  const filtrados = clientes.filter((cli) => {
+    const coincideNombre = cli.nombre.toLowerCase().includes(texto);
+    const coincideLoc =
+      localidadSeleccionada === "" || cli.localidad === localidadSeleccionada;
     return coincideNombre && coincideLoc;
   });
 
-  tablaBody.innerHTML = "";
+  tablaClientesBody.innerHTML = "";
 
   filtrados.forEach((c) => {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-            <td>${c.id}</td>
-            <td>${c.nombre}</td>
-            <td>${c.edad ?? "-"}</td>
-            <td>${c.genero || "-"}</td>
-            <td>${c.telefono}</td>
-            <td>${c.email}</td>
-            <td>${c.localidad}</td>
-            <td>${c.descripcion}</td>
-            <td>
-                <div class="acciones-clientes">
-                    <button class="c-btn-edit" data-id="${c.id}">Editar</button>
-                    <button class="c-btn-delete" data-id="${
-                      c.id
-                    }">Eliminar</button>
-                </div>
-            </td>
-        `;
+      <td>${c.id}</td>
+      <td>${c.nombre}</td>
+      <td>${c.edad ?? "-"}</td>
+      <td>${c.genero || "-"}</td>
+      <td>${c.telefono || "-"}</td>
+      <td>${c.email || "-"}</td>
+      <td>${c.localidad || "-"}</td>
+      <td>${c.comentarios || "-"}</td>
+      <td>
+        <div class="acciones-clientes">
+          <button class="c-btn-edit" data-id="${c.id}">Editar</button>
+          <button class="c-btn-delete" data-id="${c.id}">Eliminar</button>
+        </div>
+      </td>
+    `;
 
-    tablaBody.appendChild(tr);
+    tablaClientesBody.appendChild(tr);
   });
 
-  activarBotonesAcciones();
+  agregarEventosAcciones();
 }
 
-// --------------------------------------------------
-// EDITAR Y ELIMINAR
-// --------------------------------------------------
-function activarBotonesAcciones() {
-  document.querySelectorAll(".c-btn-edit").forEach((btn) => {
-    btn.addEventListener("click", () => editarCliente(btn.dataset.id));
-  });
+// ===========================================================
+// BOTONES EDITAR / ELIMINAR
+// ===========================================================
+function agregarEventosAcciones() {
+  document
+    .querySelectorAll(".c-btn-edit")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => editarCliente(btn.dataset.id))
+    );
 
-  document.querySelectorAll(".c-btn-delete").forEach((btn) => {
-    btn.addEventListener("click", () => eliminarCliente(btn.dataset.id));
-  });
+  document
+    .querySelectorAll(".c-btn-delete")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => eliminarCliente(btn.dataset.id))
+    );
 }
 
+// ===========================================================
+// EDITAR CLIENTE
+// ===========================================================
 function editarCliente(id) {
-  const cliente = clientes.find((c) => c.id == id);
+  const c = clientes.find((cli) => cli.id == id);
+  if (!c) return;
 
-  editando = true;
-  clienteEditandoId = cliente.id;
+  modoEdicion = true;
+  clienteEditandoId = id;
 
-  document.querySelector(".c-subtitle").textContent = "Editar cliente";
+  tituloModal.textContent = "Editar cliente";
 
-  campoId.value = cliente.id;
-  campoNombre.value = cliente.nombre;
-  campoEdad.value = cliente.edad;
-  campoGenero.value = cliente.genero;
-  campoTelefono.value = cliente.telefono;
-  campoEmail.value = cliente.email;
-  campoLocalidad.value = cliente.localidad;
-  campoDescripcion.value = cliente.descripcion;
+  campoId.value = c.id;
+  campoNombre.value = c.nombre;
+  campoEdad.value = c.edad ?? "";
+  campoGenero.value = c.genero ?? "";
+  campoTelefono.value = c.telefono ?? "";
+  campoEmail.value = c.email ?? "";
+  campoLocalidad.value = c.localidad ?? "";
+  campoComentarios.value = c.comentarios ?? "";
 
-  modal.style.display = "flex";
+  modalCliente.style.display = "block";
 }
 
-function eliminarCliente(id) {
-  clientes = clientes.filter((c) => c.id != id);
-  renderTabla();
+// ===========================================================
+// ELIMINAR CLIENTE
+// ===========================================================
+async function eliminarCliente(id) {
+  if (!confirm("¿Eliminar cliente?")) return;
+
+  try {
+    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  } catch (error) {
+    console.error("Error eliminando cliente:", error);
+  }
+
+  await cargarClientes();
 }
 
-// --------------------------------------------------
+const btnLimpiarFiltros = document.getElementById("c-btn-limpiar");
+
+btnLimpiarFiltros.addEventListener("click", () => {
+  buscarCliente.value = "";
+  filtroLocalidad.value = "";
+  renderTablaClientes();
+});
+
+
+// ===========================================================
 // INICIALIZAR
-// --------------------------------------------------
-renderTabla();
+// ===========================================================
+cargarClientes();

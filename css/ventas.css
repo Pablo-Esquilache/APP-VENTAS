@@ -123,7 +123,6 @@ body {
   position: sticky;
   top: 0;
   background: #222;
-  z-index: 10;
 }
 
 .btn-eliminar {
@@ -151,6 +150,7 @@ body {
   width: 420px;
   border-radius: 6px;
   position: relative;
+  z-index: 999;
 }
 
 .v-close {

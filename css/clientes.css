@@ -97,7 +97,7 @@ body {
 
 /* ACCIONES */
 .c-btn-primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: #0f0f0f;
   border: none;
   padding: 10px 14px;
@@ -131,6 +131,14 @@ body {
   border-radius: 4px;
 }
 
+.c-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
 /* FORMULARIO MODAL */
 .c-modal {
   display: none;
