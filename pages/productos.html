@@ -12,7 +12,6 @@
     <!-- NAVBAR -->
     <nav class="p-navbar">
       <div class="p-navbar-logo">Mi Librería</div>
-
       <ul class="p-navbar-menu">
         <li><a href="ventas.html">Ventas</a></li>
         <li><a href="productos.html" class="p-active">Productos</a></li>
@@ -82,9 +81,21 @@
 
           <div class="p-form-group">
             <label>Categoría</label>
-            <select id="categoriaProducto" class="p-input" required>
-              <option value="">Seleccionar categoría</option>
-            </select>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="categoriaProducto" class="p-input">
+                <option value="">Seleccionar categoría</option>
+              </select>
+              <button type="button" id="btnNuevaCategoria" class="p-btn-secondary">
+                Nueva
+              </button>
+            </div>
+            <input
+              type="text"
+              id="nuevaCategoriaProducto"
+              class="p-input"
+              placeholder="Escribí nueva categoría"
+              style="display: none; margin-top: 8px"
+            />
           </div>
 
           <div class="p-form-group">

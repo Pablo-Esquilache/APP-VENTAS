@@ -1,4 +1,3 @@
-<!-- clientes.html -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -73,13 +72,7 @@
         <form id="formCliente" class="c-form">
           <div class="c-form-group">
             <label>ID (generado)</label>
-            <input
-              type="text"
-              id="idCliente"
-              class="c-input"
-              readonly
-              value=""
-            />
+            <input type="text" id="idCliente" class="c-input" readonly />
           </div>
 
           <div class="c-form-group">
@@ -116,7 +109,19 @@
 
           <div class="c-form-group">
             <label>Localidad</label>
-            <input type="text" id="localidad" class="c-input" />
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="localidad" class="c-input">
+                <option value="">Seleccionar localidad</option>
+              </select>
+              <button type="button" id="btnNuevaLocalidad" class="c-btn-secondary">Nueva</button>
+            </div>
+            <input
+              type="text"
+              id="nuevaLocalidad"
+              class="c-input"
+              placeholder="Escribí nueva localidad"
+              style="display: none; margin-top: 8px;"
+            />
           </div>
 
           <div class="c-form-group">

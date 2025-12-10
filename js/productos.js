@@ -12,6 +12,8 @@ const tituloModal = document.getElementById("tituloModalProducto");
 
 const nombreProducto = document.getElementById("nombreProducto");
 const categoriaProducto = document.getElementById("categoriaProducto");
+const nuevaCategoriaProducto = document.getElementById("nuevaCategoriaProducto");
+const btnNuevaCategoria = document.getElementById("btnNuevaCategoria");
 const stockProducto = document.getElementById("stockProducto");
 const precioProducto = document.getElementById("precioProducto");
 
@@ -83,7 +85,17 @@ btnNuevoProducto.addEventListener("click", () => {
 
   tituloModal.textContent = "Nuevo producto";
   limpiarFormulario();
+  nuevaCategoriaProducto.style.display = "none";
+  nuevaCategoriaProducto.value = "";
   modalProducto.style.display = "flex";
+});
+
+// ------------------------------
+// BOTÓN NUEVA CATEGORÍA
+// ------------------------------
+btnNuevaCategoria.addEventListener("click", () => {
+  nuevaCategoriaProducto.style.display = "block";
+  nuevaCategoriaProducto.focus();
 });
 
 // ------------------------------
@@ -103,48 +115,50 @@ window.addEventListener("click", (e) => {
 function limpiarFormulario() {
   nombreProducto.value = "";
   categoriaProducto.value = "";
+  nuevaCategoriaProducto.value = "";
   stockProducto.value = "";
   precioProducto.value = "";
+  nuevaCategoriaProducto.style.display = "none";
 }
 
 // ------------------------------
 // GUARDAR PRODUCTO
 // ------------------------------
-document
-  .querySelector(".p-form-producto")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.querySelector(".p-form-producto").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const data = {
-      nombre: nombreProducto.value.trim(),
-      categoria: categoriaProducto.value,
-      stock: parseInt(stockProducto.value),
-      precio: parseFloat(precioProducto.value),
-    };
+  const categoriaFinal = nuevaCategoriaProducto.value.trim() || categoriaProducto.value;
 
-    try {
-      if (!modoEdicion) {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-      } else {
-        await fetch(`${API_URL}/${productoEditandoId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-      }
-    } catch (error) {
-      console.error("Error guardando producto:", error);
+  const data = {
+    nombre: nombreProducto.value.trim(),
+    categoria: categoriaFinal,
+    stock: parseInt(stockProducto.value),
+    precio: parseFloat(precioProducto.value),
+  };
+
+  try {
+    if (!modoEdicion) {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } else {
+      await fetch(`${API_URL}/${productoEditandoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
     }
+  } catch (error) {
+    console.error("Error guardando producto:", error);
+  }
 
-    modalProducto.style.display = "none";
-
-    await cargarProductos();
-    await cargarCategorias();
-  });
+  modalProducto.style.display = "none";
+  limpiarFormulario();
+  await cargarProductos();
+  await cargarCategorias();
+});
 
 // ------------------------------
 // BUSCAR / FILTRAR
@@ -171,22 +185,18 @@ function renderTablaProductos() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-            <td>${prod.id}</td>
-            <td>${prod.nombre}</td>
-            <td>${prod.categoria || "-"}</td>
-            <td>${prod.stock}</td>
-            <td>$${prod.precio.toFixed(2)}</td>
-            <td>
-                <div class="acciones-productos">
-                    <button class="p-btn-action p-btn-edit" data-id="${
-                      prod.id
-                    }">Editar</button>
-                    <button class="p-btn-action p-btn-delete" data-id="${
-                      prod.id
-                    }">Eliminar</button>
-                </div>
-            </td>
-        `;
+      <td>${prod.id}</td>
+      <td>${prod.nombre}</td>
+      <td>${prod.categoria || "-"}</td>
+      <td>${prod.stock}</td>
+      <td>$${prod.precio.toFixed(2)}</td>
+      <td>
+        <div class="acciones-productos">
+          <button class="p-btn-action p-btn-edit" data-id="${prod.id}">Editar</button>
+          <button class="p-btn-action p-btn-delete" data-id="${prod.id}">Eliminar</button>
+        </div>
+      </td>
+    `;
 
     tablaProductosBody.appendChild(tr);
   });
@@ -198,17 +208,13 @@ function renderTablaProductos() {
 // BOTONES EDITAR / ELIMINAR
 // ------------------------------
 function agregarEventosAcciones() {
-  document
-    .querySelectorAll(".p-btn-edit")
-    .forEach((btn) =>
-      btn.addEventListener("click", () => editarProducto(btn.dataset.id))
-    );
+  document.querySelectorAll(".p-btn-edit").forEach((btn) =>
+    btn.addEventListener("click", () => editarProducto(btn.dataset.id))
+  );
 
-  document
-    .querySelectorAll(".p-btn-delete")
-    .forEach((btn) =>
-      btn.addEventListener("click", () => eliminarProducto(btn.dataset.id))
-    );
+  document.querySelectorAll(".p-btn-delete").forEach((btn) =>
+    btn.addEventListener("click", () => eliminarProducto(btn.dataset.id))
+  );
 }
 
 // ------------------------------
@@ -226,6 +232,8 @@ function editarProducto(id) {
   categoriaProducto.value = prod.categoria || "";
   stockProducto.value = prod.stock;
   precioProducto.value = prod.precio;
+  nuevaCategoriaProducto.style.display = "none";
+  nuevaCategoriaProducto.value = "";
 
   modalProducto.style.display = "flex";
 }
@@ -245,12 +253,15 @@ async function eliminarProducto(id) {
   await cargarProductos();
   await cargarCategorias();
 }
+
+// ------------------------------
+// LIMPIAR FILTROS
+// ------------------------------
 const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltrosProd");
 btnLimpiarFiltros.addEventListener("click", () => {
   buscarProducto.value = "";
   filtroCategoria.value = "";
-
-  cargarProductos(); // recarga la tabla principal sin filtros
+  cargarProductos();
 });
 
 // ------------------------------

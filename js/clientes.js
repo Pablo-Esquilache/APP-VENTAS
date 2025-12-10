@@ -17,7 +17,9 @@ const campoGenero = document.getElementById("genero");
 const campoTelefono = document.getElementById("telefono");
 const campoEmail = document.getElementById("email");
 const campoLocalidad = document.getElementById("localidad");
+const campoNuevaLocalidad = document.getElementById("nuevaLocalidad");
 const campoComentarios = document.getElementById("comentarios");
+const btnNuevaLocalidad = document.getElementById("btnNuevaLocalidad");
 
 const tablaClientesBody = document.getElementById("tablaClientes");
 
@@ -59,14 +61,20 @@ async function cargarLocalidades() {
     const data = await res.json();
     localidades = Array.isArray(data) ? data : [];
 
-    // Limpiar select y agregar opción por defecto
+    // Limpiar selects
     filtroLocalidad.innerHTML = `<option value="">Todas las localidades</option>`;
+    campoLocalidad.innerHTML = `<option value="">Seleccionar localidad</option>`;
 
     localidades.forEach((loc) => {
-      const op = document.createElement("option");
-      op.value = loc;
-      op.textContent = loc;
-      filtroLocalidad.appendChild(op);
+      const opFiltro = document.createElement("option");
+      opFiltro.value = loc;
+      opFiltro.textContent = loc;
+      filtroLocalidad.appendChild(opFiltro);
+
+      const opSelect = document.createElement("option");
+      opSelect.value = loc;
+      opSelect.textContent = loc;
+      campoLocalidad.appendChild(opSelect);
     });
   } catch (error) {
     console.error("Error cargando localidades:", error);
@@ -84,6 +92,7 @@ btnNuevoCliente.addEventListener("click", () => {
   tituloModal.textContent = "Nuevo cliente";
   limpiarFormulario();
   modalCliente.style.display = "block";
+  mostrarInputNuevaLocalidad(false);
 });
 
 btnCerrarModal.addEventListener("click", () => {
@@ -105,8 +114,25 @@ function limpiarFormulario() {
   campoTelefono.value = "";
   campoEmail.value = "";
   campoLocalidad.value = "";
+  campoNuevaLocalidad.value = "";
   campoComentarios.value = "";
 }
+
+// ===========================================================
+// MOSTRAR / OCULTAR INPUT NUEVA LOCALIDAD
+// ===========================================================
+function mostrarInputNuevaLocalidad(mostrar) {
+  if (mostrar) {
+    campoNuevaLocalidad.style.display = "block";
+    campoLocalidad.style.display = "none";
+  } else {
+    campoNuevaLocalidad.style.display = "none";
+    campoLocalidad.style.display = "inline-block";
+    campoNuevaLocalidad.value = "";
+  }
+}
+
+btnNuevaLocalidad.addEventListener("click", () => mostrarInputNuevaLocalidad(true));
 
 // ===========================================================
 // GUARDAR CLIENTE (POST / PUT)
@@ -114,13 +140,15 @@ function limpiarFormulario() {
 document.getElementById("formCliente").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const localidadFinal = campoNuevaLocalidad.value.trim() || campoLocalidad.value;
+
   const data = {
     nombre: campoNombre.value.trim(),
     edad: campoEdad.value ? parseInt(campoEdad.value) : null,
     genero: campoGenero.value || "",
     telefono: campoTelefono.value.trim() || "",
     email: campoEmail.value.trim() || "",
-    localidad: campoLocalidad.value.trim() || "",
+    localidad: localidadFinal || "",
     comentarios: campoComentarios.value.trim() || "",
   };
 
@@ -143,7 +171,6 @@ document.getElementById("formCliente").addEventListener("submit", async (e) => {
   }
 
   modalCliente.style.display = "none";
-
   await cargarClientes();
 });
 
@@ -230,7 +257,15 @@ function editarCliente(id) {
   campoGenero.value = c.genero ?? "";
   campoTelefono.value = c.telefono ?? "";
   campoEmail.value = c.email ?? "";
-  campoLocalidad.value = c.localidad ?? "";
+
+  if (localidades.includes(c.localidad)) {
+    mostrarInputNuevaLocalidad(false);
+    campoLocalidad.value = c.localidad;
+  } else {
+    mostrarInputNuevaLocalidad(true);
+    campoNuevaLocalidad.value = c.localidad;
+  }
+
   campoComentarios.value = c.comentarios ?? "";
 
   modalCliente.style.display = "block";
@@ -251,14 +286,15 @@ async function eliminarCliente(id) {
   await cargarClientes();
 }
 
+// ===========================================================
+// LIMPIAR FILTROS
+// ===========================================================
 const btnLimpiarFiltros = document.getElementById("c-btn-limpiar");
-
 btnLimpiarFiltros.addEventListener("click", () => {
   buscarCliente.value = "";
   filtroLocalidad.value = "";
   renderTablaClientes();
 });
-
 
 // ===========================================================
 // INICIALIZAR
