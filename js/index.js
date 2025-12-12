@@ -30,32 +30,40 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
   const password = document.getElementById("login-password").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "pages/ventas.html";
-    })
-    .catch(() => {
-      alert("Usuario o contraseña incorrectos");
-    });
+  .then((userCredential) => {
+    const user = userCredential.user;
+
+    // 🔹 Guardar UID en localStorage
+    localStorage.setItem("firebase_uid", user.uid);
+
+    console.log("UID:", user.uid);
+
+    window.location.href = "pages/ventas.html";
+  })
+  .catch(() => {
+    alert("Usuario o contraseña incorrectos");
+  });
+
 });
 
 // ===============================
 //            REGISTRO
 // ===============================
-document.getElementById("registro-form").addEventListener("submit", (e) => {
-  e.preventDefault();
+// document.getElementById("registro-form").addEventListener("submit", (e) => {
+//   e.preventDefault();
 
-  const email = document.getElementById("reg-email").value.trim();
-  const password = document.getElementById("reg-password").value;
+//   const email = document.getElementById("reg-email").value.trim();
+//   const password = document.getElementById("reg-password").value;
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      alert("Usuario creado con éxito");
-      cerrarModal();
-    })
-    .catch((error) => {
-      alert("Error al crear usuario: " + error.message);
-    });
-});
+//   createUserWithEmailAndPassword(auth, email, password)
+//     .then(() => {
+//       alert("Usuario creado con éxito");
+//       cerrarModal();
+//     })
+//     .catch((error) => {
+//       alert("Error al crear usuario: " + error.message);
+//     });
+// });
 
 // ===============================
 //       MODAL ABRIR/CERRAR

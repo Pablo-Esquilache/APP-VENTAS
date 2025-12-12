@@ -156,6 +156,8 @@ body {
   width: 92%;
   max-width: 520px;
   position: relative;
+  justify-content: center;
+  align-items: center;
 }
 .c-close {
   position: absolute;
