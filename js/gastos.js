@@ -1,4 +1,22 @@
 // ------------------------------
+// SESIÓN / COMERCIO
+// ------------------------------
+const session = JSON.parse(localStorage.getItem("session"));
+const firebaseUID = session?.firebase_uid;
+let comercioId = null;
+
+const API_BASE = "http://localhost:4000/api";
+const API_URL = `${API_BASE}/gastos`;
+
+async function cargarComercio() {
+  if (!firebaseUID) return;
+
+  const res = await fetch(`${API_BASE}/comercios/uid/${firebaseUID}`);
+  const data = await res.json();
+  comercioId = data.id;
+}
+
+// ------------------------------
 // ELEMENTOS DEL DOM
 // ------------------------------
 const buscarGasto = document.getElementById("buscarGasto");
@@ -24,28 +42,30 @@ const tablaGastosBody = document.getElementById("tablaGastosBody");
 // ------------------------------
 let modoEdicion = false;
 let gastoEditandoId = null;
-
-const API_URL = "http://localhost:4000/api/gastos";
 let gastos = [];
 
+// ------------------------------
+// UTILIDADES
+// ------------------------------
 function formatFecha(fechaString) {
-  const fecha = new Date(fechaString);
-  const dia = fecha.getDate().toString().padStart(2, "0");
-  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-  const anio = fecha.getFullYear();
-  return `${dia}/${mes}/${anio}`;
+  const f = new Date(fechaString);
+  const d = String(f.getDate()).padStart(2, "0");
+  const m = String(f.getMonth() + 1).padStart(2, "0");
+  const y = f.getFullYear();
+  return `${d}/${m}/${y}`;
 }
 
-
 // ------------------------------
-// CARGAR GASTOS
+// CARGAR GASTOS (POR COMERCIO)
 // ------------------------------
 async function cargarGastos() {
+  if (!comercioId) return;
+
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(`${API_URL}?comercio_id=${comercioId}`);
     const data = await res.json();
 
-    gastos = data.sort((a, b) => b.id - a.id); // ID descendente
+    gastos = data.sort((a, b) => b.id - a.id);
     renderTablaGastos();
   } catch (error) {
     console.error("Error cargando gastos:", error);
@@ -53,7 +73,7 @@ async function cargarGastos() {
 }
 
 // ------------------------------
-// RENDERIZAR TABLA
+// RENDER TABLA
 // ------------------------------
 function renderTablaGastos() {
   const texto = buscarGasto.value.toLowerCase();
@@ -62,50 +82,57 @@ function renderTablaGastos() {
   const hasta = filtroHasta.value;
 
   const filtrados = gastos.filter(g => {
-    const coincideTexto = g.descripcion.toLowerCase().includes(texto) || String(g.id).includes(texto);
-    const coincideTipo = tipo === "" || g.tipo === tipo;
-    const coincideFecha = (!desde || g.fecha >= desde) && (!hasta || g.fecha <= hasta);
-    return coincideTexto && coincideTipo && coincideFecha;
+    const okTexto =
+      g.descripcion.toLowerCase().includes(texto) ||
+      String(g.id).includes(texto);
+
+    const okTipo = !tipo || g.tipo === tipo;
+
+    const okFecha =
+      (!desde || g.fecha >= desde) &&
+      (!hasta || g.fecha <= hasta);
+
+    return okTexto && okTipo && okFecha;
   });
 
   tablaGastosBody.innerHTML = "";
 
   filtrados.forEach(g => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${g.id}</td>
-      <td>${formatFecha(g.fecha)}</td>
-      <td>${g.descripcion}</td>
-      <td>${g.tipo}</td>
-      <td>$${parseFloat(g.importe).toFixed(2)}</td>
-      <td>
-        <div class="acciones-gastos">
-          <button class="g-btn-action g-btn-edit" data-id="${g.id}">Editar</button>
-          <button class="g-btn-action g-btn-delete" data-id="${g.id}">Eliminar</button>
-        </div>
-      </td>
+    tablaGastosBody.innerHTML += `
+      <tr>
+        <td>${g.id}</td>
+        <td>${formatFecha(g.fecha)}</td>
+        <td>${g.descripcion}</td>
+        <td>${g.tipo}</td>
+        <td>$${parseFloat(g.importe).toFixed(2)}</td>
+        <td>
+          <div class="acciones-gastos">
+            <button class="g-btn-action g-btn-edit" data-id="${g.id}">Editar</button>
+            <button class="g-btn-action g-btn-delete" data-id="${g.id}">Eliminar</button>
+          </div>
+        </td>
+      </tr>
     `;
-    tablaGastosBody.appendChild(tr);
   });
 
   agregarEventosAcciones();
 }
 
 // ------------------------------
-// BOTONES EDITAR / ELIMINAR
+// ACCIONES
 // ------------------------------
 function agregarEventosAcciones() {
-  document.querySelectorAll(".g-btn-edit").forEach(btn =>
-    btn.addEventListener("click", () => editarGasto(btn.dataset.id))
+  document.querySelectorAll(".g-btn-edit").forEach(b =>
+    b.addEventListener("click", () => editarGasto(b.dataset.id))
   );
 
-  document.querySelectorAll(".g-btn-delete").forEach(btn =>
-    btn.addEventListener("click", () => eliminarGasto(btn.dataset.id))
+  document.querySelectorAll(".g-btn-delete").forEach(b =>
+    b.addEventListener("click", () => eliminarGasto(b.dataset.id))
   );
 }
 
 // ------------------------------
-// ABRIR MODAL
+// ABRIR / CERRAR MODAL
 // ------------------------------
 btnNuevoGasto.addEventListener("click", () => {
   modoEdicion = false;
@@ -115,14 +142,16 @@ btnNuevoGasto.addEventListener("click", () => {
   modalGasto.style.display = "flex";
 });
 
-// ------------------------------
-// CERRAR MODAL
-// ------------------------------
-btnCerrarModal.addEventListener("click", () => modalGasto.style.display = "none");
-window.addEventListener("click", e => { if(e.target === modalGasto) modalGasto.style.display = "none"; });
+btnCerrarModal.addEventListener("click", () => {
+  modalGasto.style.display = "none";
+});
+
+window.addEventListener("click", e => {
+  if (e.target === modalGasto) modalGasto.style.display = "none";
+});
 
 // ------------------------------
-// LIMPIAR FORMULARIO
+// LIMPIAR FORM
 // ------------------------------
 function limpiarFormulario() {
   fechaGasto.value = "";
@@ -132,7 +161,7 @@ function limpiarFormulario() {
 }
 
 // ------------------------------
-// GUARDAR GASTO
+// GUARDAR (CREAR / EDITAR)
 // ------------------------------
 document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
   e.preventDefault();
@@ -142,19 +171,20 @@ document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
     descripcion: descripcionGasto.value.trim(),
     tipo: tipoGasto.value,
     importe: parseFloat(importeGasto.value),
+    comercio_id: comercioId
   };
 
   try {
     if (!modoEdicion) {
       await fetch(API_URL, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
     } else {
       await fetch(`${API_URL}/${gastoEditandoId}`, {
         method: "PUT",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
     }
@@ -170,19 +200,33 @@ document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
 // ------------------------------
 // EDITAR
 // ------------------------------
+function formatFechaInput(fechaString) {
+  const fecha = new Date(fechaString);
+  const yyyy = fecha.getFullYear();
+  const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dd = String(fecha.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function editarGasto(id) {
   const g = gastos.find(x => x.id == id);
+  if (!g) return;
+
   modoEdicion = true;
   gastoEditandoId = id;
 
   tituloModal.textContent = "Editar gasto";
-  fechaGasto.value = g.fecha;
+
+  // asignamos la fecha correctamente para el input date
+  fechaGasto.value = formatFechaInput(g.fecha);
+
   descripcionGasto.value = g.descripcion;
   tipoGasto.value = g.tipo;
   importeGasto.value = g.importe;
 
   modalGasto.style.display = "flex";
 }
+
 
 // ------------------------------
 // ELIMINAR
@@ -191,7 +235,9 @@ async function eliminarGasto(id) {
   if (!confirm("¿Eliminar gasto?")) return;
 
   try {
-    await fetch(`${API_URL}/${id}`, {method: "DELETE"});
+    await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
+      method: "DELETE"
+    });
   } catch (error) {
     console.error("Error eliminando gasto:", error);
   }
@@ -200,7 +246,7 @@ async function eliminarGasto(id) {
 }
 
 // ------------------------------
-// FILTROS / BUSQUEDA
+// FILTROS
 // ------------------------------
 buscarGasto.addEventListener("input", renderTablaGastos);
 filtroTipo.addEventListener("change", renderTablaGastos);
@@ -215,8 +261,10 @@ btnLimpiarFiltros.addEventListener("click", () => {
   renderTablaGastos();
 });
 
-
 // ------------------------------
-// INICIALIZAR
+// INIT
 // ------------------------------
-cargarGastos();
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarComercio();
+  await cargarGastos();
+});
