@@ -61,15 +61,16 @@ let ventasCache = [];
 // ------------------------------
 // ABRIR MODAL NUEVA
 // ------------------------------
-btnNuevaVenta.addEventListener("click", () => {
+btnNuevaVenta.addEventListener("click", async () => {
   isEditing = false;
   editingId = null;
   document.getElementById("tituloModalVenta").textContent = "Registrar venta";
   cambiarTextoBotonGuardar("Guardar venta");
   limpiarFormulario();
 
-  cargarClientes();
-  cargarProductos();
+  await cargarClientes();
+  await cargarProductos();
+  calcularTotal();
 
   modalVenta.style.display = "flex";
 });
@@ -119,14 +120,16 @@ async function calcularTotal() {
 
   if (!productoId) {
     totalVenta.value = "";
+    precioActual = 0;
     return;
   }
 
   try {
-    const res = await fetch(`${API_URL}/productos/${productoId}`);
+    const res = await fetch(`${API_URL}/productos/${productoId}?comercio_id=${comercioId}`);
+    if (!res.ok) throw new Error("Producto no encontrado");
     const data = await res.json();
 
-    precioActual = Number(data.precio);
+    precioActual = Number(data.precio) || 0;
     const subtotal = precioActual * cantidad;
     const descuentoAplicado = subtotal * (descuento / 100);
     const total = subtotal - descuentoAplicado;
@@ -134,6 +137,8 @@ async function calcularTotal() {
     totalVenta.value = total.toFixed(2);
   } catch (error) {
     console.error("Error obteniendo precio:", error);
+    totalVenta.value = "";
+    precioActual = 0;
   }
 }
 
@@ -257,8 +262,9 @@ async function abrirModalEdicion(id) {
   clienteVenta.value = venta.cliente_id || "";
   productoVenta.value = venta.producto_id || "";
   cantidadVenta.value = venta.cantidad || 1;
-  descuentoVenta.value = venta.descuento || 0;
-  metodoPagoVenta.value = venta.metodo_pago || "";
+  descuentoVenta.value = String(venta.descuento ?? "0");
+  metodoPagoVenta.value = venta.metodo_pago ?? "";
+
 
   await calcularTotal();
 
@@ -267,9 +273,15 @@ async function abrirModalEdicion(id) {
 
 // ------------------------------
 // GUARDAR (POST/PUT)
-// ------------------------------
 formVenta.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  await calcularTotal();
+
+  if (!productoVenta.value || precioActual === 0) {
+    alert("Seleccioná un producto válido antes de guardar la venta.");
+    return;
+  }
 
   const payload = {
     fecha: fechaVenta.value,
@@ -282,18 +294,24 @@ formVenta.addEventListener("submit", async (e) => {
     comercio_id: comercioId,
   };
 
-  if (isEditing) {
-    await fetch(`${API_URL}/ventas/${editingId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-  } else {
-    await fetch(`${API_URL}/ventas`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  try {
+    if (isEditing) {
+      await fetch(`${API_URL}/ventas/${editingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      await fetch(`${API_URL}/ventas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    }
+  } catch (error) {
+    console.error("Error guardando venta:", error);
+    alert("Hubo un error guardando la venta.");
+    return;
   }
 
   modalVenta.style.display = "none";
