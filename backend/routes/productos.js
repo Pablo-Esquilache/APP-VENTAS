@@ -4,13 +4,26 @@ import db from "../db.js";
 const router = express.Router();
 
 /* ==========================
-   GET - TODOS LOS PRODUCTOS
+   GET - PRODUCTOS POR COMERCIO
    ========================== */
 router.get("/", async (req, res) => {
+  const { comercio_id } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
   try {
     const { rows } = await db.query(
-      "SELECT * FROM productos ORDER BY nombre ASC"
+      `
+      SELECT *
+      FROM productos
+      WHERE comercio_id = $1
+      ORDER BY nombre ASC
+      `,
+      [comercio_id]
     );
+
     res.json(rows);
   } catch (error) {
     console.error("Error cargando productos:", error);
@@ -19,16 +32,27 @@ router.get("/", async (req, res) => {
 });
 
 /* ==========================
-   GET - LISTA DE CATEGORÍAS
+   GET - LISTA DE CATEGORÍAS POR COMERCIO
    ========================== */
 router.get("/categorias/lista", async (req, res) => {
+  const { comercio_id } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
   try {
-    const { rows } = await db.query(`
-      SELECT DISTINCT categoria 
-      FROM productos 
-      WHERE categoria IS NOT NULL AND categoria <> ''
+    const { rows } = await db.query(
+      `
+      SELECT DISTINCT categoria
+      FROM productos
+      WHERE comercio_id = $1
+        AND categoria IS NOT NULL
+        AND categoria <> ''
       ORDER BY categoria ASC
-    `);
+      `,
+      [comercio_id]
+    );
 
     const categorias = rows.map(r => r.categoria);
     res.json(categorias);
@@ -40,15 +64,24 @@ router.get("/categorias/lista", async (req, res) => {
 });
 
 /* ==========================
-   GET - PRODUCTO POR ID
+   GET - PRODUCTO POR ID (SEGURO)
    ========================== */
 router.get("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
+  const { comercio_id } = req.query;
 
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  try {
     const { rows } = await db.query(
-      "SELECT * FROM productos WHERE id = $1",
-      [id]
+      `
+      SELECT *
+      FROM productos
+      WHERE id = $1 AND comercio_id = $2
+      `,
+      [id, comercio_id]
     );
 
     res.json(rows[0] || null);
@@ -62,12 +95,17 @@ router.get("/:id", async (req, res) => {
    POST - CREAR PRODUCTO
    ========================== */
 router.post("/", async (req, res) => {
-  try {
-    const { nombre, categoria, precio, stock } = req.body;
+  const { nombre, categoria, precio, stock, comercio_id } = req.body;
 
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  try {
     const query = `
-      INSERT INTO productos (nombre, categoria, precio, stock)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO productos
+      (nombre, categoria, precio, stock, comercio_id)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
 
@@ -75,7 +113,8 @@ router.post("/", async (req, res) => {
       nombre,
       categoria || null,
       precio,
-      stock ?? 0
+      stock ?? 0,
+      comercio_id
     ]);
 
     res.status(201).json(rows[0]);
@@ -90,17 +129,21 @@ router.post("/", async (req, res) => {
    PUT - ACTUALIZAR PRODUCTO
    ========================== */
 router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { nombre, categoria, precio, stock } = req.body;
+  const { id } = req.params;
+  const { nombre, categoria, precio, stock, comercio_id } = req.body;
 
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  try {
     const query = `
       UPDATE productos
       SET nombre = $1,
           categoria = $2,
           precio = $3,
           stock = $4
-      WHERE id = $5
+      WHERE id = $5 AND comercio_id = $6
       RETURNING *
     `;
 
@@ -109,10 +152,15 @@ router.put("/:id", async (req, res) => {
       categoria || null,
       precio,
       stock,
-      id
+      id,
+      comercio_id
     ]);
 
-    res.json(rows[0] || null);
+    if (!rows[0]) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    res.json(rows[0]);
 
   } catch (error) {
     console.error("Error actualizando producto:", error);
@@ -124,10 +172,21 @@ router.put("/:id", async (req, res) => {
    DELETE - ELIMINAR PRODUCTO
    ========================== */
 router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
+  const { comercio_id } = req.query;
 
-    await db.query("DELETE FROM productos WHERE id = $1", [id]);
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  try {
+    await db.query(
+      `
+      DELETE FROM productos
+      WHERE id = $1 AND comercio_id = $2
+      `,
+      [id, comercio_id]
+    );
 
     res.status(204).end();
   } catch (error) {

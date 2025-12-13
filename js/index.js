@@ -1,12 +1,15 @@
-// Importar funciones necesarias desde la modular v9
+// ===============================
+//        FIREBASE IMPORTS
+// ===============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// Configuración de Firebase (la tuya)
+// ===============================
+//     FIREBASE CONFIG
+// ===============================
 const firebaseConfig = {
   apiKey: "AIzaSyA6T2S8ngU2KYbs0B9_Kz0C1j94ku5Q32Y",
   authDomain: "app-ventas-e3564.firebaseapp.com",
@@ -16,12 +19,14 @@ const firebaseConfig = {
   appId: "1:358809687504:web:6da4dab8bccb1ae86a15d5",
 };
 
-// Inicializar Firebase
+// ===============================
+//     INIT FIREBASE
+// ===============================
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // ===============================
-//             LOGIN
+//            LOGIN
 // ===============================
 document.getElementById("login-form").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -30,49 +35,21 @@ document.getElementById("login-form").addEventListener("submit", (e) => {
   const password = document.getElementById("login-password").value;
 
   signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
+    .then((userCredential) => {
+      const user = userCredential.user;
 
-    // 🔹 Guardar UID en localStorage
-    localStorage.setItem("firebase_uid", user.uid);
+      // 🔹 Sesión centralizada (preparada para multi-comercio)
+      const session = {
+        firebase_uid: user.uid
+      };
 
-    console.log("UID:", user.uid);
+      localStorage.setItem("session", JSON.stringify(session));
 
-    window.location.href = "pages/ventas.html";
-  })
-  .catch(() => {
-    alert("Usuario o contraseña incorrectos");
-  });
+      console.log("Firebase UID:", user.uid);
 
+      window.location.href = "pages/ventas.html";
+    })
+    .catch(() => {
+      alert("Usuario o contraseña incorrectos");
+    });
 });
-
-// ===============================
-//            REGISTRO
-// ===============================
-// document.getElementById("registro-form").addEventListener("submit", (e) => {
-//   e.preventDefault();
-
-//   const email = document.getElementById("reg-email").value.trim();
-//   const password = document.getElementById("reg-password").value;
-
-//   createUserWithEmailAndPassword(auth, email, password)
-//     .then(() => {
-//       alert("Usuario creado con éxito");
-//       cerrarModal();
-//     })
-//     .catch((error) => {
-//       alert("Error al crear usuario: " + error.message);
-//     });
-// });
-
-// ===============================
-//       MODAL ABRIR/CERRAR
-// ===============================
-const modal = document.getElementById("modal-registro");
-document.getElementById("abrir-modal").onclick = () =>
-  (modal.style.display = "flex");
-document.getElementById("cerrar-modal").onclick = () => cerrarModal();
-
-function cerrarModal() {
-  modal.style.display = "none";
-}

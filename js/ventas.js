@@ -1,6 +1,26 @@
 // ventas.js
 
 // ------------------------------
+// API BASE
+// ------------------------------
+const API_URL = "http://localhost:4000/api";
+
+// ------------------------------
+// SESIÓN / COMERCIO
+// ------------------------------
+const session = JSON.parse(localStorage.getItem("session"));
+const firebaseUID = session?.firebase_uid;
+let comercioId = null;
+
+async function cargarComercio() {
+  if (!firebaseUID) return;
+
+  const res = await fetch(`${API_URL}/comercios/uid/${firebaseUID}`);
+  const data = await res.json();
+  comercioId = data.id;
+}
+
+// ------------------------------
 // REFERENCIAS DEL DOM
 // ------------------------------
 const btnNuevaVenta = document.getElementById("btnNuevaVenta");
@@ -31,17 +51,12 @@ const filtroDesde = document.getElementById("filtroDesde");
 const filtroHasta = document.getElementById("filtroHasta");
 
 // ------------------------------
-// API BASE
-// ------------------------------
-const API_URL = "http://localhost:4000/api";
-
-// ------------------------------
 // ESTADO
 // ------------------------------
 let precioActual = 0;
 let isEditing = false;
 let editingId = null;
-let ventasCache = []; // ventas para tabla principal
+let ventasCache = [];
 
 // ------------------------------
 // ABRIR MODAL NUEVA
@@ -127,11 +142,10 @@ async function calcularTotal() {
 // ------------------------------
 async function cargarClientes() {
   try {
-    const res = await fetch(`${API_URL}/clientes`);
+    const res = await fetch(`${API_URL}/clientes?comercio_id=${comercioId}`);
     const clientes = await res.json();
 
     clienteVenta.innerHTML = `<option value="">Seleccionar cliente</option>`;
-
     clientes.forEach((c) => {
       clienteVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
     });
@@ -145,11 +159,10 @@ async function cargarClientes() {
 // ------------------------------
 async function cargarProductos() {
   try {
-    const res = await fetch(`${API_URL}/productos`);
+    const res = await fetch(`${API_URL}/productos?comercio_id=${comercioId}`);
     const productos = await res.json();
 
     productoVenta.innerHTML = `<option value="">Seleccionar producto</option>`;
-
     productos.forEach((p) => {
       productoVenta.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
     });
@@ -163,11 +176,11 @@ async function cargarProductos() {
 // ------------------------------
 async function cargarVentas() {
   try {
-    const res = await fetch(`${API_URL}/ventas`);
+    const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
     let ventas = await res.json();
 
     ventas = ventas.sort((a, b) => b.id - a.id);
-    ventasCache = ventas; // guardamos cache para filtro
+    ventasCache = ventas;
 
     renderVentasPrincipal(ventas);
   } catch (error) {
@@ -209,26 +222,17 @@ function renderVentasPrincipal(lista) {
 // ACCIONES EDITAR/ELIMINAR
 // ------------------------------
 function activarBotonesAccion() {
-  const botonesEliminar = document.querySelectorAll(".btn-eliminar");
-  botonesEliminar.forEach((btn) => {
+  document.querySelectorAll(".btn-eliminar").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
       if (!confirm("¿Eliminar esta venta?")) return;
 
-      try {
-        const res = await fetch(`${API_URL}/ventas/${id}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) throw new Error("Error eliminando");
-        cargarVentas();
-      } catch (error) {
-        alert("Error al eliminar la venta");
-      }
+      await fetch(`${API_URL}/ventas/${id}`, { method: "DELETE" });
+      cargarVentas();
     });
   });
 
-  const botonesEditar = document.querySelectorAll(".btn-editar");
-  botonesEditar.forEach((btn) => {
+  document.querySelectorAll(".btn-editar").forEach((btn) => {
     btn.addEventListener("click", () => abrirModalEdicion(btn.dataset.id));
   });
 }
@@ -237,32 +241,28 @@ function activarBotonesAccion() {
 // ABRIR EDICIÓN
 // ------------------------------
 async function abrirModalEdicion(id) {
-  try {
-    const res = await fetch(`${API_URL}/ventas/${id}`);
-    const venta = await res.json();
+  const res = await fetch(`${API_URL}/ventas/${id}`);
+  const venta = await res.json();
 
-    isEditing = true;
-    editingId = id;
+  isEditing = true;
+  editingId = id;
 
-    document.getElementById("tituloModalVenta").textContent = "Editar venta";
-    cambiarTextoBotonGuardar("Guardar cambios");
+  document.getElementById("tituloModalVenta").textContent = "Editar venta";
+  cambiarTextoBotonGuardar("Guardar cambios");
 
-    await cargarClientes();
-    await cargarProductos();
+  await cargarClientes();
+  await cargarProductos();
 
-    fechaVenta.value = venta.fecha?.split("T")[0] || "";
-    clienteVenta.value = venta.cliente_id || "";
-    productoVenta.value = venta.producto_id || "";
-    cantidadVenta.value = venta.cantidad || 1;
-    descuentoVenta.value = venta.descuento || 0;
-    metodoPagoVenta.value = venta.metodo_pago || "";
+  fechaVenta.value = venta.fecha?.split("T")[0] || "";
+  clienteVenta.value = venta.cliente_id || "";
+  productoVenta.value = venta.producto_id || "";
+  cantidadVenta.value = venta.cantidad || 1;
+  descuentoVenta.value = venta.descuento || 0;
+  metodoPagoVenta.value = venta.metodo_pago || "";
 
-    await calcularTotal();
+  await calcularTotal();
 
-    modalVenta.style.display = "flex";
-  } catch {
-    alert("No se pudo abrir la venta");
-  }
+  modalVenta.style.display = "flex";
 }
 
 // ------------------------------
@@ -279,36 +279,31 @@ formVenta.addEventListener("submit", async (e) => {
     precio: precioActual,
     descuento: Number(descuentoVenta.value),
     metodo_pago: metodoPagoVenta.value,
+    comercio_id: comercioId,
   };
 
-  try {
-    if (isEditing) {
-      await fetch(`${API_URL}/ventas/${editingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      alert("✔ Venta actualizada");
-    } else {
-      await fetch(`${API_URL}/ventas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      alert("✔ Venta registrada");
-    }
-
-    modalVenta.style.display = "none";
-    limpiarFormulario();
-    cargarVentas();
-  } catch {
-    alert("Error guardando");
+  if (isEditing) {
+    await fetch(`${API_URL}/ventas/${editingId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } else {
+    await fetch(`${API_URL}/ventas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
   }
+
+  modalVenta.style.display = "none";
+  limpiarFormulario();
+  cargarVentas();
 });
 
-// --------------------------------
+// ------------------------------
 // FILTRO PRINCIPAL
-// --------------------------------
+// ------------------------------
 function filtrarPrincipal() {
   let lista = [...ventasCache];
 
@@ -316,10 +311,8 @@ function filtrarPrincipal() {
   const desde = filtroDesde.value;
   const hasta = filtroHasta.value;
 
-  if (txt) {
+  if (txt)
     lista = lista.filter((v) => JSON.stringify(v).toLowerCase().includes(txt));
-  }
-
   if (desde) lista = lista.filter((v) => v.fecha >= desde);
   if (hasta) lista = lista.filter((v) => v.fecha <= hasta);
 
@@ -334,28 +327,15 @@ filtroHasta.addEventListener("change", filtrarPrincipal);
 // MODAL VER TODAS
 // ------------------------------
 btnVerVentas.addEventListener("click", async () => {
-  await cargarVentasModal();
+  const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
+  const ventas = await res.json();
+  renderVentasModal(ventas);
   modalVerVentas.style.display = "flex";
 });
 
 btnCerrarVer.addEventListener("click", () => {
   modalVerVentas.style.display = "none";
 });
-
-window.addEventListener("click", (e) => {
-  if (e.target === modalVerVentas) modalVerVentas.style.display = "none";
-});
-
-async function cargarVentasModal() {
-  try {
-    const res = await fetch(`${API_URL}/ventas`);
-    let ventas = await res.json();
-    ventas = ventas.sort((a, b) => b.id - a.id);
-    renderVentasModal(ventas);
-  } catch {
-    console.error("Error cargando modal");
-  }
-}
 
 function renderVentasModal(lista) {
   tablaVerVentasBody.innerHTML = "";
@@ -376,10 +356,12 @@ function renderVentasModal(lista) {
 
 // ------------------------------
 function formatearFecha(fechaISO) {
-  const f = new Date(fechaISO);
-  return f.toLocaleDateString("es-AR");
+  return new Date(fechaISO).toLocaleDateString("es-AR");
 }
 
+// ------------------------------
+// LIMPIAR FILTROS
+// ------------------------------
 const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
 btnLimpiarFiltros.addEventListener("click", () => {
@@ -387,8 +369,11 @@ btnLimpiarFiltros.addEventListener("click", () => {
   filtroDesde.value = "";
   filtroHasta.value = "";
 
-  cargarVentas(); // recarga la tabla principal sin filtros
+  renderVentasPrincipal(ventasCache);
 });
 
 // ------------------------------
-document.addEventListener("DOMContentLoaded", cargarVentas);
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarComercio();
+  await cargarVentas();
+});

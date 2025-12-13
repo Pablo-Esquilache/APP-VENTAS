@@ -68,7 +68,7 @@ body {
 }
 
 .p-btn-primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: #000;
   border: none;
   padding: 0.55rem 1rem;
@@ -92,43 +92,44 @@ body {
 /* ---------- TABLA ---------- */
 /* 🔥 CONTENEDOR QUE DEFINE LAS 10 FILAS Y EL SCROLL */
 .tabla-productos-container {
-    max-height: 420px; /* altura aprox para 10 filas */
-    overflow-y: auto;
-    border: 1px solid #333;
-    border-radius: 4px;
+  max-height: 420px; /* altura aprox para 10 filas */
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 4px;
 }
 
 /* 🔥 Encabezado fijo */
 #tablaProductos thead {
-    position: sticky;
-    top: 0;
-    background: #222;
+  position: sticky;
+  top: 0;
+  background: #222;
 }
 
 #tablaProductos {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 #tablaProductos th,
 #tablaProductos td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #333;
+  padding: 0.75rem;
+  border-bottom: 1px solid #333;
 }
 
 #tablaProductos th {
-    background: #222;
-    font-weight: bold;
+  background: #222;
+  font-weight: bold;
 }
 
 /* ---------- ACCIONES ---------- */
 .acciones-productos {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.p-btn-action {
+.p-btn-edit {
+  background-color: #4caf50;
   color: white;
   padding: 6px 12px;
   border: none;
@@ -136,12 +137,13 @@ body {
   border-radius: 4px;
 }
 
-.p-btn-edit {
-  background-color: #4CAF50;
-}
-
 .p-btn-delete {
   background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 /* ---------- MODAL ---------- */

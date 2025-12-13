@@ -36,7 +36,9 @@
         <select id="c-filtro-localidad" class="c-input">
           <option value="">Todas las localidades</option>
         </select>
-        <button id="c-btn-limpiar" class="c-btn-secondary">Limpiar filtros</button>
+        <button id="c-btn-limpiar" class="c-btn-secondary">
+          Limpiar filtros
+        </button>
 
         <button id="c-btn-nuevo" class="c-btn-primary">Crear cliente</button>
       </div>
@@ -70,7 +72,7 @@
         <h2 class="c-subtitle">Nuevo cliente</h2>
 
         <form id="formCliente" class="c-form">
-          <div class="c-form-group">
+          <div class="c-form-group" id="fila-id-cliente" style="display: none">
             <label>ID (generado)</label>
             <input type="text" id="idCliente" class="c-input" readonly />
           </div>
@@ -109,18 +111,24 @@
 
           <div class="c-form-group">
             <label>Localidad</label>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 8px; align-items: center">
               <select id="localidad" class="c-input">
                 <option value="">Seleccionar localidad</option>
               </select>
-              <button type="button" id="btnNuevaLocalidad" class="c-btn-secondary">Nueva</button>
+              <button
+                type="button"
+                id="btnNuevaLocalidad"
+                class="c-btn-secondary"
+              >
+                Nueva
+              </button>
             </div>
             <input
               type="text"
               id="nuevaLocalidad"
               class="c-input"
               placeholder="Escribí nueva localidad"
-              style="display: none; margin-top: 8px;"
+              style="display: none; margin-top: 8px"
             />
           </div>
 

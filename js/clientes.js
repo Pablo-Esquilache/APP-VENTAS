@@ -1,13 +1,31 @@
 // ===========================================================
+// SESIÓN / COMERCIO
+// ===========================================================
+const session = JSON.parse(localStorage.getItem("session"));
+const firebaseUID = session?.firebase_uid;
+let comercioId = null;
+
+const API_BASE = "http://localhost:4000/api";
+const API_URL = `${API_BASE}/clientes`;
+
+async function cargarComercio() {
+  if (!firebaseUID) return;
+
+  const res = await fetch(`${API_BASE}/comercios/uid/${firebaseUID}`);
+  const data = await res.json();
+  comercioId = data.id;
+}
+
+// ===========================================================
 // DOM
 // ===========================================================
 const buscarCliente = document.getElementById("c-buscar");
 const filtroLocalidad = document.getElementById("c-filtro-localidad");
 const btnNuevoCliente = document.getElementById("c-btn-nuevo");
+const btnLimpiarFiltros = document.getElementById("c-btn-limpiar");
 
 const modalCliente = document.getElementById("c-modal");
 const btnCerrarModal = document.querySelector(".c-close");
-
 const tituloModal = document.querySelector(".c-subtitle");
 
 const campoId = document.getElementById("idCliente");
@@ -28,72 +46,57 @@ const tablaClientesBody = document.getElementById("tablaClientes");
 // ===========================================================
 let modoEdicion = false;
 let clienteEditandoId = null;
-
-// API
-const API_URL = "http://localhost:4000/api/clientes";
-
 let clientes = [];
 let localidades = [];
 
 // ===========================================================
-// CARGAR CLIENTES
+// CARGAR CLIENTES (POR COMERCIO)
 // ===========================================================
 async function cargarClientes() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-    clientes = Array.isArray(data) ? data : [];
-    renderTablaClientes();
-    await cargarLocalidades(); // actualizar select dinámicamente
-  } catch (error) {
-    console.error("Error cargando clientes:", error);
-    clientes = [];
-    renderTablaClientes();
-  }
+  if (!comercioId) return;
+
+  const res = await fetch(`${API_URL}?comercio_id=${comercioId}`);
+  clientes = await res.json();
+
+  renderTablaClientes();
+  await cargarLocalidades();
 }
 
 // ===========================================================
-// CARGAR LOCALIDADES DESDE DB
+// CARGAR LOCALIDADES (POR COMERCIO)
 // ===========================================================
 async function cargarLocalidades() {
-  try {
-    const res = await fetch(`${API_URL}/localidades/lista`);
-    const data = await res.json();
-    localidades = Array.isArray(data) ? data : [];
+  if (!comercioId) return;
 
-    // Limpiar selects
-    filtroLocalidad.innerHTML = `<option value="">Todas las localidades</option>`;
-    campoLocalidad.innerHTML = `<option value="">Seleccionar localidad</option>`;
+  const res = await fetch(
+    `${API_URL}/localidades/lista?comercio_id=${comercioId}`
+  );
+  localidades = await res.json();
 
-    localidades.forEach((loc) => {
-      const opFiltro = document.createElement("option");
-      opFiltro.value = loc;
-      opFiltro.textContent = loc;
-      filtroLocalidad.appendChild(opFiltro);
+  filtroLocalidad.innerHTML = `<option value="">Todas las localidades</option>`;
+  campoLocalidad.innerHTML = `<option value="">Seleccionar localidad</option>`;
 
-      const opSelect = document.createElement("option");
-      opSelect.value = loc;
-      opSelect.textContent = loc;
-      campoLocalidad.appendChild(opSelect);
-    });
-  } catch (error) {
-    console.error("Error cargando localidades:", error);
-    localidades = [];
-  }
+  localidades.forEach((loc) => {
+    filtroLocalidad.innerHTML += `<option value="${loc}">${loc}</option>`;
+    campoLocalidad.innerHTML += `<option value="${loc}">${loc}</option>`;
+  });
 }
 
 // ===========================================================
-// ABRIR/CERRAR MODAL
+// MODAL
 // ===========================================================
 btnNuevoCliente.addEventListener("click", () => {
   modoEdicion = false;
   clienteEditandoId = null;
-
   tituloModal.textContent = "Nuevo cliente";
   limpiarFormulario();
-  modalCliente.style.display = "block";
   mostrarInputNuevaLocalidad(false);
+
+  document.getElementById("fila-id-cliente").style.display = "none";
+
+  modalCliente.style.display = "flex";
 });
+
 
 btnCerrarModal.addEventListener("click", () => {
   modalCliente.style.display = "none";
@@ -104,7 +107,7 @@ window.addEventListener("click", (e) => {
 });
 
 // ===========================================================
-// LIMPIAR FORMULARIO
+// FORM
 // ===========================================================
 function limpiarFormulario() {
   campoId.value = "";
@@ -118,9 +121,6 @@ function limpiarFormulario() {
   campoComentarios.value = "";
 }
 
-// ===========================================================
-// MOSTRAR / OCULTAR INPUT NUEVA LOCALIDAD
-// ===========================================================
 function mostrarInputNuevaLocalidad(mostrar) {
   if (mostrar) {
     campoNuevaLocalidad.style.display = "block";
@@ -132,15 +132,18 @@ function mostrarInputNuevaLocalidad(mostrar) {
   }
 }
 
-btnNuevaLocalidad.addEventListener("click", () => mostrarInputNuevaLocalidad(true));
+btnNuevaLocalidad.addEventListener("click", () =>
+  mostrarInputNuevaLocalidad(true)
+);
 
 // ===========================================================
-// GUARDAR CLIENTE (POST / PUT)
+// GUARDAR CLIENTE
 // ===========================================================
 document.getElementById("formCliente").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const localidadFinal = campoNuevaLocalidad.value.trim() || campoLocalidad.value;
+  const localidadFinal =
+    campoNuevaLocalidad.value.trim() || campoLocalidad.value;
 
   const data = {
     nombre: campoNombre.value.trim(),
@@ -150,24 +153,21 @@ document.getElementById("formCliente").addEventListener("submit", async (e) => {
     email: campoEmail.value.trim() || "",
     localidad: localidadFinal || "",
     comentarios: campoComentarios.value.trim() || "",
+    comercio_id: comercioId,
   };
 
-  try {
-    if (!modoEdicion) {
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-    } else {
-      await fetch(`${API_URL}/${clienteEditandoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-    }
-  } catch (error) {
-    console.error("Error guardando cliente:", error);
+  if (!modoEdicion) {
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+  } else {
+    await fetch(`${API_URL}/${clienteEditandoId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
   }
 
   modalCliente.style.display = "none";
@@ -175,81 +175,80 @@ document.getElementById("formCliente").addEventListener("submit", async (e) => {
 });
 
 // ===========================================================
-// BUSCAR / FILTRAR
+// FILTROS
 // ===========================================================
 buscarCliente.addEventListener("input", renderTablaClientes);
 filtroLocalidad.addEventListener("change", renderTablaClientes);
 
+btnLimpiarFiltros.addEventListener("click", () => {
+  buscarCliente.value = "";
+  filtroLocalidad.value = "";
+  renderTablaClientes();
+});
+
 // ===========================================================
-// RENDER TABLA
+// TABLA
 // ===========================================================
 function renderTablaClientes() {
   const texto = buscarCliente.value.toLowerCase();
   const localidadSeleccionada = filtroLocalidad.value;
 
-  const filtrados = clientes.filter((cli) => {
-    const coincideNombre = cli.nombre.toLowerCase().includes(texto);
-    const coincideLoc =
-      localidadSeleccionada === "" || cli.localidad === localidadSeleccionada;
-    return coincideNombre && coincideLoc;
+  const filtrados = clientes.filter((c) => {
+    const okNombre = c.nombre.toLowerCase().includes(texto);
+    const okLocalidad =
+      !localidadSeleccionada || c.localidad === localidadSeleccionada;
+    return okNombre && okLocalidad;
   });
 
   tablaClientesBody.innerHTML = "";
 
   filtrados.forEach((c) => {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${c.id}</td>
-      <td>${c.nombre}</td>
-      <td>${c.edad ?? "-"}</td>
-      <td>${c.genero || "-"}</td>
-      <td>${c.telefono || "-"}</td>
-      <td>${c.email || "-"}</td>
-      <td>${c.localidad || "-"}</td>
-      <td>${c.comentarios || "-"}</td>
-      <td>
+    tablaClientesBody.innerHTML += `
+      <tr>
+        <td>${c.id}</td>
+        <td>${c.nombre}</td>
+        <td>${c.edad ?? "-"}</td>
+        <td>${c.genero || "-"}</td>
+        <td>${c.telefono || "-"}</td>
+        <td>${c.email || "-"}</td>
+        <td>${c.localidad || "-"}</td>
+        <td>${c.comentarios || "-"}</td>
+        <td>
         <div class="acciones-clientes">
           <button class="c-btn-edit" data-id="${c.id}">Editar</button>
-          <button class="c-btn-delete" data-id="${c.id}">Eliminar</button>
-        </div>
-      </td>
-    `;
 
-    tablaClientesBody.appendChild(tr);
+        </td>
+        </div>
+      </tr>
+    `;
   });
 
-  agregarEventosAcciones();
-}
-
-// ===========================================================
-// BOTONES EDITAR / ELIMINAR
-// ===========================================================
-function agregarEventosAcciones() {
   document
     .querySelectorAll(".c-btn-edit")
-    .forEach((btn) =>
-      btn.addEventListener("click", () => editarCliente(btn.dataset.id))
+    .forEach((b) =>
+      b.addEventListener("click", () => editarCliente(b.dataset.id))
     );
 
-  document
-    .querySelectorAll(".c-btn-delete")
-    .forEach((btn) =>
-      btn.addEventListener("click", () => eliminarCliente(btn.dataset.id))
-    );
+  // document
+  //   .querySelectorAll(".c-btn-delete")
+  //   .forEach((b) =>
+  //     b.addEventListener("click", () => eliminarCliente(b.dataset.id))
+  //   );
 }
 
 // ===========================================================
-// EDITAR CLIENTE
+// EDITAR / ELIMINAR
 // ===========================================================
 function editarCliente(id) {
-  const c = clientes.find((cli) => cli.id == id);
+  const c = clientes.find((x) => x.id == id);
   if (!c) return;
 
   modoEdicion = true;
   clienteEditandoId = id;
 
   tituloModal.textContent = "Editar cliente";
+
+  document.getElementById("fila-id-cliente").style.display = "block";
 
   campoId.value = c.id;
   campoNombre.value = c.nombre;
@@ -268,35 +267,26 @@ function editarCliente(id) {
 
   campoComentarios.value = c.comentarios ?? "";
 
-  modalCliente.style.display = "block";
+  modalCliente.style.display = "flex";
 }
 
-// ===========================================================
-// ELIMINAR CLIENTE
-// ===========================================================
-async function eliminarCliente(id) {
-  if (!confirm("¿Eliminar cliente?")) return;
+// async function eliminarCliente(id) {
+//   if (!confirm("¿Eliminar cliente?")) return;
 
-  try {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  } catch (error) {
-    console.error("Error eliminando cliente:", error);
-  }
+//   await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
+//     method: "DELETE",
+//   });
 
+//   await cargarClientes();
+// }
+
+// ===========================================================
+// INIT
+// ===========================================================
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarComercio();
   await cargarClientes();
-}
-
-// ===========================================================
-// LIMPIAR FILTROS
-// ===========================================================
-const btnLimpiarFiltros = document.getElementById("c-btn-limpiar");
-btnLimpiarFiltros.addEventListener("click", () => {
-  buscarCliente.value = "";
-  filtroLocalidad.value = "";
-  renderTablaClientes();
 });
 
-// ===========================================================
-// INICIALIZAR
-// ===========================================================
-cargarClientes();
+
+// <button class="c-btn-delete" data-id="${c.id}">Eliminar</button>

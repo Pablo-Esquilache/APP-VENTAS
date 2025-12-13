@@ -1,4 +1,21 @@
 // ------------------------------
+// SESIÓN / COMERCIO
+// ------------------------------
+const session = JSON.parse(localStorage.getItem("session"));
+const firebaseUID = session?.firebase_uid;
+let comercioId = null;
+
+const API_BASE = "http://localhost:4000/api";
+
+async function cargarComercio() {
+  if (!firebaseUID) return;
+
+  const res = await fetch(`${API_BASE}/comercios/uid/${firebaseUID}`);
+  const data = await res.json();
+  comercioId = data.id;
+}
+
+// ------------------------------
 // ELEMENTOS DEL DOM
 // ------------------------------
 const buscarProducto = document.getElementById("buscarProducto");
@@ -12,28 +29,35 @@ const tituloModal = document.getElementById("tituloModalProducto");
 
 const nombreProducto = document.getElementById("nombreProducto");
 const categoriaProducto = document.getElementById("categoriaProducto");
-const nuevaCategoriaProducto = document.getElementById("nuevaCategoriaProducto");
+const nuevaCategoriaProducto = document.getElementById(
+  "nuevaCategoriaProducto"
+);
 const btnNuevaCategoria = document.getElementById("btnNuevaCategoria");
 const stockProducto = document.getElementById("stockProducto");
 const precioProducto = document.getElementById("precioProducto");
 
 const tablaProductosBody = document.getElementById("tablaProductosBody");
 
-// Estado
+// ------------------------------
+// ESTADO
+// ------------------------------
 let modoEdicion = false;
 let productoEditandoId = null;
-
-// API
-const API_URL = "http://localhost:4000/api/productos";
-
 let productos = [];
 
 // ------------------------------
-// CARGAR PRODUCTOS
+// API
+// ------------------------------
+const API_URL = `${API_BASE}/productos`;
+
+// ------------------------------
+// CARGAR PRODUCTOS (POR COMERCIO)
 // ------------------------------
 async function cargarProductos() {
+  if (!comercioId) return;
+
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(`${API_URL}?comercio_id=${comercioId}`);
     const data = await res.json();
 
     productos = data.map((p) => ({
@@ -49,27 +73,23 @@ async function cargarProductos() {
 }
 
 // ------------------------------
-// CARGAR CATEGORÍAS
+// CARGAR CATEGORÍAS (POR COMERCIO)
 // ------------------------------
 async function cargarCategorias() {
+  if (!comercioId) return;
+
   try {
-    const res = await fetch(`${API_URL}/categorias/lista`);
+    const res = await fetch(
+      `${API_URL}/categorias/lista?comercio_id=${comercioId}`
+    );
     const categorias = await res.json();
 
-    // RESET selects
     categoriaProducto.innerHTML = `<option value="">Seleccionar categoría</option>`;
     filtroCategoria.innerHTML = `<option value="">Todas las categorías</option>`;
 
     categorias.forEach((cat) => {
-      const op1 = document.createElement("option");
-      op1.value = cat;
-      op1.textContent = cat;
-      categoriaProducto.appendChild(op1);
-
-      const op2 = document.createElement("option");
-      op2.value = cat;
-      op2.textContent = cat;
-      filtroCategoria.appendChild(op2);
+      categoriaProducto.innerHTML += `<option value="${cat}">${cat}</option>`;
+      filtroCategoria.innerHTML += `<option value="${cat}">${cat}</option>`;
     });
   } catch (error) {
     console.error("Error cargando categorías:", error);
@@ -85,13 +105,11 @@ btnNuevoProducto.addEventListener("click", () => {
 
   tituloModal.textContent = "Nuevo producto";
   limpiarFormulario();
-  nuevaCategoriaProducto.style.display = "none";
-  nuevaCategoriaProducto.value = "";
   modalProducto.style.display = "flex";
 });
 
 // ------------------------------
-// BOTÓN NUEVA CATEGORÍA
+// NUEVA CATEGORÍA
 // ------------------------------
 btnNuevaCategoria.addEventListener("click", () => {
   nuevaCategoriaProducto.style.display = "block";
@@ -110,7 +128,7 @@ window.addEventListener("click", (e) => {
 });
 
 // ------------------------------
-// LIMPIAR FORMULARIO
+// LIMPIAR FORM
 // ------------------------------
 function limpiarFormulario() {
   nombreProducto.value = "";
@@ -124,116 +142,119 @@ function limpiarFormulario() {
 // ------------------------------
 // GUARDAR PRODUCTO
 // ------------------------------
-document.querySelector(".p-form-producto").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document
+  .querySelector(".p-form-producto")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const categoriaFinal = nuevaCategoriaProducto.value.trim() || categoriaProducto.value;
+    const categoriaFinal =
+      nuevaCategoriaProducto.value.trim() || categoriaProducto.value;
 
-  const data = {
-    nombre: nombreProducto.value.trim(),
-    categoria: categoriaFinal,
-    stock: parseInt(stockProducto.value),
-    precio: parseFloat(precioProducto.value),
-  };
+    const data = {
+      nombre: nombreProducto.value.trim(),
+      categoria: categoriaFinal,
+      stock: parseInt(stockProducto.value),
+      precio: parseFloat(precioProducto.value),
+      comercio_id: comercioId,
+    };
 
-  try {
-    if (!modoEdicion) {
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-    } else {
-      await fetch(`${API_URL}/${productoEditandoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+    try {
+      if (!modoEdicion) {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } else {
+        await fetch(`${API_URL}/${productoEditandoId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      }
+    } catch (error) {
+      console.error("Error guardando producto:", error);
     }
-  } catch (error) {
-    console.error("Error guardando producto:", error);
-  }
 
-  modalProducto.style.display = "none";
-  limpiarFormulario();
-  await cargarProductos();
-  await cargarCategorias();
-});
+    modalProducto.style.display = "none";
+    limpiarFormulario();
+    await cargarProductos();
+    await cargarCategorias();
+  });
 
 // ------------------------------
-// BUSCAR / FILTRAR
+// FILTROS
 // ------------------------------
 buscarProducto.addEventListener("input", renderTablaProductos);
 filtroCategoria.addEventListener("change", renderTablaProductos);
 
 // ------------------------------
-// RENDERIZAR TABLA
+// RENDER TABLA
 // ------------------------------
 function renderTablaProductos() {
   const texto = buscarProducto.value.toLowerCase();
   const categoria = filtroCategoria.value;
 
-  const filtrados = productos.filter((prod) => {
-    const coincideNombre = prod.nombre.toLowerCase().includes(texto);
-    const coincideCat = categoria === "" || prod.categoria === categoria;
-    return coincideNombre && coincideCat;
+  const filtrados = productos.filter((p) => {
+    const okNombre = p.nombre.toLowerCase().includes(texto);
+    const okCat = !categoria || p.categoria === categoria;
+    return okNombre && okCat;
   });
 
   tablaProductosBody.innerHTML = "";
 
-  filtrados.forEach((prod) => {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${prod.id}</td>
-      <td>${prod.nombre}</td>
-      <td>${prod.categoria || "-"}</td>
-      <td>${prod.stock}</td>
-      <td>$${prod.precio.toFixed(2)}</td>
-      <td>
+  filtrados.forEach((p) => {
+    tablaProductosBody.innerHTML += `
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.nombre}</td>
+        <td>${p.categoria || "-"}</td>
+        <td>${p.stock}</td>
+        <td>$${p.precio.toFixed(2)}</td>
+        <td>
         <div class="acciones-productos">
-          <button class="p-btn-action p-btn-edit" data-id="${prod.id}">Editar</button>
-          <button class="p-btn-action p-btn-delete" data-id="${prod.id}">Eliminar</button>
+          <button class="p-btn-edit" data-id="${p.id}">Editar</button>
+          <button class="p-btn-delete" data-id="${p.id}">Eliminar</button>
+        </td>
         </div>
-      </td>
+      </tr>
     `;
-
-    tablaProductosBody.appendChild(tr);
   });
 
   agregarEventosAcciones();
 }
 
 // ------------------------------
-// BOTONES EDITAR / ELIMINAR
+// ACCIONES
 // ------------------------------
 function agregarEventosAcciones() {
-  document.querySelectorAll(".p-btn-edit").forEach((btn) =>
-    btn.addEventListener("click", () => editarProducto(btn.dataset.id))
-  );
+  document
+    .querySelectorAll(".p-btn-edit")
+    .forEach((b) =>
+      b.addEventListener("click", () => editarProducto(b.dataset.id))
+    );
 
-  document.querySelectorAll(".p-btn-delete").forEach((btn) =>
-    btn.addEventListener("click", () => eliminarProducto(btn.dataset.id))
-  );
+  document
+    .querySelectorAll(".p-btn-delete")
+    .forEach((b) =>
+      b.addEventListener("click", () => eliminarProducto(b.dataset.id))
+    );
 }
 
 // ------------------------------
 // EDITAR
 // ------------------------------
 function editarProducto(id) {
-  const prod = productos.find((p) => p.id == id);
+  const p = productos.find((x) => x.id == id);
 
   modoEdicion = true;
   productoEditandoId = id;
 
   tituloModal.textContent = "Editar producto";
-
-  nombreProducto.value = prod.nombre;
-  categoriaProducto.value = prod.categoria || "";
-  stockProducto.value = prod.stock;
-  precioProducto.value = prod.precio;
-  nuevaCategoriaProducto.style.display = "none";
-  nuevaCategoriaProducto.value = "";
+  nombreProducto.value = p.nombre;
+  categoriaProducto.value = p.categoria || "";
+  stockProducto.value = p.stock;
+  precioProducto.value = p.precio;
 
   modalProducto.style.display = "flex";
 }
@@ -244,11 +265,9 @@ function editarProducto(id) {
 async function eliminarProducto(id) {
   if (!confirm("¿Eliminar producto?")) return;
 
-  try {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  } catch (error) {
-    console.error("Error eliminando producto:", error);
-  }
+  await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
+    method: "DELETE",
+  });
 
   await cargarProductos();
   await cargarCategorias();
@@ -257,15 +276,19 @@ async function eliminarProducto(id) {
 // ------------------------------
 // LIMPIAR FILTROS
 // ------------------------------
-const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltrosProd");
-btnLimpiarFiltros.addEventListener("click", () => {
-  buscarProducto.value = "";
-  filtroCategoria.value = "";
-  cargarProductos();
-});
+document
+  .getElementById("btnLimpiarFiltrosProd")
+  .addEventListener("click", () => {
+    buscarProducto.value = "";
+    filtroCategoria.value = "";
+    renderTablaProductos();
+  });
 
 // ------------------------------
-// INICIALIZAR APP
+// INIT
 // ------------------------------
-cargarProductos();
-cargarCategorias();
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarComercio();
+  await cargarProductos();
+  await cargarCategorias();
+});

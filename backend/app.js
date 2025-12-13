@@ -13,6 +13,8 @@ import ventasRouter from "./routes/ventas.js";
 import productosRouter from "./routes/productos.js";
 import clientesRouter from "./routes/clientes.js";
 import gastosRouter from "./routes/gastos.js";
+import comerciosRouter from "./routes/comercios.js";
+
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use("/api/ventas", ventasRouter);
 app.use("/api/productos", productosRouter);
 app.use("/api/clientes", clientesRouter);
 app.use("/api/gastos", gastosRouter);
+app.use("/api/comercios", comerciosRouter);
+
 
 // Puerto
 const PORT = process.env.PORT || 4000;
