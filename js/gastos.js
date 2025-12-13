@@ -1,195 +1,222 @@
-// gastos.js
-
-// ------------------------------------------------------
+// ------------------------------
 // ELEMENTOS DEL DOM
-// ------------------------------------------------------
-const buscarInput = document.getElementById("buscarGasto");
+// ------------------------------
+const buscarGasto = document.getElementById("buscarGasto");
 const filtroTipo = document.getElementById("filtroTipo");
 const filtroDesde = document.getElementById("filtroDesde");
 const filtroHasta = document.getElementById("filtroHasta");
-
 const btnNuevoGasto = document.getElementById("btnNuevoGasto");
+const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltrosGasto");
 
-const modal = document.getElementById("modalGasto");
-const modalClose = document.querySelector(".g-close");
-
+const modalGasto = document.getElementById("modalGasto");
+const btnCerrarModal = document.querySelector(".g-close");
 const tituloModal = document.getElementById("tituloModalGasto");
 
-const campoFecha = document.getElementById("fechaGasto");
-const campoDescripcion = document.getElementById("descripcionGasto");
-const campoTipo = document.getElementById("tipoGasto");
-const campoImporte = document.getElementById("importeGasto");
+const fechaGasto = document.getElementById("fechaGasto");
+const descripcionGasto = document.getElementById("descripcionGasto");
+const tipoGasto = document.getElementById("tipoGasto");
+const importeGasto = document.getElementById("importeGasto");
 
-const tablaBody = document.getElementById("tablaGastosBody");
+const tablaGastosBody = document.getElementById("tablaGastosBody");
 
-let editando = false;
+// ------------------------------
+// ESTADO
+// ------------------------------
+let modoEdicion = false;
 let gastoEditandoId = null;
 
+const API_URL = "http://localhost:4000/api/gastos";
+let gastos = [];
 
-// ------------------------------------------------------
-// DATOS SIMULADOS
-// ------------------------------------------------------
-let gastos = [
-    {
-        id: 1,
-        fecha: "2025-01-02",
-        descripcion: "Pago del alquiler",
-        tipo: "fijo",
-        importe: 120000
-    },
-    {
-        id: 2,
-        fecha: "2025-01-05",
-        descripcion: "Compra de insumos",
-        tipo: "variable",
-        importe: 18000
-    }
-];
+function formatFecha(fechaString) {
+  const fecha = new Date(fechaString);
+  const dia = fecha.getDate().toString().padStart(2, "0");
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+  const anio = fecha.getFullYear();
+  return `${dia}/${mes}/${anio}`;
+}
 
 
-// ------------------------------------------------------
-// ABRIR MODAL NUEVO
-// ------------------------------------------------------
+// ------------------------------
+// CARGAR GASTOS
+// ------------------------------
+async function cargarGastos() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    gastos = data.sort((a, b) => b.id - a.id); // ID descendente
+    renderTablaGastos();
+  } catch (error) {
+    console.error("Error cargando gastos:", error);
+  }
+}
+
+// ------------------------------
+// RENDERIZAR TABLA
+// ------------------------------
+function renderTablaGastos() {
+  const texto = buscarGasto.value.toLowerCase();
+  const tipo = filtroTipo.value;
+  const desde = filtroDesde.value;
+  const hasta = filtroHasta.value;
+
+  const filtrados = gastos.filter(g => {
+    const coincideTexto = g.descripcion.toLowerCase().includes(texto) || String(g.id).includes(texto);
+    const coincideTipo = tipo === "" || g.tipo === tipo;
+    const coincideFecha = (!desde || g.fecha >= desde) && (!hasta || g.fecha <= hasta);
+    return coincideTexto && coincideTipo && coincideFecha;
+  });
+
+  tablaGastosBody.innerHTML = "";
+
+  filtrados.forEach(g => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${g.id}</td>
+      <td>${formatFecha(g.fecha)}</td>
+      <td>${g.descripcion}</td>
+      <td>${g.tipo}</td>
+      <td>$${parseFloat(g.importe).toFixed(2)}</td>
+      <td>
+        <div class="acciones-gastos">
+          <button class="g-btn-action g-btn-edit" data-id="${g.id}">Editar</button>
+          <button class="g-btn-action g-btn-delete" data-id="${g.id}">Eliminar</button>
+        </div>
+      </td>
+    `;
+    tablaGastosBody.appendChild(tr);
+  });
+
+  agregarEventosAcciones();
+}
+
+// ------------------------------
+// BOTONES EDITAR / ELIMINAR
+// ------------------------------
+function agregarEventosAcciones() {
+  document.querySelectorAll(".g-btn-edit").forEach(btn =>
+    btn.addEventListener("click", () => editarGasto(btn.dataset.id))
+  );
+
+  document.querySelectorAll(".g-btn-delete").forEach(btn =>
+    btn.addEventListener("click", () => eliminarGasto(btn.dataset.id))
+  );
+}
+
+// ------------------------------
+// ABRIR MODAL
+// ------------------------------
 btnNuevoGasto.addEventListener("click", () => {
-    editando = false;
-    gastoEditandoId = null;
-
-    tituloModal.textContent = "Registrar gasto";
-    campoFecha.value = "";
-    campoDescripcion.value = "";
-    campoTipo.value = "";
-    campoImporte.value = "";
-
-    modal.style.display = "flex";
+  modoEdicion = false;
+  gastoEditandoId = null;
+  tituloModal.textContent = "Registrar gasto";
+  limpiarFormulario();
+  modalGasto.style.display = "flex";
 });
 
-
-// ------------------------------------------------------
+// ------------------------------
 // CERRAR MODAL
-// ------------------------------------------------------
-modalClose.addEventListener("click", () => modal.style.display = "none");
+// ------------------------------
+btnCerrarModal.addEventListener("click", () => modalGasto.style.display = "none");
+window.addEventListener("click", e => { if(e.target === modalGasto) modalGasto.style.display = "none"; });
 
-window.addEventListener("click", e => {
-    if (e.target === modal) modal.style.display = "none";
-});
+// ------------------------------
+// LIMPIAR FORMULARIO
+// ------------------------------
+function limpiarFormulario() {
+  fechaGasto.value = "";
+  descripcionGasto.value = "";
+  tipoGasto.value = "";
+  importeGasto.value = "";
+}
 
+// ------------------------------
+// GUARDAR GASTO
+// ------------------------------
+document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
+  e.preventDefault();
 
-// ------------------------------------------------------
-// GUARDAR
-// ------------------------------------------------------
-document.querySelector(".g-form-gasto").addEventListener("submit", e => {
-    e.preventDefault();
+  const data = {
+    fecha: fechaGasto.value,
+    descripcion: descripcionGasto.value.trim(),
+    tipo: tipoGasto.value,
+    importe: parseFloat(importeGasto.value),
+  };
 
-    const gasto = {
-        id: editando ? gastoEditandoId : Date.now(),
-        fecha: campoFecha.value,
-        descripcion: campoDescripcion.value.trim(),
-        tipo: campoTipo.value,
-        importe: Number(campoImporte.value)
-    };
-
-    if (!editando) {
-        gastos.push(gasto);
+  try {
+    if (!modoEdicion) {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+      });
     } else {
-        const i = gastos.findIndex(g => g.id === gastoEditandoId);
-        gastos[i] = gasto;
+      await fetch(`${API_URL}/${gastoEditandoId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+      });
     }
+  } catch (error) {
+    console.error("Error guardando gasto:", error);
+  }
 
-    modal.style.display = "none";
-    renderTabla();
+  modalGasto.style.display = "none";
+  limpiarFormulario();
+  await cargarGastos();
+});
+
+// ------------------------------
+// EDITAR
+// ------------------------------
+function editarGasto(id) {
+  const g = gastos.find(x => x.id == id);
+  modoEdicion = true;
+  gastoEditandoId = id;
+
+  tituloModal.textContent = "Editar gasto";
+  fechaGasto.value = g.fecha;
+  descripcionGasto.value = g.descripcion;
+  tipoGasto.value = g.tipo;
+  importeGasto.value = g.importe;
+
+  modalGasto.style.display = "flex";
+}
+
+// ------------------------------
+// ELIMINAR
+// ------------------------------
+async function eliminarGasto(id) {
+  if (!confirm("¿Eliminar gasto?")) return;
+
+  try {
+    await fetch(`${API_URL}/${id}`, {method: "DELETE"});
+  } catch (error) {
+    console.error("Error eliminando gasto:", error);
+  }
+
+  await cargarGastos();
+}
+
+// ------------------------------
+// FILTROS / BUSQUEDA
+// ------------------------------
+buscarGasto.addEventListener("input", renderTablaGastos);
+filtroTipo.addEventListener("change", renderTablaGastos);
+filtroDesde.addEventListener("change", renderTablaGastos);
+filtroHasta.addEventListener("change", renderTablaGastos);
+
+btnLimpiarFiltros.addEventListener("click", () => {
+  buscarGasto.value = "";
+  filtroTipo.value = "";
+  filtroDesde.value = "";
+  filtroHasta.value = "";
+  renderTablaGastos();
 });
 
 
-// ------------------------------------------------------
-// FILTROS
-// ------------------------------------------------------
-buscarInput.addEventListener("input", renderTabla);
-filtroTipo.addEventListener("change", renderTabla);
-filtroDesde.addEventListener("change", renderTabla);
-filtroHasta.addEventListener("change", renderTabla);
-
-
-// ------------------------------------------------------
-// RENDER TABLA
-// ------------------------------------------------------
-function renderTabla() {
-    const texto = buscarInput.value.toLowerCase();
-    const tipo = filtroTipo.value;
-    const desde = filtroDesde.value;
-    const hasta = filtroHasta.value;
-
-    const filtrados = gastos.filter(g => {
-        const coincideDesc = g.descripcion.toLowerCase().includes(texto);
-        const coincideTipo = tipo === "" || g.tipo === tipo;
-
-        const coincideDesde = !desde || g.fecha >= desde;
-        const coincideHasta = !hasta || g.fecha <= hasta;
-
-        return coincideDesc && coincideTipo && coincideDesde && coincideHasta;
-    });
-
-    tablaBody.innerHTML = "";
-
-    filtrados.forEach(g => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-            <td>${g.id}</td>
-            <td>${g.fecha}</td>
-            <td>${g.descripcion}</td>
-            <td>${g.tipo}</td>
-            <td>$ ${g.importe.toLocaleString()}</td>
-            <td>
-                <div class="acciones-gastos">
-                    <button class="g-btn-edit" data-id="${g.id}">Editar</button>
-                    <button class="g-btn-delete" data-id="${g.id}">Eliminar</button>
-                </div>
-            </td>
-        `;
-
-        tablaBody.appendChild(tr);
-    });
-
-    activarBotonesAcciones();
-}
-
-
-// ------------------------------------------------------
-// EDITAR / ELIMINAR
-// ------------------------------------------------------
-function activarBotonesAcciones() {
-    document.querySelectorAll(".g-btn-edit").forEach(btn => {
-        btn.addEventListener("click", () => editarGasto(btn.dataset.id));
-    });
-
-    document.querySelectorAll(".g-btn-delete").forEach(btn => {
-        btn.addEventListener("click", () => eliminarGasto(btn.dataset.id));
-    });
-}
-
-function editarGasto(id) {
-    const gasto = gastos.find(g => g.id == id);
-
-    editando = true;
-    gastoEditandoId = gasto.id;
-
-    tituloModal.textContent = "Editar gasto";
-
-    campoFecha.value = gasto.fecha;
-    campoDescripcion.value = gasto.descripcion;
-    campoTipo.value = gasto.tipo;
-    campoImporte.value = gasto.importe;
-
-    modal.style.display = "flex";
-}
-
-function eliminarGasto(id) {
-    gastos = gastos.filter(g => g.id != id);
-    renderTabla();
-}
-
-
-// ------------------------------------------------------
-// INICIO
-// ------------------------------------------------------
-renderTabla();
+// ------------------------------
+// INICIALIZAR
+// ------------------------------
+cargarGastos();

@@ -65,66 +65,42 @@ body {
   padding: 0.5rem 0.7rem;
   color: #fff;
   border-radius: 4px;
-  min-width: 130px;
 }
 
-/* ---------- BOTONES ---------- */
 .g-btn-primary {
   background-color: #4CAF50;
   color: #000;
+  border: none;
   padding: 0.55rem 1rem;
   border-radius: 4px;
-  border: none;
   cursor: pointer;
 }
 
 .g-btn-primary:hover {
-  background: #35c77f;
+  background: #6bb4ff;
 }
 
-.g-btn-full {
-  width: 100%;
-  margin-top: 1rem;
-}
-
-/* Botones de acción en la tabla */
-.acciones-gastos {
-  display: flex;
-  gap: 8px;      /* separación entre botones */
-  align-items: center;
-}
-.g-btn-edit {
-  background-color: #4CAF50;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  cursor: pointer;
+.g-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.55rem 1rem;
   border-radius: 4px;
-}
-
-.g-btn-edit:hover {
-  background: #0088cc;
-}
-
-.g-btn-delete {
-  background-color: #e53935;
-  color: white;
-  padding: 6px 12px;
-  border: none;
   cursor: pointer;
-  border-radius: 4px;
-}
-
-.g-btn-delete:hover {
-  background: #d93636;
+  border: none;
 }
 
 /* ---------- TABLA ---------- */
 .g-tabla-container {
-  max-height: 450px;
+  max-height: 420px; /* altura aprox para 10 filas */
   overflow-y: auto;
-  background: #1a1a1a;
-  border-radius: 6px;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+
+.g-tabla thead {
+  position: sticky;
+  top: 0;
+  background: #222;
 }
 
 .g-tabla {
@@ -143,6 +119,29 @@ body {
   font-weight: bold;
 }
 
+/* ---------- ACCIONES ---------- */
+.acciones-gastos {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.g-btn-action {
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.g-btn-edit {
+  background-color: #4CAF50;
+}
+
+.g-btn-delete {
+  background-color: #e53935;
+}
+
 /* ---------- MODAL ---------- */
 .g-modal {
   display: none;
@@ -158,15 +157,13 @@ body {
   padding: 1.5rem;
   width: 420px;
   border-radius: 6px;
-  position: relative;
 }
 
 .g-close {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 1.5rem;
+  float: right;
   cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
 }
 
 .g-form-group {
@@ -175,4 +172,8 @@ body {
 
 .g-subtitle {
   margin-bottom: 1rem;
+}
+
+.g-btn-full {
+  width: 100%;
 }

@@ -45,6 +45,10 @@
         <input type="date" id="filtroDesde" class="g-input" />
         <input type="date" id="filtroHasta" class="g-input" />
 
+        <button id="btnLimpiarFiltrosGasto" class="g-btn-secondary">
+          Limpiar filtros
+        </button>
+
         <button id="btnNuevoGasto" class="g-btn-primary">
           Registrar gasto
         </button>
@@ -100,7 +104,7 @@
 
           <div class="g-form-group">
             <label for="importeGasto">Importe</label>
-            <input type="number" id="importeGasto" class="g-input" required />
+            <input type="number" id="importeGasto" class="g-input" min="0" step="0.01" required />
           </div>
 
           <button type="submit" class="g-btn-primary g-btn-full">
