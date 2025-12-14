@@ -4,9 +4,10 @@ body {
   color: #f1f1f1;
   font-family: Arial, sans-serif;
   margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
 }
 
-/* ---------- NAVBAR ---------- */
+/* ---------- NAVBAR GASTOS (idéntica a VENTAS) ---------- */
 .g-navbar {
   background: #151515;
   padding: 14px 28px;
@@ -14,21 +15,46 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
+/* ---------- LOGO ---------- */
 .g-navbar-logo {
   font-weight: 700;
   color: #fff;
 }
 
+/* ---------- MENU ---------- */
 .g-navbar-menu {
   display: flex;
   gap: 16px;
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
+.g-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.g-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
 .g-navbar-menu a {
   color: #c8c8c8;
   text-decoration: none;
@@ -38,6 +64,34 @@ body {
 .g-active {
   color: #3fd18c !important;
 }
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- COMPENSO NAVBAR FIJA ---------- */
+.g-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
 
 /* ---------- CONTENEDOR ---------- */
 .g-container {
@@ -56,7 +110,7 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 12px;
 }
 
 .g-input {
@@ -91,34 +145,38 @@ body {
 
 /* ---------- TABLA ---------- */
 .g-tabla-container {
-  max-height: 420px; /* altura aprox para 10 filas */
+  max-height: 420px;
   overflow-y: auto;
-  border: 1px solid #333;
-  border-radius: 4px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
 }
 
+.g-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🔥 CLAVE */
+}
 .g-tabla thead {
   position: sticky;
   top: 0;
   background: #222;
 }
 
-.g-tabla {
-  width: 100%;
-  border-collapse: collapse;
-}
 
 .g-tabla th,
 .g-tabla td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
 }
 
 .g-tabla th {
   background: #222;
   font-weight: bold;
 }
-
 /* ---------- ACCIONES ---------- */
 .acciones-gastos {
   display: flex;

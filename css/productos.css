@@ -4,6 +4,7 @@ body {
   color: #f1f1f1;
   font-family: Arial, sans-serif;
   margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
 }
 
 /* ---------- NAVBAR ---------- */
@@ -14,21 +15,46 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
+/* ---------- LOGO ---------- */
 .p-navbar-logo {
   font-weight: 700;
   color: #fff;
 }
 
+/* ---------- MENU ---------- */
 .p-navbar-menu {
   display: flex;
   gap: 16px;
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
+.p-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.p-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
 .p-navbar-menu a {
   color: #c8c8c8;
   text-decoration: none;
@@ -38,6 +64,27 @@ body {
 .p-active {
   color: #3fd18c !important;
 }
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
 
 /* ---------- CONTENEDOR ---------- */
 .p-container {
@@ -56,7 +103,7 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 12px;
 }
 
 .p-input {
@@ -92,10 +139,11 @@ body {
 /* ---------- TABLA ---------- */
 /* 🔥 CONTENEDOR QUE DEFINE LAS 10 FILAS Y EL SCROLL */
 .tabla-productos-container {
-  max-height: 420px; /* altura aprox para 10 filas */
+  max-height: 420px;
   overflow-y: auto;
-  border: 1px solid #333;
-  border-radius: 4px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
 }
 
 /* 🔥 Encabezado fijo */
@@ -107,13 +155,17 @@ body {
 
 #tablaProductos {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: collapse;  
+  table-layout: fixed; /* 🔥 CLAVE */
 }
 
 #tablaProductos th,
 #tablaProductos td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
 }
 
 #tablaProductos th {
@@ -170,10 +222,11 @@ body {
   color: #ccc;
 }
 
+.p-subtitle {
+  margin-bottom: 1rem;
+  color: #fff;
+}
 .p-form-group {
   margin-bottom: 1rem;
 }
 
-.p-subtitle {
-  margin-bottom: 1rem;
-}

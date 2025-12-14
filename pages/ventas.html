@@ -19,7 +19,7 @@
         <li><a href="clientes.html">Clientes</a></li>
         <li><a href="gastos.html">Gastos</a></li>
         <li><a href="reportes.html">Reportes</a></li>
-        <li><a id="logout-btn">Cerrar Sesión</a></li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
 
@@ -38,12 +38,14 @@
         />
         <input type="date" id="filtroDesde" class="v-input" />
         <input type="date" id="filtroHasta" class="v-input" />
-        <button id="btnLimpiarFiltros" class="v-btn-secondary">Limpiar filtros</button>
+        <button id="btnLimpiarFiltros" class="v-btn-secondary">
+          Limpiar filtros
+        </button>
 
+        <button id="btnVerVentas" class="v-btn-secondary">Ver todas</button>
         <button id="btnNuevaVenta" class="v-btn-primary">
           Registrar venta
         </button>
-        <button id="btnVerVentas" class="v-btn-secondary">Ver todas</button>
       </div>
 
       <!-- TABLA PRINCIPAL -->
@@ -78,7 +80,7 @@
         <form class="v-form-venta">
           <div class="v-form-group">
             <label for="fechaVenta">Fecha</label>
-            <input type="date" id="fechaVenta" class="v-input"  required/>
+            <input type="date" id="fechaVenta" class="v-input" required />
           </div>
 
           <div class="v-form-group">
@@ -97,7 +99,13 @@
 
           <div class="v-form-group">
             <label for="cantidadVenta">Cantidad</label>
-            <input type="number" id="cantidadVenta" min="1" class="v-input" required/>
+            <input
+              type="number"
+              id="cantidadVenta"
+              min="1"
+              class="v-input"
+              required
+            />
           </div>
 
           <div class="v-form-group">
@@ -114,7 +122,7 @@
           <div class="v-form-group">
             <label for="metodoPagoVenta">Método de pago</label>
             <select id="metodoPagoVenta" class="v-input" required>
-              <option value="">Seleccionar método </option>
+              <option value="">Seleccionar método</option>
               <option value="Efectivo">Efectivo</option>
               <option value="Debito">Débito</option>
               <option value="QR">QR</option>
