@@ -17,13 +17,28 @@ const auth = getAuth(app);
 const logoutBtn = document.getElementById("logout-btn");
 
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth)
-      .then(() => {
-        window.location.href = "../index.html";
-      })
-      .catch((error) => {
-        console.error("Error al cerrar sesión:", error);
-      });
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      // 1️⃣ Cerrar sesión en Firebase
+      await signOut(auth);
+
+      // 2️⃣ Limpiar sesión en backend
+      const session = JSON.parse(localStorage.getItem("session"));
+      if (session?.uid) {
+        await fetch("http://localhost:4000/api/auth/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ firebase_uid: session.uid }),
+        });
+      }
+
+      // 3️⃣ Limpiar localStorage
+      localStorage.removeItem("session");
+
+      // 4️⃣ Redirigir al login
+      window.location.href = "../index.html";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   });
 }

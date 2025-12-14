@@ -28,28 +28,46 @@ const auth = getAuth(app);
 // ===============================
 //            LOGIN
 // ===============================
-document.getElementById("login-form").addEventListener("submit", (e) => {
+document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = document.getElementById("login-usuario").value.trim();
   const password = document.getElementById("login-password").value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
+  try {
+    // 1️⃣ Login Firebase
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      // 🔹 Sesión centralizada (preparada para multi-comercio)
-      const session = {
-        firebase_uid: user.uid
-      };
-
-      localStorage.setItem("session", JSON.stringify(session));
-
-      console.log("Firebase UID:", user.uid);
-
-      window.location.href = "pages/ventas.html";
-    })
-    .catch(() => {
-      alert("Usuario o contraseña incorrectos");
+    // 2️⃣ Consultar backend (roles + comercio)
+    const res = await fetch("http://localhost:4000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firebase_uid: user.uid })
     });
+
+    if (!res.ok) throw new Error("No autorizado");
+
+    const data = await res.json();
+
+    // 3️⃣ Guardar sesión unificada
+    localStorage.setItem("session", JSON.stringify({
+      uid: user.uid,
+      role: data.role,
+      comercio_id: data.comercio_id
+    }));
+
+    // 4️⃣ Redirección por rol
+    if (data.role === "admin") {
+      window.location.href = "pages/ventas.html";
+    } else {
+      window.location.href = "pages/ventas.html";
+    }
+
+  } catch (err) {
+    alert("Usuario sin permisos o credenciales inválidas");
+    console.error(err);
+  }
 });
+
+

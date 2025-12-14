@@ -92,7 +92,6 @@ body {
   padding: 0 1rem;
 }
 
-
 /* ---------- CONTENEDOR ---------- */
 .g-container {
   max-width: 1100px;
@@ -122,7 +121,7 @@ body {
 }
 
 .g-btn-primary {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: #000;
   border: none;
   padding: 0.55rem 1rem;
@@ -163,10 +162,15 @@ body {
   background: #222;
 }
 
-
-.g-tabla th,
 .g-tabla td {
   position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+
+.g-tabla th {
   top: 0;
   background: #1f1f1f;
   padding: 10px;
@@ -193,7 +197,7 @@ body {
 }
 
 .g-btn-edit {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .g-btn-delete {

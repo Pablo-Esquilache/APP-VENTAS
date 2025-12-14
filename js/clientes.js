@@ -2,8 +2,8 @@
 // SESIÓN / COMERCIO
 // ===========================================================
 const session = JSON.parse(localStorage.getItem("session"));
-const firebaseUID = session?.firebase_uid;
-let comercioId = null;
+const firebaseUID = session?.uid; // antes era session?.firebase_uid
+let comercioId = session?.comercio_id || null;
 
 const API_BASE = "http://localhost:4000/api";
 const API_URL = `${API_BASE}/clientes`;
@@ -285,8 +285,11 @@ function editarCliente(id) {
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarComercio();
-  await cargarClientes();
+  console.log("comercioId:", comercioId); // debe mostrar un número
+  if (comercioId) {
+    await cargarClientes();
+  } else {
+    console.error("No se pudo obtener comercioId");
+  }
 });
 
-
-// <button class="c-btn-delete" data-id="${c.id}">Eliminar</button>

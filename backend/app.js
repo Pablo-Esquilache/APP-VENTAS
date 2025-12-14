@@ -14,6 +14,7 @@ import productosRouter from "./routes/productos.js";
 import clientesRouter from "./routes/clientes.js";
 import gastosRouter from "./routes/gastos.js";
 import comerciosRouter from "./routes/comercios.js";
+import authRouter from "./routes/auth.js";
 
 
 const app = express();
@@ -29,6 +30,8 @@ app.use("/api/productos", productosRouter);
 app.use("/api/clientes", clientesRouter);
 app.use("/api/gastos", gastosRouter);
 app.use("/api/comercios", comerciosRouter);
+app.use("/api/auth", authRouter);
+
 
 
 // Puerto
