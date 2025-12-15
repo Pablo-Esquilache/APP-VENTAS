@@ -9,7 +9,7 @@ const API_URL = "http://localhost:4000/api";
 // SESIÓN / COMERCIO
 // ------------------------------
 const session = JSON.parse(localStorage.getItem("session"));
-const firebaseUID = session?.uid; // antes era session?.firebase_uid
+const firebaseUID = session?.uid;
 let comercioId = session?.comercio_id || null;
 
 async function cargarComercio() {
@@ -100,7 +100,6 @@ function limpiarFormulario() {
   precioActual = 0;
 }
 
-// ------------------------------
 function cambiarTextoBotonGuardar(txt) {
   const btn = formVenta.querySelector('button[type="submit"]');
   if (btn) btn.textContent = txt;
@@ -160,21 +159,25 @@ async function cargarClientes() {
 }
 
 // ------------------------------
-// CARGAR PRODUCTOS
-// ------------------------------
-async function cargarProductos() {
+// CARGAR PRODUCTOS (solo con stock > 0)
+async function cargarProductos(selectedId = null) {
   try {
     const res = await fetch(`${API_URL}/productos?comercio_id=${comercioId}`);
     const productos = await res.json();
 
     productoVenta.innerHTML = `<option value="">Seleccionar producto</option>`;
+
     productos.forEach((p) => {
-      productoVenta.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+      // Mostrar producto si tiene stock > 0 o si es el que estamos editando
+      if (p.stock > 0 || p.id == selectedId) {
+        productoVenta.innerHTML += `<option value="${p.id}" ${p.id == selectedId ? "selected" : ""}>${p.nombre}</option>`;
+      }
     });
   } catch (error) {
     console.error("Error cargando productos:", error);
   }
 }
+
 
 // ------------------------------
 // CARGAR TABLA PRINCIPAL
@@ -256,7 +259,8 @@ async function abrirModalEdicion(id) {
   cambiarTextoBotonGuardar("Guardar cambios");
 
   await cargarClientes();
-  await cargarProductos();
+  await cargarProductos(venta.producto_id);
+
 
   fechaVenta.value = venta.fecha?.split("T")[0] || "";
   clienteVenta.value = venta.cliente_id || "";
@@ -265,14 +269,13 @@ async function abrirModalEdicion(id) {
   descuentoVenta.value = String(venta.descuento ?? "0");
   metodoPagoVenta.value = venta.metodo_pago ?? "";
 
-
   await calcularTotal();
 
   modalVenta.style.display = "flex";
 }
 
 // ------------------------------
-// GUARDAR (POST/PUT)
+// GUARDAR (POST/PUT) con alerta por stock
 formVenta.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -295,19 +298,24 @@ formVenta.addEventListener("submit", async (e) => {
   };
 
   try {
-    if (isEditing) {
-      await fetch(`${API_URL}/ventas/${editingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await fetch(`${API_URL}/ventas`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const res = isEditing
+      ? await fetch(`${API_URL}/ventas/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+      : await fetch(`${API_URL}/ventas`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      alert(errData.error || "Hubo un error guardando la venta.");
+      return;
     }
+
   } catch (error) {
     console.error("Error guardando venta:", error);
     alert("Hubo un error guardando la venta.");
@@ -393,7 +401,7 @@ btnLimpiarFiltros.addEventListener("click", () => {
 // ------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarComercio();
-  console.log("comercioId:", comercioId); // debe mostrar un número
+  console.log("comercioId:", comercioId);
   if (comercioId) {
     await cargarVentas();
   } else {
@@ -404,10 +412,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // BLOQUEO DE TABS POR ROL
   // ------------------------------
   const role = session?.role;
-  const tabReportes = document.getElementById("tab-reportes"); // el id que le pusiste al li de reportes
+  const tabReportes = document.getElementById("tab-reportes");
 
   if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none"; // usuarios no ven reportes
+    tabReportes.style.display = "none";
   }
 });
-
