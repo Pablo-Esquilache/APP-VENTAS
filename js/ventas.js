@@ -266,7 +266,7 @@ async function abrirModalEdicion(id) {
   clienteVenta.value = venta.cliente_id || "";
   productoVenta.value = venta.producto_id || "";
   cantidadVenta.value = venta.cantidad || 1;
-  descuentoVenta.value = String(venta.descuento ?? "0");
+  descuentoVenta.value = Number(venta.descuento ?? 0).toFixed(0);
   metodoPagoVenta.value = venta.metodo_pago ?? "";
 
   await calcularTotal();
