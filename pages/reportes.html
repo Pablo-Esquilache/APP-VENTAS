@@ -1,4 +1,5 @@
-<!-- reports.html --><!DOCTYPE html>
+<!-- reportes.html -->
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -13,11 +14,13 @@
     <nav class="r-navbar">
       <div class="r-navbar-logo">Mi Librería</div>
       <ul class="r-navbar-menu">
-        <li id="tab-ventas"><a href="ventas.html">Ventas</a></li>
-        <li id="tab-productos"><a href="productos.html">Productos</a></li>
-        <li id="tab-clientes"><a href="clientes.html">Clientes</a></li>
-        <li id="tab-gastos"><a href="gastos.html">Gastos</a></li>
-        <li id="tab-reportes"><a href="reportes.html" class="r-active">Reportes</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li>
+          <a href="reportes.html" class="r-active">Reportes</a>
+        </li>
         <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
@@ -38,58 +41,21 @@
           <input type="date" id="rHasta" class="r-input" />
         </div>
 
-        <button class="r-btn-primary" id="btnGenerarReportes">Generar</button>
+        <button class="r-btn-primary" id="btnGenerarReportes">
+          Generar
+        </button>
       </div>
 
-      <!-- ESPACIO: TOP 10 PRODUCTOS -->
+      <!-- GRÁFICO -->
       <section class="r-card">
-        <h2 class="r-subtitle">Top 10 productos más vendidos</h2>
-        <canvas id="graficoTop10"></canvas>
-      </section>
-
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
-      </section>
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
-      </section>
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
-      </section>
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
-      </section>
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
-      </section>
-      <!-- ESPACIO: FACTURACIÓN DIARIA + KPI -->
-      <section class="r-card">
-        <h2 class="r-subtitle">
-          Facturación diaria / Ticket promedio / Total ventas
-        </h2>
-        <canvas id="graficoFacturacion"></canvas>
+        <h2 class="r-subtitle">Ventas vs Gastos</h2>
+        <canvas id="graficoVentasGastos"></canvas>
       </section>
     </main>
+
+    <!-- LIBRERÍAS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="../js/reportes.js"></script>
     <script type="module" src="../js/logout.js"></script>
   </body>
 </html>
