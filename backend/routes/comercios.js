@@ -3,13 +3,19 @@ import pool from "../db.js";
 
 const router = express.Router();
 
-// Obtener comercio por Firebase UID
+// ------------------------------
+// Obtener comercio a partir del Firebase UID del usuario
+// ------------------------------
 router.get("/uid/:uid", async (req, res) => {
   const { uid } = req.params;
 
   try {
+    // Antes buscábamos firebase_uid en la tabla comercios, lo correcto es buscar en usuarios
     const result = await pool.query(
-      "SELECT id, nombre FROM comercios WHERE firebase_uid = $1",
+      `SELECT c.id, c.nombre
+       FROM usuarios u
+       JOIN comercios c ON u.comercio_id = c.id
+       WHERE u.firebase_uid = $1`,
       [uid]
     );
 
