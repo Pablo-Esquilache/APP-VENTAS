@@ -459,6 +459,43 @@ function renderGastosDescripcionTipo(data) {
   });
 }
 
+//DESCARGAR PDF
+async function descargarPDF() {
+  const { jsPDF } = window.jspdf;
+  const contenedor = document.getElementById("reportePDF");
+
+  const canvas = await html2canvas(contenedor, {
+    scale: 2,
+    backgroundColor: "#1f1f1f",
+    useCORS: true
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pdfWidth = 210;
+  const pdfHeight = 297;
+
+  const imgWidth = pdfWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    position -= pdfHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+  }
+
+  pdf.save("reporte.pdf");
+}
+
+
 // Inicialización
 document.addEventListener("DOMContentLoaded", () => {
   const session = JSON.parse(localStorage.getItem("session"));
@@ -479,5 +516,13 @@ document.addEventListener("DOMContentLoaded", () => {
       cargarEdadEtarioGenero();
       cargarMetodosPago();
       cargarGastosDescripcionTipo();
+
+      document.getElementById("btnDescargarPDF").disabled = false;
+
     });
+
+    document
+  .getElementById("btnDescargarPDF")
+  .addEventListener("click", descargarPDF);
+
 });

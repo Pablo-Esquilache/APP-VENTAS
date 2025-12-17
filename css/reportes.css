@@ -162,7 +162,33 @@ body {
   color: #fff;
 }
 
-/* CANVAS */
+/* ---------- BOTÓN DESCARGAR PDF ---------- */
+.r-btn-secondary {
+  background: #2e2e2e;
+  color: #e6e6e6;
+  border: 1px solid #555;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.r-btn-secondary:hover {
+  background: #3a3a3a;
+  border-color: #3fd18c;
+  color: #3fd18c;
+}
+
+.r-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.r-btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: #444;
+  color: #aaa;
+}
 
 
 

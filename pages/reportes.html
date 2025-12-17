@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reportes</title>
+
     <link rel="stylesheet" href="/css/normalize.css" />
     <link rel="stylesheet" href="/css/reportes.css" />
   </head>
@@ -41,37 +42,59 @@
           <input type="date" id="rHasta" class="r-input" />
         </div>
 
-        <button class="r-btn-primary" id="btnGenerarReportes">Generar</button>
+        <button class="r-btn-primary" id="btnGenerarReportes">
+          Generar
+        </button>
+
+        <button class="r-btn-secondary" id="btnDescargarPDF" disabled>
+          Descargar PDF
+        </button>
       </div>
 
-      <!-- GRÁFICO -->
-      <section class="r-card">
-        <h2 class="r-subtitle">Ventas / Gastos / Ticket promedio</h2>
-        <canvas id="graficoVentasGastos"></canvas>
-      </section>
-      <section class="r-card">
-        <h2 class="r-subtitle">Top 10 de productos mas vendidos</h2>
-        <canvas id="graficoTopProductos"></canvas>
-      </section>
-      <section class="r-card">
-        <h2 class="r-subtitle">Categorías vendidas</h2>
-        <canvas id="graficoCategorias"></canvas>
-      </section>
-      <section class="r-card">
-        <h2 class="r-subtitle">Edad promedio por grupo etario y género</h2>
-        <canvas id="graficoEdadEtarioGenero"></canvas>
-      </section>
-      <section class="r-card">
-        <h2 class="r-subtitle">Métodos de pago</h2>
-        <canvas id="graficoMetodosPago"></canvas>
-      </section>
-      <section class="r-card">
-        <h2 class="r-subtitle">Gastos por descripción y tipo</h2>
-        <canvas id="graficoGastosDescripcionTipo"></canvas>
-      </section>
+      <!-- TODO LO EXPORTABLE -->
+      <div id="reportePDF">
+        <section class="r-card">
+          <h2 class="r-subtitle">Ventas / Gastos / Ticket promedio</h2>
+          <canvas id="graficoVentasGastos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Top 10 de productos más vendidos</h2>
+          <canvas id="graficoTopProductos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Categorías vendidas</h2>
+          <canvas id="graficoCategorias"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">
+            Edad promedio por grupo etario y género
+          </h2>
+          <canvas id="graficoEdadEtarioGenero"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Métodos de pago</h2>
+          <canvas id="graficoMetodosPago"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Gastos por descripción y tipo</h2>
+          <canvas id="graficoGastosDescripcionTipo"></canvas>
+        </section>
+      </div>
     </main>
+
     <!-- LIBRERÍAS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <!-- PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script type="module" src="../js/reportes.js"></script>
     <script type="module" src="../js/logout.js"></script>
   </body>
