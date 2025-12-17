@@ -190,5 +190,24 @@ body {
   color: #aaa;
 }
 
+/* SELECT Y BOTÓN DESCARGAR TABLAS */
+#selectTablaDescargar {
+  min-width: 160px;
+}
+
+#btnDescargarTabla {
+  background: #4caf50;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#btnDescargarTabla:hover {
+  background: #35c77f;
+  color: #000;
+}
 
 

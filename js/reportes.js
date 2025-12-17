@@ -1,3 +1,7 @@
+// ============================
+// reportes.js completo con etiquetas y paleta de colores
+// ============================
+
 let graficoVG = null;
 let graficoTopProductos = null;
 let graficoCategorias = null;
@@ -5,8 +9,23 @@ let graficoEdadEtarioGenero = null;
 let graficoMetodosPago = null;
 let graficoGastosDescripcionTipo = null;
 
+// Paleta de colores unificada
+const paletaColores = [
+  "#3fd18c", // verde principal
+  "#36A2EB", // azul
+  "#FFCE56", // amarillo
+  "#FF6384", // rosa
+  "#FF8333", // naranja
+  "#A633FF", // morado
+  "#8AFF33", // verde claro
+  "#33FFF3", // celeste
+  "#FF33A6", // fucsia
+  "#FF3333", // rojo
+];
 
+// ============================
 // Ventas vs gastos + ticket promedio
+// ============================
 async function cargarVentasGastosTiempo() {
   try {
     const session = JSON.parse(localStorage.getItem("session"));
@@ -33,9 +52,7 @@ function renderGraficoVentasGastos(data) {
   const labels = data.map((d) => new Date(d.periodo).toLocaleDateString());
   const ventas = data.map((d) => Number(d.total_ventas));
   const gastos = data.map((d) => Number(d.total_gastos));
-  const ticket = data.map((d) =>
-    d.ticket_promedio ? Number(d.ticket_promedio) : null
-  );
+  const ticket = data.map((d) => (d.ticket_promedio ? Number(d.ticket_promedio) : null));
 
   const canvas = document.getElementById("graficoVentasGastos");
   const ctx = canvas.getContext("2d");
@@ -43,37 +60,67 @@ function renderGraficoVentasGastos(data) {
   if (graficoVG) graficoVG.destroy();
 
   graficoVG = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [
-        { label: "Ventas", data: ventas, tension: 0.3, yAxisID: "y" },
-        { label: "Gastos", data: gastos, tension: 0.3, yAxisID: "y" },
-        { label: "Ticket promedio", data: ticket, tension: 0.3, yAxisID: "y1" },
-      ],
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: "index", intersect: false },
-      plugins: { legend: { display: true } },
-      scales: {
-        y: {
-          type: "linear",
-          position: "left",
-          title: { display: true, text: "Importes" },
-        },
-        y1: {
-          type: "linear",
-          position: "right",
-          grid: { drawOnChartArea: false },
-          title: { display: true, text: "Ticket promedio" },
-        },
+  type: "line",
+  data: {
+    labels,
+    datasets: [
+      {
+        label: "Ventas",
+        data: ventas,
+        tension: 0.3,
+        backgroundColor: paletaColores[0],
+        borderColor: paletaColores[0],
+        fill: false,
+      },
+      {
+        label: "Gastos",
+        data: gastos,
+        tension: 0.3,
+        backgroundColor: paletaColores[1],
+        borderColor: paletaColores[1],
+        fill: false,
+      },
+      {
+        label: "Ticket promedio",
+        data: ticket,
+        tension: 0.3,
+        backgroundColor: paletaColores[2],
+        borderColor: paletaColores[2],
+        fill: false,
+        // yAxisID eliminado para usar el mismo eje que ventas/gastos
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: { display: true },
+      tooltip: { enabled: true },
+      datalabels: {
+        display: true,
+        color: "#fff",
+        anchor: "end",
+        align: "top",
+        formatter: (value) => value,
       },
     },
-  });
+    scales: {
+      y: {
+        type: "linear",
+        position: "left",
+        title: { display: true, text: "Importes / Ticket promedio" },
+      },
+      // y1 eliminado
+    },
+  },
+  plugins: [ChartDataLabels],
+});
 }
 
+// ============================
 // Top 10 productos
+// ============================
 async function cargarTopProductos() {
   try {
     const session = JSON.parse(localStorage.getItem("session"));
@@ -109,40 +156,38 @@ function renderTopProductos(data) {
     data: {
       labels,
       datasets: [
-        { label: "Cantidad vendida", data: cantidades, xAxisID: "x" },
-        { label: "Importe vendido", data: importes, xAxisID: "x1" },
+        { label: "Cantidad vendida", data: cantidades, xAxisID: "x", backgroundColor: paletaColores[0] },
+        { label: "Importe vendido", data: importes, xAxisID: "x1", backgroundColor: paletaColores[1] },
       ],
     },
     options: {
-      indexAxis: "y", // hace el gráfico horizontal
+      indexAxis: "y",
       responsive: true,
       interaction: { mode: "index", intersect: false },
-      plugins: { legend: { display: true } },
-      scales: {
-        x: {
-          // ahora el eje de valores
-          type: "linear",
-          position: "bottom",
-          title: { display: true, text: "Cantidad" },
-        },
-        x1: {
-          // segundo eje de valores
-          type: "linear",
-          position: "top",
-          grid: { drawOnChartArea: false },
-          title: { display: true, text: "Importe" },
-        },
-        y: {
-          // eje de categorías
-          title: { display: true, text: "Producto" },
+      plugins: {
+        legend: { display: true },
+        tooltip: { enabled: true },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          anchor: "end",
+          align: "right",
+          formatter: (value) => value,
         },
       },
+      scales: {
+        x: { type: "linear", position: "bottom", title: { display: true, text: "Cantidad" } },
+        x1: { type: "linear", position: "top", grid: { drawOnChartArea: false }, title: { display: true, text: "Importe" } },
+        y: { title: { display: true, text: "Producto" } },
+      },
     },
+    plugins: [ChartDataLabels],
   });
 }
 
-//Categroias vendidas
-
+// ============================
+// Categorías vendidas
+// ============================
 async function cargarCategoriasVendidas() {
   try {
     const session = JSON.parse(localStorage.getItem("session"));
@@ -152,7 +197,6 @@ async function cargarCategoriasVendidas() {
     const hasta = document.getElementById("rHasta").value;
 
     let url = `http://localhost:4000/api/reportes/categorias-vendidas?comercio_id=${comercioId}`;
-
     if (desde) url += `&desde=${desde}`;
     if (hasta) url += `&hasta=${hasta}`;
 
@@ -173,11 +217,8 @@ function renderCategoriasVendidas(data) {
   const porcentajes = data.map((d) => d.porcentaje);
 
   const canvas = document.getElementById("graficoCategorias");
-
-  // Fijamos tamaño exacto (igual que los otros)
   canvas.width = 1024;
   canvas.height = 512;
-
   const ctx = canvas.getContext("2d");
 
   if (graficoCategorias) graficoCategorias.destroy();
@@ -187,26 +228,11 @@ function renderCategoriasVendidas(data) {
     data: {
       labels,
       datasets: [
-        {
-          label: "Importe vendido",
-          data: importes,
-          backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#8AFF33",
-            "#FF8333",
-            "#A633FF",
-            "#33FFF3",
-            "#FF33A6",
-            "#33FF57",
-            "#FF3333",
-          ],
-        },
+        { label: "Importe vendido", data: importes, backgroundColor: labels.map((_, i) => paletaColores[i % paletaColores.length]) },
       ],
     },
     options: {
-      responsive: false, // desactivamos redimensionamiento automático
+      responsive: false,
       plugins: {
         legend: { display: true, position: "right" },
         tooltip: {
@@ -217,11 +243,20 @@ function renderCategoriasVendidas(data) {
             },
           },
         },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          formatter: (value) => `$${value}`,
+        },
       },
     },
+    plugins: [ChartDataLabels],
   });
 }
 
+// ============================
+// Edad promedio por grupo y género
+// ============================
 async function cargarEdadEtarioGenero() {
   const session = JSON.parse(localStorage.getItem("session"));
   const comercioId = session.comercio_id;
@@ -239,31 +274,24 @@ async function cargarEdadEtarioGenero() {
 }
 
 function renderEdadEtarioGenero(data) {
-  // Ordenar grupos etarios por importe total
   const importePorGrupo = {};
   data.forEach((d) => {
-    importePorGrupo[d.grupo_etario] =
-      (importePorGrupo[d.grupo_etario] || 0) + Number(d.importe_total);
+    importePorGrupo[d.grupo_etario] = (importePorGrupo[d.grupo_etario] || 0) + Number(d.importe_total);
   });
 
-  const grupos = Object.keys(importePorGrupo).sort(
-    (a, b) => importePorGrupo[b] - importePorGrupo[a]
-  );
-
+  const grupos = Object.keys(importePorGrupo).sort((a, b) => importePorGrupo[b] - importePorGrupo[a]);
   const generos = ["Masculino", "Femenino", "Otro"];
 
-  const datasets = generos.map((g) => ({
+  const datasets = generos.map((g, idx) => ({
     label: g,
     data: grupos.map((gr) => {
       const r = data.find((d) => d.grupo_etario === gr && d.genero === g);
       return r ? Number(r.edad_promedio) : null;
     }),
+    backgroundColor: paletaColores[idx],
   }));
 
-  const ctx = document
-    .getElementById("graficoEdadEtarioGenero")
-    .getContext("2d");
-
+  const ctx = document.getElementById("graficoEdadEtarioGenero").getContext("2d");
   if (graficoEdadEtarioGenero) graficoEdadEtarioGenero.destroy();
 
   graficoEdadEtarioGenero = new Chart(ctx, {
@@ -276,27 +304,28 @@ function renderEdadEtarioGenero(data) {
         tooltip: {
           callbacks: {
             afterLabel: function (context) {
-              const r = data.find(
-                (d) =>
-                  d.grupo_etario === context.label &&
-                  d.genero === context.dataset.label
-              );
-              return r
-                ? `Importe: $${r.importe_total} | Compras: ${r.cantidad_compras}`
-                : "";
+              const r = data.find((d) => d.grupo_etario === context.label && d.genero === context.dataset.label);
+              return r ? `Importe: $${r.importe_total} | Compras: ${r.cantidad_compras}` : "";
             },
           },
         },
-      },
-      scales: {
-        y: {
-          title: { display: true, text: "Edad promedio" },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          anchor: "end",
+          align: "top",
+          formatter: (value) => value,
         },
       },
+      scales: { y: { title: { display: true, text: "Edad promedio" } } },
     },
+    plugins: [ChartDataLabels],
   });
 }
-// METODOS DE PAGO
+
+// ============================
+// Métodos de pago
+// ============================
 async function cargarMetodosPago() {
   const session = JSON.parse(localStorage.getItem("session"));
   const comercioId = session.comercio_id;
@@ -314,50 +343,25 @@ async function cargarMetodosPago() {
 }
 
 function renderMetodosPago(data) {
-  // Ordenar por importe descendente
   data.sort((a, b) => Number(b.importe_total) - Number(a.importe_total));
 
-  const labels = data.map(d => d.metodo_pago);
-  const importes = data.map(d => Number(d.importe_total));
-  const porcentajes = data.map(d => d.porcentaje);
-  const cantidades = data.map(d => d.cantidad_ventas);
+  const labels = data.map((d) => d.metodo_pago);
+  const importes = data.map((d) => Number(d.importe_total));
+  const porcentajes = data.map((d) => d.porcentaje);
+  const cantidades = data.map((d) => d.cantidad_ventas);
 
   const canvas = document.getElementById("graficoMetodosPago");
-
-  // Tamaño fijo del gráfico
   canvas.width = 1024;
   canvas.height = 512;
-
   const ctx = canvas.getContext("2d");
 
   if (graficoMetodosPago) graficoMetodosPago.destroy();
 
-  const colores = [
-    "#FF3333",
-    "#33FF57",
-    "#FF33A6",
-    "#33FFF3",
-    "#A633FF",
-    "#FF8333",
-    "#8AFF33",
-    "#FFCE56",
-    "#36A2EB",
-    "#FF6384",
-  ];
-
   graficoMetodosPago = new Chart(ctx, {
     type: "pie",
-    data: {
-      labels,
-      datasets: [
-        {
-          data: importes,
-          backgroundColor: labels.map((_, i) => colores[i % colores.length]),
-        },
-      ],
-    },
+    data: { labels, datasets: [{ data: importes, backgroundColor: labels.map((_, i) => paletaColores[i % paletaColores.length]) }] },
     options: {
-      responsive: false, // clave para respetar width/height
+      responsive: false,
       plugins: {
         legend: { position: "right" },
         tooltip: {
@@ -368,13 +372,20 @@ function renderMetodosPago(data) {
             },
           },
         },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          formatter: (value) => `$${value}`,
+        },
       },
     },
+    plugins: [ChartDataLabels],
   });
 }
 
-
-//GASTOS
+// ============================
+// Gastos por descripción y tipo
+// ============================
 async function cargarGastosDescripcionTipo() {
   const session = JSON.parse(localStorage.getItem("session"));
   const comercioId = session.comercio_id;
@@ -392,26 +403,19 @@ async function cargarGastosDescripcionTipo() {
 }
 
 function renderGastosDescripcionTipo(data) {
-  // Agrupar descripciones únicas
-  const descripciones = [
-    ...new Set(data.map(d => d.descripcion))
-  ];
+  const descripciones = [...new Set(data.map((d) => d.descripcion))];
 
-  // Totales por tipo
-  const fijos = descripciones.map(desc => {
-    const r = data.find(d => d.descripcion === desc && d.tipo === "fijo");
+  const fijos = descripciones.map((desc) => {
+    const r = data.find((d) => d.descripcion === desc && d.tipo === "fijo");
     return r ? Number(r.importe) : 0;
   });
 
-  const variables = descripciones.map(desc => {
-    const r = data.find(d => d.descripcion === desc && d.tipo === "variable");
+  const variables = descripciones.map((desc) => {
+    const r = data.find((d) => d.descripcion === desc && d.tipo === "variable");
     return r ? Number(r.importe) : 0;
   });
 
-  const ctx = document
-    .getElementById("graficoGastosDescripcionTipo")
-    .getContext("2d");
-
+  const ctx = document.getElementById("graficoGastosDescripcionTipo").getContext("2d");
   if (graficoGastosDescripcionTipo) graficoGastosDescripcionTipo.destroy();
 
   graficoGastosDescripcionTipo = new Chart(ctx, {
@@ -419,17 +423,9 @@ function renderGastosDescripcionTipo(data) {
     data: {
       labels: descripciones,
       datasets: [
-        {
-          label: "Gastos fijos",
-          data: fijos,
-          backgroundColor: "#F44336"
-        },
-        {
-          label: "Gastos variables",
-          data: variables,
-          backgroundColor: "#FF9800"
-        }
-      ]
+        { label: "Gastos fijos", data: fijos, backgroundColor: paletaColores[0] },
+        { label: "Gastos variables", data: variables, backgroundColor: paletaColores[1] },
+      ],
     },
     options: {
       responsive: true,
@@ -440,38 +436,36 @@ function renderGastosDescripcionTipo(data) {
           callbacks: {
             label: function (context) {
               return `${context.dataset.label}: $${context.parsed.y}`;
-            }
-          }
-        }
+            },
+          },
+        },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          anchor: "end",
+          align: "top",
+          formatter: (value) => value,
+        },
       },
       scales: {
-        x: {
-          stacked: true,
-          title: { display: true, text: "Descripción del gasto" }
-        },
-        y: {
-          stacked: true,
-          beginAtZero: true,
-          title: { display: true, text: "Importe total" }
-        }
-      }
-    }
+        x: { stacked: true, title: { display: true, text: "Descripción del gasto" } },
+        y: { stacked: true, beginAtZero: true, title: { display: true, text: "Importe total" } },
+      },
+    },
+    plugins: [ChartDataLabels],
   });
 }
 
-//DESCARGAR PDF
+// ============================
+// Descargar PDF
+// ============================
 async function descargarPDF() {
   const { jsPDF } = window.jspdf;
   const contenedor = document.getElementById("reportePDF");
 
-  const canvas = await html2canvas(contenedor, {
-    scale: 2,
-    backgroundColor: "#1f1f1f",
-    useCORS: true
-  });
+  const canvas = await html2canvas(contenedor, { scale: 2, backgroundColor: "#1f1f1f", useCORS: true });
 
   const imgData = canvas.toDataURL("image/png");
-
   const pdf = new jsPDF("p", "mm", "a4");
   const pdfWidth = 210;
   const pdfHeight = 297;
@@ -495,8 +489,31 @@ async function descargarPDF() {
   pdf.save("reporte.pdf");
 }
 
+//DESCARGAR TABLAS
 
+document.getElementById("btnDescargarTabla").addEventListener("click", async () => {
+  const tabla = document.getElementById("selectTablaDescargar").value;
+
+  try {
+    const res = await fetch(`http://localhost:4000/api/exportar-tabla?tabla=${tabla}`);
+    if (!res.ok) throw new Error("Error al descargar tabla");
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${tabla}.xlsx`;
+    a.click();
+  } catch (error) {
+    console.error(error);
+    alert("No se pudo descargar la tabla");
+  }
+});
+
+
+// ============================
 // Inicialización
+// ============================
 document.addEventListener("DOMContentLoaded", () => {
   const session = JSON.parse(localStorage.getItem("session"));
   const role = session?.role;
@@ -507,22 +524,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  document
-    .getElementById("btnGenerarReportes")
-    .addEventListener("click", () => {
-      cargarVentasGastosTiempo();
-      cargarTopProductos();
-      cargarCategoriasVendidas();
-      cargarEdadEtarioGenero();
-      cargarMetodosPago();
-      cargarGastosDescripcionTipo();
+  document.getElementById("btnGenerarReportes").addEventListener("click", () => {
+    cargarVentasGastosTiempo();
+    cargarTopProductos();
+    cargarCategoriasVendidas();
+    cargarEdadEtarioGenero();
+    cargarMetodosPago();
+    cargarGastosDescripcionTipo();
 
-      document.getElementById("btnDescargarPDF").disabled = false;
+    document.getElementById("btnDescargarPDF").disabled = false;
+  });
 
-    });
-
-    document
-  .getElementById("btnDescargarPDF")
-  .addEventListener("click", descargarPDF);
-
+  document.getElementById("btnDescargarPDF").addEventListener("click", descargarPDF);
 });

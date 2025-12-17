@@ -32,24 +32,32 @@
 
       <!-- FILTROS -->
       <div class="r-filtros">
-        <div class="r-form-group">
-          <label for="rDesde">Desde</label>
-          <input type="date" id="rDesde" class="r-input" />
-        </div>
+    <div class="r-form-group">
+      <label for="rDesde">Desde</label>
+      <input type="date" id="rDesde" class="r-input" />
+    </div>
 
-        <div class="r-form-group">
-          <label for="rHasta">Hasta</label>
-          <input type="date" id="rHasta" class="r-input" />
-        </div>
+    <div class="r-form-group">
+      <label for="rHasta">Hasta</label>
+      <input type="date" id="rHasta" class="r-input" />
+    </div>
 
-        <button class="r-btn-primary" id="btnGenerarReportes">
-          Generar
-        </button>
+    <button class="r-btn-primary" id="btnGenerarReportes">Generar</button>
+    <button class="r-btn-secondary" id="btnDescargarPDF" disabled>Descargar PDF</button>
 
-        <button class="r-btn-secondary" id="btnDescargarPDF" disabled>
-          Descargar PDF
-        </button>
-      </div>
+    <!-- NUEVO BLOQUE PARA DESCARGA DE TABLAS -->
+    <div class="r-form-group">
+      <label for="selectTablaDescargar">Descargar tabla</label>
+      <select id="selectTablaDescargar" class="r-input">
+        <option value="" disabled selected>Seleccioná una tabla</option>
+        <option value="ventas">Ventas</option>
+        <option value="clientes">Clientes</option>
+        <option value="productos">Productos</option>
+        <option value="gastos">Gastos</option>
+      </select>
+    </div>
+    <button class="r-btn-primary" id="btnDescargarTabla">Descargar Excel</button>
+</div>
 
       <!-- TODO LO EXPORTABLE -->
       <div id="reportePDF">

@@ -120,10 +120,11 @@ body {
 /* ---------- BOTONES ---------- */
 .v-btn-primary,
 .v-btn-secondary {
-  padding: 0.55rem 1rem;
+  padding: 0.65rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   border: none;
+  font-size: 15.5px !important
 }
 
 .v-btn-primary {

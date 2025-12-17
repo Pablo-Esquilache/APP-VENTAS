@@ -123,10 +123,11 @@ body {
 .g-btn-primary {
   background-color: #4caf50;
   color: #000;
-  border: none;
+  border: n6ne;
   padding: 0.55rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 15.5px !important;
 }
 
 .g-btn-primary:hover {
@@ -136,10 +137,11 @@ body {
 .g-btn-secondary {
   background: #333;
   color: #f1f1f1;
-  padding: 0.55rem 1rem;
+  padding: 0.65rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   border: none;
+  font-size: 15.5px !important;
 }
 
 /* ---------- TABLA ---------- */

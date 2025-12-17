@@ -16,7 +16,7 @@ import gastosRouter from "./routes/gastos.js";
 import comerciosRouter from "./routes/comercios.js";
 import authRouter from "./routes/auth.js";
 import reportesRoutes from "./routes/reportes.js";
-
+import exportarTablaRouter from "./routes/deacragaExcel.js";
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.use("/api/gastos", gastosRouter);
 app.use("/api/comercios", comerciosRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/reportes", reportesRoutes);
-
+app.use("/api/exportar-tabla", exportarTablaRouter);
 
 
 // Puerto
