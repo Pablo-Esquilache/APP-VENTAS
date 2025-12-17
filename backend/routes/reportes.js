@@ -141,4 +141,128 @@ router.get("/categorias-vendidas", async (req, res) => {
   res.json(dataConPorcentaje);
 });
 
+// Edad promedio por grupo etario y género
+router.get("/edad-etario-genero", async (req, res) => {
+  const { comercio_id, desde, hasta } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  let filtroFecha = "";
+  const params = [comercio_id];
+
+  if (desde && hasta) {
+    filtroFecha = "AND v.fecha BETWEEN $2 AND $3";
+    params.push(desde, hasta);
+  }
+
+  const q = `
+    SELECT
+      CASE
+        WHEN c.edad BETWEEN 0 AND 12 THEN 'Niños (0–12)'
+        WHEN c.edad BETWEEN 13 AND 24 THEN 'Jóvenes (13–24)'
+        WHEN c.edad BETWEEN 25 AND 59 THEN 'Adultos (25–59)'
+        ELSE 'Adultos mayores (60+)'
+      END AS grupo_etario,
+
+      CASE
+        WHEN UPPER(c.genero) IN ('M', 'MASCULINO') THEN 'Masculino'
+        WHEN UPPER(c.genero) IN ('F', 'FEMENINO') THEN 'Femenino'
+        ELSE 'Otro'
+      END AS genero,
+
+      AVG(c.edad)::numeric(10,2) AS edad_promedio,
+      SUM(v.total) AS importe_total,
+      COUNT(v.id) AS cantidad_compras
+
+    FROM ventas v
+    JOIN clientes c ON c.id = v.cliente_id
+    WHERE v.comercio_id = $1
+      ${filtroFecha}
+    GROUP BY grupo_etario, genero
+    ORDER BY importe_total DESC;
+  `;
+
+  const { rows } = await db.query(q, params);
+  res.json(rows);
+});
+
+// Métodos de pago
+router.get("/metodos-pago", async (req, res) => {
+  const { comercio_id, desde, hasta } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  let filtroFecha = "";
+  const params = [comercio_id];
+
+  if (desde && hasta) {
+    filtroFecha = "AND fecha BETWEEN $2 AND $3";
+    params.push(desde, hasta);
+  }
+
+  const q = `
+    SELECT
+      metodo_pago,
+      SUM(total) AS importe_total,
+      COUNT(id) AS cantidad_ventas
+    FROM ventas
+    WHERE comercio_id = $1
+      ${filtroFecha}
+    GROUP BY metodo_pago
+    ORDER BY importe_total DESC;
+  `;
+
+  const { rows } = await db.query(q, params);
+
+  const totalImporte = rows.reduce(
+    (acc, r) => acc + Number(r.importe_total),
+    0
+  );
+
+  const data = rows.map(r => ({
+    metodo_pago: r.metodo_pago,
+    importe_total: Number(r.importe_total),
+    cantidad_ventas: Number(r.cantidad_ventas),
+    porcentaje: ((Number(r.importe_total) / totalImporte) * 100).toFixed(2)
+  }));
+
+  res.json(data);
+});
+
+// Gastos por descripción y tipo (fijo / variable)
+router.get("/gastos-descripcion-tipo", async (req, res) => {
+  const { comercio_id, desde, hasta } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  let filtroFecha = "";
+  const params = [comercio_id];
+
+  if (desde && hasta) {
+    filtroFecha = "AND g.fecha BETWEEN $2 AND $3";
+    params.push(desde, hasta);
+  }
+
+  const q = `
+    SELECT
+      g.descripcion,
+      g.tipo, -- 'fijo' o 'variable'
+      SUM(g.importe) AS importe
+    FROM gastos g
+    WHERE g.comercio_id = $1
+      ${filtroFecha}
+    GROUP BY g.descripcion, g.tipo
+    ORDER BY importe DESC;
+  `;
+
+  const { rows } = await db.query(q, params);
+  res.json(rows);
+});
+
 export default router;
