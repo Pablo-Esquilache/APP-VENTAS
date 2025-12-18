@@ -1,0 +1,27 @@
+# Node
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Entornos
+.env
+.env.local
+.env.example
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+dist/
+build/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Python (si tu backend tiene algo en Python)
+__pycache__/
+*.pyc
