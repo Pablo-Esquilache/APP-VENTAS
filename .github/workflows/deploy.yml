@@ -3,7 +3,7 @@ name: Deploy PWA
 on:
   push:
     branches:
-      - main  # cada vez que hagas push a main, se publica
+      - main
 
 jobs:
   deploy:
@@ -14,4 +14,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public  # carpeta que se publica
+          publish_dir: ./public
+          destination_branch: gh-pages
+          force_orphan: true
