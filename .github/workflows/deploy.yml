@@ -1,0 +1,17 @@
+name: Deploy PWA
+
+on:
+  push:
+    branches:
+      - main  # cada vez que hagas push a main, se publica
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # carpeta que se publica
