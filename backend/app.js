@@ -23,7 +23,9 @@ const app = express();
 
 // Middlewares
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: "*", // luego podés restringir
+}));
 app.use(express.json());
 
 // Rutas API

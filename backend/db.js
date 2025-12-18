@@ -1,4 +1,4 @@
-// db.js (formato ES Modules)
+// db.js
 import pkg from "pg";
 import dotenv from "dotenv";
 dotenv.config();
@@ -6,13 +6,16 @@ dotenv.config();
 const { Pool } = pkg;
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
-// Mensaje al iniciar
-pool.connect()
-    .then(() => console.log("🔌 Conectado a PostgreSQL correctamente"))
-    .catch(err => console.error("❌ Error de conexión a PostgreSQL:", err));
+pool.on("connect", () => {
+  console.log("🔌 PostgreSQL conectado");
+});
+
+pool.on("error", (err) => {
+  console.error("❌ Error inesperado en PostgreSQL:", err);
+});
 
 export default pool;

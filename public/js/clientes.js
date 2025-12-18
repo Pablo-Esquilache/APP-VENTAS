@@ -5,7 +5,11 @@ const session = JSON.parse(localStorage.getItem("session"));
 const firebaseUID = session?.uid; // antes era session?.firebase_uid
 let comercioId = session?.comercio_id || null;
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE =
+  location.hostname === "localhost"
+    ? "http://localhost:4000/api"
+    : "https://app-ventas-gvdk.onrender.com/api";
+
 const API_URL = `${API_BASE}/clientes`;
 
 async function cargarComercio() {

@@ -2,6 +2,12 @@
 // reportes.js completo con etiquetas y paleta de colores
 // ============================
 
+const API_BASE =
+  location.hostname === "localhost"
+    ? "http://localhost:4000/api"
+    : "https://app-ventas-gvdk.onrender.com/api";
+
+
 let graficoVG = null;
 let graficoTopProductos = null;
 let graficoCategorias = null;
@@ -41,7 +47,7 @@ async function cargarVentasGastosTiempo() {
     const desde = document.getElementById("rDesde").value;
     const hasta = document.getElementById("rHasta").value;
 
-    let url = `http://localhost:4000/api/reportes/ventas-gastos-tiempo?comercio_id=${comercioId}&agrupacion=dia`;
+    let url = `${API_BASE}/reportes/ventas-gastos-tiempo?comercio_id=${comercioId}&agrupacion=dia`;
     if (desde) url += `&desde=${desde}`;
     if (hasta) url += `&hasta=${hasta}`;
 
@@ -146,7 +152,7 @@ async function cargarTopProductos() {
     const desde = document.getElementById("rDesde").value;
     const hasta = document.getElementById("rHasta").value;
 
-    let url = `http://localhost:4000/api/reportes/top-productos?comercio_id=${comercioId}&limit=10`;
+    let url = `${API_BASE}/reportes/top-productos?comercio_id=${comercioId}&limit=10`;
     if (desde) url += `&desde=${desde}`;
     if (hasta) url += `&hasta=${hasta}`;
 
@@ -252,7 +258,7 @@ async function cargarCategoriasVendidas() {
     const desde = document.getElementById("rDesde").value;
     const hasta = document.getElementById("rHasta").value;
 
-    let url = `http://localhost:4000/api/reportes/categorias-vendidas?comercio_id=${comercioId}`;
+    let url = `${API_BASE}/reportes/categorias-vendidas?comercio_id=${comercioId}`;
     if (desde) url += `&desde=${desde}`;
     if (hasta) url += `&hasta=${hasta}`;
 
@@ -320,7 +326,7 @@ async function cargarEdadEtarioGenero() {
   const desde = document.getElementById("rDesde").value;
   const hasta = document.getElementById("rHasta").value;
 
-  let url = `http://localhost:4000/api/reportes/edad-etario-genero?comercio_id=${comercioId}`;
+  let url = `${API_BASE}/reportes/edad-etario-genero?comercio_id=${comercioId}`;
   if (desde) url += `&desde=${desde}`;
   if (hasta) url += `&hasta=${hasta}`;
 
@@ -389,7 +395,7 @@ async function cargarMetodosPago() {
   const desde = document.getElementById("rDesde").value;
   const hasta = document.getElementById("rHasta").value;
 
-  let url = `http://localhost:4000/api/reportes/metodos-pago?comercio_id=${comercioId}`;
+  let url = `${API_BASE}reportes/metodos-pago?comercio_id=${comercioId}`;
   if (desde) url += `&desde=${desde}`;
   if (hasta) url += `&hasta=${hasta}`;
 
@@ -449,7 +455,7 @@ async function cargarGastosDescripcionTipo() {
   const desde = document.getElementById("rDesde").value;
   const hasta = document.getElementById("rHasta").value;
 
-  let url = `http://localhost:4000/api/reportes/gastos-descripcion-tipo?comercio_id=${comercioId}`;
+  let url = `${API_BASE}/reportes/gastos-descripcion-tipo?comercio_id=${comercioId}`;
   if (desde) url += `&desde=${desde}`;
   if (hasta) url += `&hasta=${hasta}`;
 
