@@ -1,0 +1,305 @@
+/* ---------- GENERAL ---------- */
+body {
+  background: #1f1f1f;
+  color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
+}
+
+/* ---------- NAVBAR ---------- */
+.v-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- LOGO ---------- */
+.v-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- MENU ---------- */
+.v-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center; /* CLAVE */
+}
+
+.v-navbar-menu li {
+  display: flex;
+  align-items: center; /* CLAVE */
+}
+
+/* Normalizo links y botón */
+.v-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;            /* CLAVE: misma altura */
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
+.v-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.v-navbar-menu a:hover,
+.v-active {
+  color: #3fd18c !important;
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;         /* vertical controlado por height */
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+.v-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+/* ---------- CONTENEDOR ---------- */
+.v-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.v-title {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* ---------- CONTROLES ---------- */
+.v-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.v-input {
+  background: #222;
+  border: 1px solid #444;
+  padding: 0.5rem 0.7rem;
+  color: #fff;
+  border-radius: 4px;
+  min-width: 130px;
+}
+
+/* ---------- BOTONES ---------- */
+.v-btn-primary,
+.v-btn-secondary {
+  padding: 0.65rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-size: 15.5px !important
+}
+
+.v-btn-primary {
+  background-color: #4caf50;
+  color: #000;
+}
+
+.v-btn-primary:hover {
+  background: #35c77f;
+}
+
+.v-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+}
+
+.v-btn-secondary:hover {
+  background: #444;
+}
+
+/* ---------- TABLA ---------- */
+.v-tabla-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+
+.v-tabla {
+  width: 100%;
+  border-collapse: collapse;  
+}
+
+.v-tabla th,
+.v-tabla td {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+
+.v-tabla th {
+  background: #222;
+  font-weight: bold;
+}
+
+.v-tabla thead {
+  position: sticky;
+  top: 0;
+  background: #222;
+}
+
+.btn-eliminar {
+  background: #ff4a4a;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* ---------- MODAL ---------- */
+.v-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+.v-modal-content {
+  background: #1d1d1d;
+  padding: 1.5rem;
+  width: 420px;
+  border-radius: 6px;
+  position: relative;
+  z-index: 999;
+}
+
+.v-close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.v-form-group {
+  margin-bottom: 1rem;
+}
+
+.v-subtitle {
+  margin-bottom: 1rem;
+}
+
+.acciones-venta {
+  display: flex;
+  gap: 8px; /* separación entre botones */
+  align-items: center;
+}
+
+.btn-editar {
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-eliminar {
+  background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* -------- MODAL VER TODAS -------- */
+.v-modal-grande {
+  width: 85%;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+.v-filtros-ver {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.v-tabla-modal-container {
+  max-height: 65vh;
+  overflow-y: auto;
+  background: #161616;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.v-close-ver {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+/* ---------- REFRESH DB BUTTON ---------- */
+.v-navbar-refresh {
+  margin-left: 32px; /* lo separa del menú */
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}
+

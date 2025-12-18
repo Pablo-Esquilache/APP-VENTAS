@@ -1,0 +1,119 @@
+<!-- reportes.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/reportes.css" />
+    <link rel="manifest" href="../manifest.json" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="r-navbar">
+      <div class="r-navbar-logo">Mi Librería</div>
+      <ul class="r-navbar-menu">
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li>
+          <a href="reportes.html" class="r-active">Reportes</a>
+        </li>
+        <li class="v-navbar-refresh">
+          <button id="refresh-db-btn" title="Actualizar datos">
+            ⟳ Actualizar
+          </button>
+        </li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="r-container">
+      <h1 class="r-title">Reportes</h1>
+
+      <!-- FILTROS -->
+      <div class="r-filtros">
+        <div class="r-form-group">
+          <label for="rDesde">Desde</label>
+          <input type="date" id="rDesde" class="r-input" />
+        </div>
+
+        <div class="r-form-group">
+          <label for="rHasta">Hasta</label>
+          <input type="date" id="rHasta" class="r-input" />
+        </div>
+
+        <button class="r-btn-primary" id="btnGenerarReportes">Generar</button>
+        <button class="r-btn-secondary" id="btnDescargarPDF" disabled>
+          Descargar PDF
+        </button>
+
+        <!-- NUEVO BLOQUE PARA DESCARGA DE TABLAS -->
+        <div class="r-form-group">
+          <label for="selectTablaDescargar">Descargar tabla</label>
+          <select id="selectTablaDescargar" class="r-input">
+            <option value="" disabled selected>Seleccioná una tabla</option>
+            <option value="ventas">Ventas</option>
+            <option value="clientes">Clientes</option>
+            <option value="productos">Productos</option>
+            <option value="gastos">Gastos</option>
+          </select>
+        </div>
+        <button class="r-btn-primary" id="btnDescargarTabla">
+          Descargar Excel
+        </button>
+      </div>
+
+      <!-- TODO LO EXPORTABLE -->
+      <div id="reportePDF">
+        <section class="r-card">
+          <h2 class="r-subtitle">Ventas / Gastos / Ticket promedio</h2>
+          <canvas id="graficoVentasGastos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Top 10 de productos más vendidos</h2>
+          <canvas id="graficoTopProductos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Categorías vendidas</h2>
+          <canvas id="graficoCategorias"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Edad promedio por grupo etario y género</h2>
+          <canvas id="graficoEdadEtarioGenero"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Métodos de pago</h2>
+          <canvas id="graficoMetodosPago"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="r-subtitle">Gastos por descripción y tipo</h2>
+          <canvas id="graficoGastosDescripcionTipo"></canvas>
+        </section>
+      </div>
+    </main>
+
+    <!-- LIBRERÍAS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <!-- PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script type="module" src="../js/reportes.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>

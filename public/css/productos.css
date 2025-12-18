@@ -1,0 +1,258 @@
+/* ---------- GENERAL ---------- */
+body {
+  background: #1f1f1f;
+  color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
+}
+
+/* ---------- NAVBAR ---------- */
+.p-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* ---------- LOGO ---------- */
+.p-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- MENU ---------- */
+.p-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.p-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.p-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
+.p-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.p-navbar-menu a:hover,
+.p-active {
+  color: #3fd18c !important;
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* ---------- CONTENEDOR ---------- */
+.p-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.p-title {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* ---------- CONTROLES ---------- */
+.p-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.p-input {
+  background: #222;
+  border: 1px solid #444;
+  padding: 0.5rem 0.7rem;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.p-btn-primary {
+  background-color: #4caf50;
+  color: #000;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.p-btn-primary:hover {
+  background: #6bb4ff;
+}
+
+.p-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
+/* ---------- TABLA ---------- */
+/* 🔥 CONTENEDOR QUE DEFINE LAS 10 FILAS Y EL SCROLL */
+.tabla-productos-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+
+/* 🔥 Encabezado fijo */
+#tablaProductos thead {
+  position: sticky;
+  top: 0;
+  background: #222;
+}
+
+#tablaProductos {
+  width: 100%;
+  border-collapse: collapse;  
+  table-layout: fixed; /* 🔥 CLAVE */
+}
+
+#tablaProductos th,
+#tablaProductos td {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+
+#tablaProductos th {
+  background: #222;
+  font-weight: bold;
+}
+
+/* ---------- ACCIONES ---------- */
+.acciones-productos {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.p-btn-edit {
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.p-btn-delete {
+  background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* ---------- MODAL ---------- */
+.p-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+.p-modal-content {
+  background: #1d1d1d;
+  padding: 1.5rem;
+  width: 420px;
+  border-radius: 6px;
+}
+
+.p-close {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+.p-subtitle {
+  margin-bottom: 1rem;
+  color: #fff;
+}
+.p-form-group {
+  margin-bottom: 1rem;
+}
+/* ---------- REFRESH DB BUTTON ---------- */
+.v-navbar-refresh {
+  margin-left: 32px; /* lo separa del menú */
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}
+
+

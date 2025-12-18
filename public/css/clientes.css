@@ -1,0 +1,290 @@
+/* =====================
+   CLIENTES.CSS (v1)
+   ===================== */
+
+body {
+  background: #1f1f1f;
+  color: #e6e6e6;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
+}
+
+/* ---------- NAVBAR ---------- */
+.c-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* ---------- LOGO ---------- */
+.c-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- MENU ---------- */
+.c-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.c-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.c-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
+.c-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.c-navbar-menu a:hover,
+.c-active {
+  color: #3fd18c !important;
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* CONTENEDOR */
+.c-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.c-title {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+}
+
+/* CONTROLES */
+.c-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.c-input {
+  background: #1b1b1b;
+  border: 1px solid #444;
+  color: #ededed;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.c-input:focus {
+  outline: none;
+  border-color: #3fd18c;
+}
+
+/* LISTA */
+.c-lista-clientes {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+.c-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.c-tabla thead {
+  position: sticky;
+    top: 0;
+    background: #222;
+}
+.c-tabla th {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+.c-tabla td {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  color: #e6e6e6;
+}
+
+/* ACCIONES */
+.c-btn-primary {
+  background-color: #4caf50;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.c-btn-primary:hover {
+  background: #35b97a;
+}
+
+.acciones-clientes {
+  display: flex;
+  gap: 8px; /* separación entre botones */
+  align-items: center;
+}
+
+.c-btn-edit {
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.c-btn-delete {
+  background-color: #e53935;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.c-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+/* FORMULARIO MODAL */
+.c-modal {
+display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+
+.c-modal-content {
+  background: #1d1d1d;
+  padding: 1.5rem;
+  border-radius: 6px;
+}
+
+.c-close {
+ float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+.c-subtitle {
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* FORM ROWS */
+.c-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.c-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.c-form-group label {
+  font-size: 0.85rem;
+  color: #bfbfbf;
+}
+
+
+.c-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.c-col {
+  flex: 1;
+}
+
+.c-col {
+  flex: 1;
+}
+
+/* TEXTAREA */
+.c-input[rows] {
+  resize: vertical;
+}
+
+/* small adjustments */
+.c-btn-delete:hover {
+  opacity: 0.95;
+}
+
+/* ---------- REFRESH DB BUTTON ---------- */
+.v-navbar-refresh {
+  margin-left: 32px; /* lo separa del menú */
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}

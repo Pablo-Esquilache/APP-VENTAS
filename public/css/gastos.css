@@ -1,0 +1,270 @@
+/* ---------- GENERAL ---------- */
+body {
+  background: #1f1f1f;
+  color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
+}
+
+/* ---------- NAVBAR GASTOS (idéntica a VENTAS) ---------- */
+.g-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* ---------- LOGO ---------- */
+.g-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- MENU ---------- */
+.g-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.g-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.g-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
+.g-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.g-navbar-menu a:hover,
+.g-active {
+  color: #3fd18c !important;
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- COMPENSO NAVBAR FIJA ---------- */
+.g-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* ---------- CONTENEDOR ---------- */
+.g-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.g-title {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* ---------- CONTROLES ---------- */
+.g-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.g-input {
+  background: #222;
+  border: 1px solid #444;
+  padding: 0.5rem 0.7rem;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.g-btn-primary {
+  background-color: #4caf50;
+  color: #000;
+  border: n6ne;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15.5px !important;
+}
+
+.g-btn-primary:hover {
+  background: #6bb4ff;
+}
+
+.g-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  padding: 0.65rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-size: 15.5px !important;
+}
+
+/* ---------- TABLA ---------- */
+.g-tabla-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+
+.g-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* 🔥 CLAVE */
+}
+.g-tabla thead {
+  position: sticky;
+  top: 0;
+  background: #222;
+}
+
+.g-tabla td {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+
+.g-tabla th {
+  top: 0;
+  background: #1f1f1f;
+  padding: 10px;
+  text-align: left;
+}
+
+.g-tabla th {
+  background: #222;
+  font-weight: bold;
+}
+/* ---------- ACCIONES ---------- */
+.acciones-gastos {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.g-btn-action {
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.g-btn-edit {
+  background-color: #4caf50;
+}
+
+.g-btn-delete {
+  background-color: #e53935;
+}
+
+/* ---------- MODAL ---------- */
+.g-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  justify-content: center;
+  align-items: center;
+}
+
+.g-modal-content {
+  background: #1d1d1d;
+  padding: 1.5rem;
+  width: 420px;
+  border-radius: 6px;
+}
+
+.g-close {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+.g-form-group {
+  margin-bottom: 1rem;
+}
+
+.g-subtitle {
+  margin-bottom: 1rem;
+}
+
+.g-btn-full {
+  width: 100%;
+}
+
+/* ---------- REFRESH DB BUTTON ---------- */
+.v-navbar-refresh {
+  margin-left: 32px; /* lo separa del menú */
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Gastos</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/gastos.css" />
+    <link rel="manifest" href="../manifest.json" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="g-navbar">
+      <div class="g-navbar-logo">Mi Librería</div>
+
+      <ul class="g-navbar-menu">
+        <li id="tab-ventas"><a href="ventas.html">Ventas</a></li>
+        <li id="tab-productos"><a href="productos.html">Productos</a></li>
+        <li id="tab-clientes"><a href="clientes.html">Clientes</a></li>
+        <li id="tab-gastos">
+          <a href="gastos.html" class="g-active">Gastos</a>
+        </li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+        <li class="v-navbar-refresh">
+          <button id="refresh-db-btn" title="Actualizar datos">
+            ⟳ Actualizar
+          </button>
+        </li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="g-container">
+      <h1 class="g-title">Gestión de Gastos</h1>
+
+      <!-- CONTROLES -->
+      <div class="g-controls">
+        <input
+          type="text"
+          id="buscarGasto"
+          class="g-input"
+          placeholder="Buscar gasto..."
+        />
+
+        <select id="filtroTipo" class="g-input">
+          <option value="">Todos</option>
+          <option value="fijo">Fijo</option>
+          <option value="variable">Variable</option>
+        </select>
+        <label for="">Desde</label>
+        <input type="date" id="filtroDesde" class="g-input" />
+        <label for="">Hasta</label>
+        <input type="date" id="filtroHasta" class="g-input" />
+
+        <button id="btnLimpiarFiltrosGasto" class="g-btn-secondary">
+          Limpiar filtros
+        </button>
+
+        <button id="btnNuevoGasto" class="g-btn-primary">
+          Registrar gasto
+        </button>
+      </div>
+
+      <!-- TABLA -->
+      <div class="g-tabla-container">
+        <table class="g-tabla">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Tipo</th>
+              <th>Importe</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody id="tablaGastosBody">
+            <!-- filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL NUEVO GASTO -->
+    <div id="modalGasto" class="g-modal">
+      <div class="g-modal-content">
+        <span class="g-close">&times;</span>
+
+        <h2 class="g-subtitle" id="tituloModalGasto">Registrar gasto</h2>
+
+        <form class="g-form-gasto">
+          <div class="g-form-group">
+            <label for="fechaGasto">Fecha</label>
+            <input type="date" id="fechaGasto" class="g-input" required />
+          </div>
+
+          <div class="g-form-group">
+            <label for="descripcionGasto">Descripción</label>
+            <input type="text" id="descripcionGasto" class="g-input" required />
+          </div>
+
+          <div class="g-form-group">
+            <label for="tipoGasto">Tipo</label>
+            <select id="tipoGasto" class="g-input" required>
+              <option value="">Seleccionar</option>
+              <option value="fijo">Fijo</option>
+              <option value="variable">Variable</option>
+            </select>
+          </div>
+
+          <div class="g-form-group">
+            <label for="importeGasto">Importe</label>
+            <input
+              type="number"
+              id="importeGasto"
+              class="g-input"
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+
+          <button type="submit" class="g-btn-primary g-btn-full">
+            Guardar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="../js/gastos.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+    <script src="../js/app.js"></script>
+  </body>
+</html>

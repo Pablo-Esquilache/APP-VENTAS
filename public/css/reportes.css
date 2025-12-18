@@ -1,0 +1,239 @@
+/* =====================
+   REPORTES.CSS (v1 unificado con CLIENTES)
+   ===================== */
+
+/* GENERAL */
+body {
+  background: #1f1f1f;
+  color: #e6e6e6;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px; /* ajustá si tu navbar es más alta */
+}
+
+/* ---------- NAVBAR REPORTES (idéntica a VENTAS) ---------- */
+.r-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* ---------- LOGO ---------- */
+.r-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- MENU ---------- */
+.r-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.r-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+/* Normalizo links y botón */
+.r-navbar-menu a,
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+}
+
+/* ---------- LINKS ---------- */
+.r-navbar-menu a {
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.r-navbar-menu a:hover,
+.r-active {
+  color: #3fd18c !important;
+}
+
+/* ---------- LOGOUT BUTTON ---------- */
+#logout-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- COMPENSO NAVBAR FIJA ---------- */
+.r-container {
+  padding-top: 80px;
+}
+
+/* CONTENEDOR */
+.r-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.r-title {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+/* FILTROS */
+.r-filtros {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.r-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.r-input {
+  background: #1b1b1b;
+  border: 1px solid #444;
+  color: #ededed;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.r-input:focus {
+  outline: none;
+  border-color: #3fd18c;
+}
+
+/* BOTÓN PRINCIPAL */
+.r-btn-primary {
+  background: #3fd18c;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.r-btn-primary:hover {
+  background: #35b97a;
+}
+
+/* TARJETAS DE REPORTES */
+.r-card {
+  background: #2a2a2a;
+  padding: 22px;
+  border-radius: 10px;
+  margin-bottom: 26px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.r-subtitle {
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+/* ---------- BOTÓN DESCARGAR PDF ---------- */
+.r-btn-secondary {
+  background: #2e2e2e;
+  color: #e6e6e6;
+  border: 1px solid #555;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.r-btn-secondary:hover {
+  background: #3a3a3a;
+  border-color: #3fd18c;
+  color: #3fd18c;
+}
+
+.r-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.r-btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: #444;
+  color: #aaa;
+}
+
+/* SELECT Y BOTÓN DESCARGAR TABLAS */
+#selectTablaDescargar {
+  min-width: 160px;
+}
+
+#btnDescargarTabla {
+  background: #4caf50;
+  color: #0f0f0f;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#btnDescargarTabla:hover {
+  background: #35c77f;
+  color: #000;
+}
+
+/* ---------- REFRESH DB BUTTON ---------- */
+.v-navbar-refresh {
+  margin-left: 32px; /* lo separa del menú */
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}
+
+
