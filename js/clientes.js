@@ -355,5 +355,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("No se pudo obtener comercioId");
   }
+
+    // ------------------------------
+  // BLOQUEO DE TABS POR ROL
+  // ------------------------------
+  const role = session?.role;
+  const tabReportes = document.getElementById("tab-reportes");
+
+  if (role !== "admin" && tabReportes) {
+    tabReportes.style.display = "none";
+  }
 });
+
+
 
