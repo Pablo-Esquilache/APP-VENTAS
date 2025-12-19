@@ -395,7 +395,7 @@ async function cargarMetodosPago() {
   const desde = document.getElementById("rDesde").value;
   const hasta = document.getElementById("rHasta").value;
 
-  let url = `${API_BASE}reportes/metodos-pago?comercio_id=${comercioId}`;
+  let url = `${API_BASE}/reportes/metodos-pago?comercio_id=${comercioId}`;
   if (desde) url += `&desde=${desde}`;
   if (hasta) url += `&hasta=${hasta}`;
 
