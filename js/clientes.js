@@ -3,7 +3,7 @@
 // ===========================================================
 const session = JSON.parse(localStorage.getItem("session"));
 const firebaseUID = session?.uid;
-const role = session?.role;
+// const role = session?.role;
 let comercioId = session?.comercio_id || null;
 
 const API_BASE =
