@@ -226,13 +226,11 @@ function renderTablaClientes() {
         <td>${c.comentarios || "-"}</td>
         <td>
           <div class="acciones-clientes">
-            <button class="c-btn-edit" data-id="${c.id}">Editar</button>
-            ${
-              role === "admin"
-                ? `<button class="c-btn-historial" data-id="${c.id}">Historial</button>`
-                : ""
-            }
-          </div>
+  <button class="c-btn-edit" data-id="${c.id}">Editar</button>
+  <button class="c-btn-historial only-admin" data-id="${c.id}">
+    Historial
+  </button>
+</div>
         </td>
       </tr>
     `;
@@ -287,8 +285,7 @@ function editarCliente(id) {
 // HISTORIAL CLIENTE
 // ===========================================================
 async function verHistorial(clienteId) {
-  tablaHistorialBody.innerHTML =
-    "<tr><td colspan='4'>Cargando...</td></tr>";
+  tablaHistorialBody.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
 
   const res = await fetch(
     `${API_BASE}/clientes/${clienteId}/historial?comercio_id=${comercioId}`
@@ -328,6 +325,11 @@ window.addEventListener("click", (e) => {
 // INIT
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
+  // Seteo de rol para control visual por CSS
+  if (role) {
+    document.body.classList.add(`role-${role}`);
+  }
+
   await cargarComercio();
 
   if (comercioId) {
@@ -335,12 +337,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("No se pudo obtener comercioId");
   }
-
-  // ------------------------------
-  // BLOQUEO DE REPORTES POR ROL
-  // ------------------------------
-  const tabReportes = document.getElementById("tab-reportes");
-  if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none";
-  }
 });
+

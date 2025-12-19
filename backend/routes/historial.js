@@ -1,17 +1,12 @@
 import express from "express";
 import db from "../db.js";
-import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// GET historial de compras por cliente (solo admin)
-router.get("/clientes/:id/historial", authMiddleware, async (req, res) => {
+// GET historial de compras por cliente
+router.get("/clientes/:id/historial", async (req, res) => {
   const { id } = req.params;
   const { comercio_id } = req.query;
-
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ error: "No autorizado" });
-  }
 
   if (!comercio_id) {
     return res.status(400).json({ error: "comercio_id requerido" });

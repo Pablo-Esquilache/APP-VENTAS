@@ -309,3 +309,24 @@ display: none;
   font-size: 1.5rem;
   color: #ccc;
 }
+
+/* =====================
+   CONTROL POR ROL
+   ===================== */
+
+/* Oculto por defecto */
+.only-admin {
+  display: none !important;
+}
+.only-user {
+  display: none !important;
+}
+
+/* Cuando el body tiene rol */
+body.role-admin .only-admin {
+  display: inline-flex !important;
+}
+
+body.role-user .only-user {
+  display: inline-flex !important;
+}
