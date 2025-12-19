@@ -1,3 +1,7 @@
+const API_BASE =
+  location.hostname === "localhost"
+    ? "http://localhost:4000/api"
+    : "https://app-ventas-gvdk.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refresh-db-btn");
@@ -9,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshBtn.textContent = "⟳ Actualizando...";
 
     try {
-      const res = await fetch("http://localhost:4000/api/system/refresh-db");
+      const res = await fetch(`${API_BASE}/system/refresh-db`);
       if (!res.ok) throw new Error();
 
       await res.json();
@@ -23,4 +27,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
