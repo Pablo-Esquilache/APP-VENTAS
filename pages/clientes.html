@@ -12,7 +12,7 @@
   <body>
     <!-- NAVBAR -->
     <nav class="c-navbar">
-      <div class="c-navbar-logo">Mi Librería</div>
+      <div class="c-navbar-logo">MI APP</div>
       <ul class="c-navbar-menu">
         <li id="tab-ventas"><a href="ventas.html">Ventas</a></li>
         <li id="tab-productos"><a href="productos.html">Productos</a></li>
@@ -155,6 +155,26 @@
         </form>
       </div>
     </div>
+    <!-- MODAL HISTORIAL CLIENTE -->
+<div id="c-modal-historial" class="c-modal">
+  <div class="c-modal-content" style="max-width: 700px;">
+    <span class="c-close-historial">&times;</span>
+
+    <h2 class="c-subtitle">Historial de compras</h2>
+
+    <table class="c-tabla">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="tablaHistorialBody"></tbody>
+    </table>
+  </div>
+</div>
 
     <script type="module" src="../js/clientes.js"></script>
     <script type="module" src="../js/logout.js"></script>

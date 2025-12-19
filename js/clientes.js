@@ -2,7 +2,8 @@
 // SESIÓN / COMERCIO
 // ===========================================================
 const session = JSON.parse(localStorage.getItem("session"));
-const firebaseUID = session?.uid; // antes era session?.firebase_uid
+const firebaseUID = session?.uid;
+const role = session?.role;
 let comercioId = session?.comercio_id || null;
 
 const API_BASE =
@@ -11,14 +12,6 @@ const API_BASE =
     : "https://app-ventas-gvdk.onrender.com/api";
 
 const API_URL = `${API_BASE}/clientes`;
-
-async function cargarComercio() {
-  if (!firebaseUID) return;
-
-  const res = await fetch(`${API_BASE}/comercios/uid/${firebaseUID}`);
-  const data = await res.json();
-  comercioId = data.id;
-}
 
 // ===========================================================
 // DOM
@@ -45,6 +38,11 @@ const btnNuevaLocalidad = document.getElementById("btnNuevaLocalidad");
 
 const tablaClientesBody = document.getElementById("tablaClientes");
 
+// ---- Modal Historial
+const modalHistorial = document.getElementById("c-modal-historial");
+const tablaHistorialBody = document.getElementById("tablaHistorialBody");
+const btnCerrarHistorial = document.querySelector(".c-close-historial");
+
 // ===========================================================
 // ESTADO
 // ===========================================================
@@ -54,7 +52,18 @@ let clientes = [];
 let localidades = [];
 
 // ===========================================================
-// CARGAR CLIENTES (POR COMERCIO)
+// CARGAR COMERCIO
+// ===========================================================
+async function cargarComercio() {
+  if (!firebaseUID) return;
+
+  const res = await fetch(`${API_BASE}/comercios/uid/${firebaseUID}`);
+  const data = await res.json();
+  comercioId = data.id;
+}
+
+// ===========================================================
+// CARGAR CLIENTES
 // ===========================================================
 async function cargarClientes() {
   if (!comercioId) return;
@@ -67,7 +76,7 @@ async function cargarClientes() {
 }
 
 // ===========================================================
-// CARGAR LOCALIDADES (POR COMERCIO)
+// CARGAR LOCALIDADES
 // ===========================================================
 async function cargarLocalidades() {
   if (!comercioId) return;
@@ -87,7 +96,7 @@ async function cargarLocalidades() {
 }
 
 // ===========================================================
-// MODAL
+// MODAL CLIENTE
 // ===========================================================
 btnNuevoCliente.addEventListener("click", () => {
   modoEdicion = false;
@@ -97,10 +106,8 @@ btnNuevoCliente.addEventListener("click", () => {
   mostrarInputNuevaLocalidad(false);
 
   document.getElementById("fila-id-cliente").style.display = "none";
-
   modalCliente.style.display = "flex";
 });
-
 
 btnCerrarModal.addEventListener("click", () => {
   modalCliente.style.display = "none";
@@ -218,11 +225,15 @@ function renderTablaClientes() {
         <td>${c.localidad || "-"}</td>
         <td>${c.comentarios || "-"}</td>
         <td>
-        <div class="acciones-clientes">
-          <button class="c-btn-edit" data-id="${c.id}">Editar</button>
-
+          <div class="acciones-clientes">
+            <button class="c-btn-edit" data-id="${c.id}">Editar</button>
+            ${
+              role === "admin"
+                ? `<button class="c-btn-historial" data-id="${c.id}">Historial</button>`
+                : ""
+            }
+          </div>
         </td>
-        </div>
       </tr>
     `;
   });
@@ -233,15 +244,15 @@ function renderTablaClientes() {
       b.addEventListener("click", () => editarCliente(b.dataset.id))
     );
 
-  // document
-  //   .querySelectorAll(".c-btn-delete")
-  //   .forEach((b) =>
-  //     b.addEventListener("click", () => eliminarCliente(b.dataset.id))
-  //   );
+  document
+    .querySelectorAll(".c-btn-historial")
+    .forEach((b) =>
+      b.addEventListener("click", () => verHistorial(b.dataset.id))
+    );
 }
 
 // ===========================================================
-// EDITAR / ELIMINAR
+// EDITAR CLIENTE
 // ===========================================================
 function editarCliente(id) {
   const c = clientes.find((x) => x.id == id);
@@ -251,7 +262,6 @@ function editarCliente(id) {
   clienteEditandoId = id;
 
   tituloModal.textContent = "Editar cliente";
-
   document.getElementById("fila-id-cliente").style.display = "block";
 
   campoId.value = c.id;
@@ -270,26 +280,56 @@ function editarCliente(id) {
   }
 
   campoComentarios.value = c.comentarios ?? "";
-
   modalCliente.style.display = "flex";
 }
 
-// async function eliminarCliente(id) {
-//   if (!confirm("¿Eliminar cliente?")) return;
+// ===========================================================
+// HISTORIAL CLIENTE
+// ===========================================================
+async function verHistorial(clienteId) {
+  tablaHistorialBody.innerHTML =
+    "<tr><td colspan='4'>Cargando...</td></tr>";
 
-//   await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
-//     method: "DELETE",
-//   });
+  const res = await fetch(
+    `${API_BASE}/clientes/${clienteId}/historial?comercio_id=${comercioId}`
+  );
 
-//   await cargarClientes();
-// }
+  const data = await res.json();
+  tablaHistorialBody.innerHTML = "";
+
+  if (!data.length) {
+    tablaHistorialBody.innerHTML =
+      "<tr><td colspan='4'>Sin compras registradas</td></tr>";
+  } else {
+    data.forEach((v) => {
+      tablaHistorialBody.innerHTML += `
+        <tr>
+          <td>${v.fecha}</td>
+          <td>${v.producto}</td>
+          <td>${v.cantidad}</td>
+          <td>$${v.total}</td>
+        </tr>
+      `;
+    });
+  }
+
+  modalHistorial.style.display = "flex";
+}
+
+btnCerrarHistorial.addEventListener("click", () => {
+  modalHistorial.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modalHistorial) modalHistorial.style.display = "none";
+});
 
 // ===========================================================
 // INIT
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarComercio();
-  console.log("comercioId:", comercioId); // debe mostrar un número
+
   if (comercioId) {
     await cargarClientes();
   } else {
@@ -297,14 +337,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ------------------------------
-  // BLOQUEO DE TABS POR ROL
+  // BLOQUEO DE REPORTES POR ROL
   // ------------------------------
-  const session = JSON.parse(localStorage.getItem("session"));
-  const role = session?.role;
-  const tabReportes = document.getElementById("tab-reportes"); // id del li de reportes
-
+  const tabReportes = document.getElementById("tab-reportes");
   if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none"; // usuarios no ven reportes
+    tabReportes.style.display = "none";
   }
 });
-
