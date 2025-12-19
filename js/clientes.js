@@ -285,7 +285,8 @@ function editarCliente(id) {
 // HISTORIAL CLIENTE
 // ===========================================================
 async function verHistorial(clienteId) {
-  tablaHistorialBody.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
+  tablaHistorialBody.innerHTML =
+    "<tr><td colspan='4'>Cargando...</td></tr>";
 
   const res = await fetch(
     `${API_BASE}/clientes/${clienteId}/historial?comercio_id=${comercioId}`
@@ -298,16 +299,28 @@ async function verHistorial(clienteId) {
     tablaHistorialBody.innerHTML =
       "<tr><td colspan='4'>Sin compras registradas</td></tr>";
   } else {
+    let totalGeneral = 0;
+
     data.forEach((v) => {
+      totalGeneral += Number(v.total) || 0;
+
       tablaHistorialBody.innerHTML += `
         <tr>
-          <td>${v.fecha}</td>
+          <td>${formatearFecha(v.fecha)}</td>
           <td>${v.producto}</td>
           <td>${v.cantidad}</td>
           <td>$${v.total}</td>
         </tr>
       `;
     });
+
+    // Fila de total general
+    tablaHistorialBody.innerHTML += `
+      <tr class="fila-total-historial">
+        <td colspan="3"><strong>Total</strong></td>
+        <td><strong>$${totalGeneral.toFixed(2)}</strong></td>
+      </tr>
+    `;
   }
 
   modalHistorial.style.display = "flex";

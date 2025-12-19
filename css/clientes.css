@@ -330,3 +330,8 @@ body.role-admin .only-admin {
 body.role-user .only-user {
   display: inline-flex !important;
 }
+
+.fila-total-historial td {
+  border-top: 2px solid #333;
+  background-color: #f3f3f3;
+}
