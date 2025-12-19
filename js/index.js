@@ -26,6 +26,14 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // ===============================
+//       CONFIG API URL
+// ===============================
+const API_URL =
+  location.hostname === "localhost"
+    ? "http://localhost:4000/api"
+    : "https://app-ventas-gvdk.onrender.com/api";
+
+// ===============================
 //            LOGIN
 // ===============================
 document.getElementById("login-form").addEventListener("submit", async (e) => {
@@ -40,7 +48,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     const user = userCredential.user;
 
     // 2️⃣ Consultar backend (roles + comercio)
-    const res = await fetch("http://localhost:4000/api/auth/login", {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ firebase_uid: user.uid })
@@ -58,16 +66,10 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     }));
 
     // 4️⃣ Redirección por rol
-    if (data.role === "admin") {
-      window.location.href = "pages/ventas.html";
-    } else {
-      window.location.href = "pages/ventas.html";
-    }
+    window.location.href = "pages/ventas.html";
 
   } catch (err) {
     alert("Usuario sin permisos o credenciales inválidas");
     console.error(err);
   }
 });
-
-
