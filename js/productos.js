@@ -237,11 +237,11 @@ function agregarEventosAcciones() {
       b.addEventListener("click", () => editarProducto(b.dataset.id))
     );
 
-  document
-    .querySelectorAll(".p-btn-delete")
-    .forEach((b) =>
-      b.addEventListener("click", () => eliminarProducto(b.dataset.id))
-    );
+  // document
+  //   .querySelectorAll(".p-btn-delete")
+  //   .forEach((b) =>
+  //     b.addEventListener("click", () => eliminarProducto(b.dataset.id))
+  //   );
 }
 
 // ------------------------------

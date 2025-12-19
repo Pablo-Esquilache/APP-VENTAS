@@ -571,7 +571,7 @@ document.getElementById("btnDescargarTabla").addEventListener("click", async () 
   const tabla = document.getElementById("selectTablaDescargar").value;
 
   try {
-    const res = await fetch(`http://localhost:4000/api/exportar-tabla?tabla=${tabla}`);
+    const res = await fetch(`${API_BASE}/exportar-tabla?tabla=${tabla}`);
     if (!res.ok) throw new Error("Error al descargar tabla");
 
     const blob = await res.blob();
@@ -580,12 +580,12 @@ document.getElementById("btnDescargarTabla").addEventListener("click", async () 
     a.href = url;
     a.download = `${tabla}.xlsx`;
     a.click();
+    URL.revokeObjectURL(url);
   } catch (error) {
     console.error(error);
     alert("No se pudo descargar la tabla");
   }
 });
-
 
 // ============================
 // Inicialización
