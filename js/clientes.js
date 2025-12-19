@@ -343,10 +343,17 @@ window.addEventListener("click", (e) => {
 // INIT
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
+  const role = session?.role; // <-- mover arriba
+
+  // Seteo de rol para control visual por CSS
+  if (role) {
+    document.body.classList.add(`role-${role}`);
+  }
+
   await cargarComercio();
-  console.log("comercioId:", comercioId);
+
   if (comercioId) {
-    await cargarVentas();
+    await cargarClientes();
   } else {
     console.error("No se pudo obtener comercioId");
   }
@@ -354,13 +361,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ------------------------------
   // BLOQUEO DE TABS POR ROL
   // ------------------------------
-  const role = session?.role;
   const tabReportes = document.getElementById("tab-reportes");
 
   if (role !== "admin" && tabReportes) {
     tabReportes.style.display = "none";
   }
 });
+
 
 
 
