@@ -218,7 +218,6 @@ function renderTablaProductos() {
         <td>
         <div class="acciones-productos">
           <button class="p-btn-edit" data-id="${p.id}">Editar</button>
-          <button class="p-btn-delete" data-id="${p.id}">Eliminar</button>
         </td>
         </div>
       </tr>
@@ -266,16 +265,16 @@ function editarProducto(id) {
 // ------------------------------
 // ELIMINAR
 // ------------------------------
-async function eliminarProducto(id) {
-  if (!confirm("¿Eliminar producto?")) return;
+// async function eliminarProducto(id) {
+//   if (!confirm("¿Eliminar producto?")) return;
 
-  await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
-    method: "DELETE",
-  });
+//   await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
+//     method: "DELETE",
+//   });
 
-  await cargarProductos();
-  await cargarCategorias();
-}
+//   await cargarProductos();
+//   await cargarCategorias();
+// }
 
 // ------------------------------
 // LIMPIAR FILTROS
@@ -312,4 +311,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     tabReportes.style.display = "none"; // usuarios no ven reportes
   }
 });
+
+//<button class="p-btn-delete" data-id="${p.id}">Eliminar</button>
 

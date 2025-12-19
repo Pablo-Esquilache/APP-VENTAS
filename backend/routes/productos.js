@@ -171,28 +171,28 @@ router.put("/:id", async (req, res) => {
 /* ==========================
    DELETE - ELIMINAR PRODUCTO
    ========================== */
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  const { comercio_id } = req.query;
+// router.delete("/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const { comercio_id } = req.query;
 
-  if (!comercio_id) {
-    return res.status(400).json({ error: "comercio_id requerido" });
-  }
+//   if (!comercio_id) {
+//     return res.status(400).json({ error: "comercio_id requerido" });
+//   }
 
-  try {
-    await db.query(
-      `
-      DELETE FROM productos
-      WHERE id = $1 AND comercio_id = $2
-      `,
-      [id, comercio_id]
-    );
+//   try {
+//     await db.query(
+//       `
+//       DELETE FROM productos
+//       WHERE id = $1 AND comercio_id = $2
+//       `,
+//       [id, comercio_id]
+//     );
 
-    res.status(204).end();
-  } catch (error) {
-    console.error("Error eliminando producto:", error);
-    res.status(500).json({ error: "Error al eliminar el producto" });
-  }
-});
+//     res.status(204).end();
+//   } catch (error) {
+//     console.error("Error eliminando producto:", error);
+//     res.status(500).json({ error: "Error al eliminar el producto" });
+//   }
+// });
 
 export default router;
