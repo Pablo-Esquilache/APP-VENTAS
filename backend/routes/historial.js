@@ -1,3 +1,8 @@
+import express from "express";
+import db from "../db.js";
+
+const router = express.Router();
+
 // GET historial de compras por cliente (solo admin)
 router.get("/clientes/:id/historial", authMiddleware, async (req, res) => {
   const { id } = req.params;
@@ -26,3 +31,6 @@ ORDER BY v.fecha DESC
 
   res.json(rows);
 });
+
+
+export default router;

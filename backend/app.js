@@ -18,7 +18,7 @@ import authRouter from "./routes/auth.js";
 import reportesRoutes from "./routes/reportes.js";
 import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
-import clientesRoutes from "./routes/historial.js"
+import clientesHistorialRoutes from "./routes/historial.js";
 
 
 const app = express();
@@ -40,7 +40,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/reportes", reportesRoutes);
 app.use("/api/exportar-tabla", exportarTablaRouter);
 app.use("/api/system", systemRouter);
-app.use("/api", clientesRoutes);
+app.use("/api", clientesHistorialRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 4000;
