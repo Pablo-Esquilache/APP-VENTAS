@@ -1,5 +1,6 @@
 import express from "express";
 import db from "../db.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -12,25 +13,32 @@ router.get("/clientes/:id/historial", authMiddleware, async (req, res) => {
     return res.status(403).json({ error: "No autorizado" });
   }
 
-  const [rows] = await pool.query(
-    `
-    SELECT
-  DATE(v.fecha) AS fecha,
-  p.nombre AS producto,
-  v.cantidad,
-  v.total
-FROM ventas v
-JOIN productos p ON p.id = v.producto_id
-WHERE v.cliente_id = ?
-  AND v.comercio_id = ?
-ORDER BY v.fecha DESC
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
 
-    `,
-    [id, comercio_id]
-  );
+  try {
+    const { rows } = await db.query(
+      `
+      SELECT
+        DATE(v.fecha) AS fecha,
+        p.nombre AS producto,
+        v.cantidad,
+        v.total
+      FROM ventas v
+      JOIN productos p ON p.id = v.producto_id
+      WHERE v.cliente_id = $1
+        AND v.comercio_id = $2
+      ORDER BY v.fecha DESC
+      `,
+      [id, comercio_id]
+    );
 
-  res.json(rows);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error historial cliente:", error);
+    res.status(500).json({ error: "Error al obtener historial" });
+  }
 });
-
 
 export default router;
