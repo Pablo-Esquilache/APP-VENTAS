@@ -34,13 +34,24 @@ const API_URL =
     : "https://app-ventas-gvdk.onrender.com/api";
 
 // ===============================
+//        DOM ELEMENTS
+// ===============================
+const form = document.getElementById("login-form");
+const loader = document.getElementById("loader");
+const submitBtn = form.querySelector("button");
+
+// ===============================
 //            LOGIN
 // ===============================
-document.getElementById("login-form").addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = document.getElementById("login-usuario").value.trim();
   const password = document.getElementById("login-password").value;
+
+  // 🔄 Mostrar loader y bloquear botón
+  loader.classList.remove("hidden");
+  submitBtn.disabled = true;
 
   try {
     // 1️⃣ Login Firebase
@@ -65,10 +76,14 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       comercio_id: data.comercio_id
     }));
 
-    // 4️⃣ Redirección por rol
+    // 4️⃣ Redirección
     window.location.href = "pages/ventas.html";
 
   } catch (err) {
+    // ❌ Error → ocultar loader y reactivar botón
+    loader.classList.add("hidden");
+    submitBtn.disabled = false;
+
     alert("Usuario sin permisos o credenciales inválidas");
     console.error(err);
   }

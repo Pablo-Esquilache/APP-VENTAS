@@ -6,7 +6,7 @@
     <title>Login | Sistema de Ventas</title>
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/index.css" />
-    <link rel="manifest" href="/manifest.json"/>
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#151515" />
   </head>
   <body>
@@ -39,7 +39,10 @@
 
         <button type="submit" class="btn-primary">Ingresar</button>
       </form>
-
+      <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <p>Conectando…</p>
+      </div>
       <!-- <p class="register-link">
         ¿No tenés usuario?
         <a href="#" id="abrir-modal">Crear nuevo usuario</a>

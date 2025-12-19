@@ -140,3 +140,29 @@ body {
 .registro-form .input-group {
     margin-bottom: 1rem;
 }
+
+/* LOADER */
+.hidden {
+  display: none;
+}
+
+.loader {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #151515;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
