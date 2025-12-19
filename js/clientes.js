@@ -284,6 +284,11 @@ function editarCliente(id) {
 // ===========================================================
 // HISTORIAL CLIENTE
 // ===========================================================
+
+function formatearFecha(fechaISO) {
+  return new Date(fechaISO).toLocaleDateString("es-AR");
+}
+
 async function verHistorial(clienteId) {
   tablaHistorialBody.innerHTML =
     "<tr><td colspan='4'>Cargando...</td></tr>";
