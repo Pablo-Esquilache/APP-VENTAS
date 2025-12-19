@@ -343,20 +343,15 @@ window.addEventListener("click", (e) => {
 // INIT
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
-  // Seteo de rol para control visual por CSS
-  if (role) {
-    document.body.classList.add(`role-${role}`);
-  }
-
   await cargarComercio();
-
+  console.log("comercioId:", comercioId);
   if (comercioId) {
-    await cargarClientes();
+    await cargarVentas();
   } else {
     console.error("No se pudo obtener comercioId");
   }
 
-    // ------------------------------
+  // ------------------------------
   // BLOQUEO DE TABS POR ROL
   // ------------------------------
   const role = session?.role;
