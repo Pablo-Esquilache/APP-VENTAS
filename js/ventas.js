@@ -8,7 +8,6 @@ const API_URL =
     ? "http://localhost:4000/api"
     : "https://app-ventas-gvdk.onrender.com/api";
 
-
 // ------------------------------
 // SESIÓN / COMERCIO
 // ------------------------------
@@ -128,7 +127,9 @@ async function calcularTotal() {
   }
 
   try {
-    const res = await fetch(`${API_URL}/productos/${productoId}?comercio_id=${comercioId}`);
+    const res = await fetch(
+      `${API_URL}/productos/${productoId}?comercio_id=${comercioId}`
+    );
     if (!res.ok) throw new Error("Producto no encontrado");
     const data = await res.json();
 
@@ -174,14 +175,15 @@ async function cargarProductos(selectedId = null) {
     productos.forEach((p) => {
       // Mostrar producto si tiene stock > 0 o si es el que estamos editando
       if (p.stock > 0 || p.id == selectedId) {
-        productoVenta.innerHTML += `<option value="${p.id}" ${p.id == selectedId ? "selected" : ""}>${p.nombre}</option>`;
+        productoVenta.innerHTML += `<option value="${p.id}" ${
+          p.id == selectedId ? "selected" : ""
+        }>${p.nombre}</option>`;
       }
     });
   } catch (error) {
     console.error("Error cargando productos:", error);
   }
 }
-
 
 // ------------------------------
 // CARGAR TABLA PRINCIPAL
@@ -191,6 +193,17 @@ async function cargarVentas() {
     const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
     let ventas = await res.json();
 
+  const hoy = new Date();
+hoy.setHours(0, 0, 0, 0);
+
+ventas = ventas.filter(v => {
+  const fechaVenta = new Date(v.fecha);
+  fechaVenta.setHours(0, 0, 0, 0);
+  return fechaVenta.getTime() === hoy.getTime();
+});
+
+
+    // Ordenar de mayor a menor por id
     ventas = ventas.sort((a, b) => b.id - a.id);
     ventasCache = ventas;
 
@@ -265,7 +278,6 @@ async function abrirModalEdicion(id) {
   await cargarClientes();
   await cargarProductos(venta.producto_id);
 
-
   fechaVenta.value = venta.fecha?.split("T")[0] || "";
   clienteVenta.value = venta.cliente_id || "";
   productoVenta.value = venta.producto_id || "";
@@ -319,7 +331,6 @@ formVenta.addEventListener("submit", async (e) => {
       alert(errData.error || "Hubo un error guardando la venta.");
       return;
     }
-
   } catch (error) {
     console.error("Error guardando venta:", error);
     alert("Hubo un error guardando la venta.");
