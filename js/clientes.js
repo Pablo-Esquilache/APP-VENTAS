@@ -42,6 +42,8 @@ const tablaClientesBody = document.getElementById("tablaClientes");
 const modalHistorial = document.getElementById("c-modal-historial");
 const tablaHistorialBody = document.getElementById("tablaHistorialBody");
 const btnCerrarHistorial = document.querySelector(".c-close-historial");
+let historialActual = [];
+let clienteActualHistorial = null;
 
 // ===========================================================
 // ESTADO
@@ -313,6 +315,10 @@ async function verHistorial(clienteId) {
   }
 
   const data = await res.json();
+
+  historialActual = data;
+  clienteActualHistorial = clienteId;
+
   tablaHistorialBody.innerHTML = "";
 
   if (!data.length) {
@@ -344,6 +350,28 @@ async function verHistorial(clienteId) {
 
   modalHistorial.style.display = "flex";
 }
+
+document
+  .getElementById("btnDescargarHistorial")
+  .addEventListener("click", () => {
+    if (!historialActual.length) {
+      alert("No hay datos para exportar");
+      return;
+    }
+
+    const dataExcel = historialActual.map((v) => ({
+      Fecha: formatearFecha(v.fecha),
+      Producto: v.producto,
+      Cantidad: v.cantidad,
+      Total: Number(v.total),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataExcel);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Historial");
+
+    XLSX.writeFile(wb, `historial_cliente_${clienteActualHistorial}.xlsx`);
+  });
 
 btnCerrarHistorial.addEventListener("click", () => {
   modalHistorial.style.display = "none";
