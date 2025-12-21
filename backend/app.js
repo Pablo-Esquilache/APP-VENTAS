@@ -5,10 +5,10 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Importar conexión a la base (IMPORTANTE)
+// DB
 import "./db.js";
 
-// Importar rutas
+// Rutas
 import ventasRouter from "./routes/ventas.js";
 import productosRouter from "./routes/productos.js";
 import clientesRouter from "./routes/clientes.js";
@@ -20,31 +20,46 @@ import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
 import clientesHistorialRoutes from "./routes/historial.js";
 
+// Middlewares
+import requireAuth from "./middleware/requireAuth.js";
+import { requiereRol } from "./middleware/requireRole.js";
 
 const app = express();
 
-// Middlewares
+// Middlewares globales
 app.use(helmet());
-app.use(cors({
-  origin: "*", // luego podés restringir
-}));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// Rutas API
-app.use("/api/ventas", ventasRouter);
-app.use("/api/productos", productosRouter);
-app.use("/api/clientes", clientesRouter);
-app.use("/api/gastos", gastosRouter);
-app.use("/api/comercios", comerciosRouter);
+// Auth (login / register)
 app.use("/api/auth", authRouter);
-app.use("/api/reportes", reportesRoutes);
-app.use("/api/exportar-tabla", exportarTablaRouter);
-app.use("/api/system", systemRouter);
-app.use("/api", clientesHistorialRoutes);
+
+// Rutas comunes → user y admin (solo logueados)
+app.use("/api/ventas", requireAuth, ventasRouter);
+app.use("/api/productos", requireAuth, productosRouter);
+app.use("/api/clientes", requireAuth, clientesRouter);
+app.use("/api/gastos", requireAuth, gastosRouter);
+app.use("/api/comercios", requireAuth, comerciosRouter);
+app.use("/api/exportar-tabla", requireAuth, exportarTablaRouter);
+app.use("/api/system", requireAuth, systemRouter);
+
+app.use(
+  "/api/reportes",
+  requireAuth,
+  requiereRol("admin"),
+  reportesRoutes
+);
+
+app.use(
+  "/api",
+  requireAuth,
+  requiereRol("admin"),
+  clientesHistorialRoutes
+);
+
 
 // Puerto
 const PORT = process.env.PORT || 4000;
-
 app.listen(PORT, () => {
-    console.log(`Servidor backend corriendo en puerto ${PORT}`);
+  console.log(`Servidor backend corriendo en puerto ${PORT}`);
 });

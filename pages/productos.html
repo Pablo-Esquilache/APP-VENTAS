@@ -11,6 +11,12 @@
   </head>
 
   <body>
+    <script>
+      const session = JSON.parse(localStorage.getItem("session"));
+      if (session?.role) {
+        document.body.classList.add(`role-${session.role}`);
+      }
+    </script>
     <!-- NAVBAR -->
     <nav class="p-navbar">
       <div class="p-navbar-logo">MI APP</div>

@@ -51,11 +51,9 @@ let gastos = [];
 // ------------------------------
 // UTILIDADES
 // ------------------------------
-function formatFecha(fechaString) {
-  const f = new Date(fechaString);
-  const d = String(f.getDate()).padStart(2, "0");
-  const m = String(f.getMonth() + 1).padStart(2, "0");
-  const y = f.getFullYear();
+function formatFecha(fechaISO) {
+  if (!fechaISO) return "—";
+  const [y, m, d] = fechaISO.slice(0, 10).split("-");
   return `${d}/${m}/${y}`;
 }
 
@@ -85,7 +83,7 @@ function renderTablaGastos() {
   const desde = filtroDesde.value;
   const hasta = filtroHasta.value;
 
-  const filtrados = gastos.filter(g => {
+  const filtrados = gastos.filter((g) => {
     const okTexto =
       g.descripcion.toLowerCase().includes(texto) ||
       String(g.id).includes(texto);
@@ -93,15 +91,14 @@ function renderTablaGastos() {
     const okTipo = !tipo || g.tipo === tipo;
 
     const okFecha =
-      (!desde || g.fecha >= desde) &&
-      (!hasta || g.fecha <= hasta);
+      (!desde || g.fecha >= desde) && (!hasta || g.fecha <= hasta);
 
     return okTexto && okTipo && okFecha;
   });
 
   tablaGastosBody.innerHTML = "";
 
-  filtrados.forEach(g => {
+  filtrados.forEach((g) => {
     tablaGastosBody.innerHTML += `
       <tr>
         <td>${g.id}</td>
@@ -111,8 +108,12 @@ function renderTablaGastos() {
         <td>$${parseFloat(g.importe).toFixed(2)}</td>
         <td>
           <div class="acciones-gastos">
-            <button class="g-btn-action g-btn-edit" data-id="${g.id}">Editar</button>
-            <button class="g-btn-action g-btn-delete" data-id="${g.id}">Eliminar</button>
+            <button class="g-btn-action g-btn-edit" data-id="${
+              g.id
+            }">Editar</button>
+            <button class="g-btn-action g-btn-delete" data-id="${
+              g.id
+            }">Eliminar</button>
           </div>
         </td>
       </tr>
@@ -126,13 +127,17 @@ function renderTablaGastos() {
 // ACCIONES
 // ------------------------------
 function agregarEventosAcciones() {
-  document.querySelectorAll(".g-btn-edit").forEach(b =>
-    b.addEventListener("click", () => editarGasto(b.dataset.id))
-  );
+  document
+    .querySelectorAll(".g-btn-edit")
+    .forEach((b) =>
+      b.addEventListener("click", () => editarGasto(b.dataset.id))
+    );
 
-  document.querySelectorAll(".g-btn-delete").forEach(b =>
-    b.addEventListener("click", () => eliminarGasto(b.dataset.id))
-  );
+  document
+    .querySelectorAll(".g-btn-delete")
+    .forEach((b) =>
+      b.addEventListener("click", () => eliminarGasto(b.dataset.id))
+    );
 }
 
 // ------------------------------
@@ -150,7 +155,7 @@ btnCerrarModal.addEventListener("click", () => {
   modalGasto.style.display = "none";
 });
 
-window.addEventListener("click", e => {
+window.addEventListener("click", (e) => {
   if (e.target === modalGasto) modalGasto.style.display = "none";
 });
 
@@ -167,39 +172,41 @@ function limpiarFormulario() {
 // ------------------------------
 // GUARDAR (CREAR / EDITAR)
 // ------------------------------
-document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
-  e.preventDefault();
+document
+  .querySelector(".g-form-gasto")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const data = {
-    fecha: fechaGasto.value,
-    descripcion: descripcionGasto.value.trim(),
-    tipo: tipoGasto.value,
-    importe: parseFloat(importeGasto.value),
-    comercio_id: comercioId
-  };
+    const data = {
+      fecha: fechaGasto.value,
+      descripcion: descripcionGasto.value.trim(),
+      tipo: tipoGasto.value,
+      importe: parseFloat(importeGasto.value),
+      comercio_id: comercioId,
+    };
 
-  try {
-    if (!modoEdicion) {
-      await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-    } else {
-      await fetch(`${API_URL}/${gastoEditandoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
+    try {
+      if (!modoEdicion) {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } else {
+        await fetch(`${API_URL}/${gastoEditandoId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      }
+    } catch (error) {
+      console.error("Error guardando gasto:", error);
     }
-  } catch (error) {
-    console.error("Error guardando gasto:", error);
-  }
 
-  modalGasto.style.display = "none";
-  limpiarFormulario();
-  await cargarGastos();
-});
+    modalGasto.style.display = "none";
+    limpiarFormulario();
+    await cargarGastos();
+  });
 
 // ------------------------------
 // EDITAR
@@ -207,13 +214,13 @@ document.querySelector(".g-form-gasto").addEventListener("submit", async e => {
 function formatFechaInput(fechaString) {
   const fecha = new Date(fechaString);
   const yyyy = fecha.getFullYear();
-  const mm = String(fecha.getMonth() + 1).padStart(2, '0');
-  const dd = String(fecha.getDate()).padStart(2, '0');
+  const mm = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dd = String(fecha.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 }
 
 function editarGasto(id) {
-  const g = gastos.find(x => x.id == id);
+  const g = gastos.find((x) => x.id == id);
   if (!g) return;
 
   modoEdicion = true;
@@ -231,7 +238,6 @@ function editarGasto(id) {
   modalGasto.style.display = "flex";
 }
 
-
 // ------------------------------
 // ELIMINAR
 // ------------------------------
@@ -240,7 +246,7 @@ async function eliminarGasto(id) {
 
   try {
     await fetch(`${API_URL}/${id}?comercio_id=${comercioId}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
   } catch (error) {
     console.error("Error eliminando gasto:", error);
@@ -276,17 +282,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("No se pudo obtener comercioId");
   }
-
-  // ------------------------------
-  // BLOQUEO DE TABS POR ROL
-  // ------------------------------
-  const session = JSON.parse(localStorage.getItem("session"));
-  const role = session?.role;
-  const tabReportes = document.getElementById("tab-reportes"); // id del li de reportes
-
-  if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none"; // usuarios no ven reportes
-  }
 });
-
-

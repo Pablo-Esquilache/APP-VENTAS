@@ -88,6 +88,15 @@ body {
   transform: scale(0.97);
 }
 
+/* TAB REPORTES */
+#tab-reportes {
+  display: none;
+}
+
+body.role-admin #tab-reportes {
+  display: inline-flex;
+}
+
 /* CONTENEDOR */
 .c-container {
   max-width: 1100px;
@@ -133,8 +142,8 @@ body {
 
 .c-tabla thead {
   position: sticky;
-    top: 0;
-    background: #222;
+  top: 0;
+  background: #222;
 }
 .c-tabla th {
   position: sticky;
@@ -195,14 +204,13 @@ body {
 }
 /* FORMULARIO MODAL */
 .c-modal {
-display: none;
+  display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
   justify-content: center;
   align-items: center;
 }
-
 
 .c-modal-content {
   background: #1d1d1d;
@@ -211,7 +219,7 @@ display: none;
 }
 
 .c-close {
- float: right;
+  float: right;
   cursor: pointer;
   font-size: 1.5rem;
   color: #ccc;
@@ -238,7 +246,6 @@ display: none;
   font-size: 0.85rem;
   color: #bfbfbf;
 }
-
 
 .c-form-row {
   display: flex;

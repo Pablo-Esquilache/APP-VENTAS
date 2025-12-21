@@ -285,17 +285,32 @@ function editarCliente(id) {
 // HISTORIAL CLIENTE
 // ===========================================================
 
+// FORMATO FECHA
 function formatearFecha(fechaISO) {
-  return new Date(fechaISO).toLocaleDateString("es-AR");
+  if (!fechaISO) return "—";
+  const [y, m, d] = fechaISO.slice(0, 10).split("-");
+  return `${d}/${m}/${y}`;
 }
 
 async function verHistorial(clienteId) {
-  tablaHistorialBody.innerHTML =
-    "<tr><td colspan='4'>Cargando...</td></tr>";
+  const role = session?.role;
+
+  if (role !== "admin") {
+    alert("No tenés permisos para ver el historial");
+    return;
+  }
+
+  tablaHistorialBody.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
 
   const res = await fetch(
     `${API_BASE}/clientes/${clienteId}/historial?comercio_id=${comercioId}`
   );
+
+  if (!res.ok) {
+    tablaHistorialBody.innerHTML =
+      "<tr><td colspan='4'>Acceso no autorizado</td></tr>";
+    return;
+  }
 
   const data = await res.json();
   tablaHistorialBody.innerHTML = "";
@@ -319,7 +334,6 @@ async function verHistorial(clienteId) {
       `;
     });
 
-    // Fila de total general
     tablaHistorialBody.innerHTML += `
       <tr class="fila-total-historial">
         <td colspan="3"><strong>Total</strong></td>
@@ -357,17 +371,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("No se pudo obtener comercioId");
   }
-
-  // ------------------------------
-  // BLOQUEO DE TABS POR ROL
-  // ------------------------------
-  const tabReportes = document.getElementById("tab-reportes");
-
-  if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none";
-  }
 });
-
-
-
-

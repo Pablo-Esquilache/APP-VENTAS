@@ -8,7 +8,8 @@ const router = express.Router();
 // ==========================
 router.get("/", async (req, res) => {
   const { comercio_id } = req.query;
-  if (!comercio_id) return res.status(400).json({ error: "comercio_id requerido" });
+  if (!comercio_id)
+    return res.status(400).json({ error: "comercio_id requerido" });
 
   const { rows } = await db.query(
     `SELECT * FROM clientes WHERE comercio_id = $1 ORDER BY id DESC`,
@@ -22,7 +23,16 @@ router.get("/", async (req, res) => {
 // POST
 // ==========================
 router.post("/", async (req, res) => {
-  const { nombre, edad, genero, telefono, email, localidad, comentarios, comercio_id } = req.body;
+  const {
+    nombre,
+    edad,
+    genero,
+    telefono,
+    email,
+    localidad,
+    comentarios,
+    comercio_id,
+  } = req.body;
 
   const q = `
     INSERT INTO clientes
@@ -32,7 +42,14 @@ router.post("/", async (req, res) => {
   `;
 
   const { rows } = await db.query(q, [
-    nombre, edad, genero, telefono, email, localidad, comentarios, comercio_id
+    nombre,
+    edad,
+    genero,
+    telefono,
+    email,
+    localidad,
+    comentarios,
+    comercio_id,
   ]);
 
   res.status(201).json(rows[0]);
@@ -43,7 +60,16 @@ router.post("/", async (req, res) => {
 // ==========================
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, edad, genero, telefono, email, localidad, comentarios, comercio_id } = req.body;
+  const {
+    nombre,
+    edad,
+    genero,
+    telefono,
+    email,
+    localidad,
+    comentarios,
+    comercio_id,
+  } = req.body;
 
   const q = `
     UPDATE clientes SET
@@ -54,7 +80,15 @@ router.put("/:id", async (req, res) => {
   `;
 
   const { rows } = await db.query(q, [
-    nombre, edad, genero, telefono, email, localidad, comentarios, id, comercio_id
+    nombre,
+    edad,
+    genero,
+    telefono,
+    email,
+    localidad,
+    comentarios,
+    id,
+    comercio_id,
   ]);
 
   res.json(rows[0] || null);
@@ -96,7 +130,7 @@ router.get("/localidades/lista", async (req, res) => {
     [comercio_id]
   );
 
-  res.json(rows.map(r => r.localidad));
+  res.json(rows.map((r) => r.localidad));
 });
 
 export default router;

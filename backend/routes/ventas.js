@@ -8,9 +8,11 @@ const router = express.Router();
 // ------------------------------
 router.get("/", async (req, res) => {
   const { comercio_id } = req.query;
-  if (!comercio_id) return res.status(400).json({ error: "comercio_id requerido" });
+  if (!comercio_id)
+    return res.status(400).json({ error: "comercio_id requerido" });
 
-  const { rows } = await db.query(`
+  const { rows } = await db.query(
+    `
     SELECT v.*, c.nombre AS cliente_nombre, p.nombre AS producto_nombre
     FROM ventas v
     LEFT JOIN clientes c ON v.cliente_id = c.id
@@ -18,7 +20,9 @@ router.get("/", async (req, res) => {
     WHERE v.comercio_id = $1
     ORDER BY v.fecha DESC, v.id DESC
     LIMIT 50
-  `, [comercio_id]);
+  `,
+    [comercio_id]
+  );
 
   res.json(rows);
 });
@@ -27,8 +31,18 @@ router.get("/", async (req, res) => {
 // POST crear venta
 // ------------------------------
 router.post("/", async (req, res) => {
-  const { fecha, cliente_id, producto_id, cantidad, precio, descuento = 0, metodo_pago, comercio_id } = req.body;
-  if (!comercio_id) return res.status(400).json({ error: "comercio_id requerido" });
+  const {
+    fecha,
+    cliente_id,
+    producto_id,
+    cantidad,
+    precio,
+    descuento = 0,
+    metodo_pago,
+    comercio_id,
+  } = req.body;
+  if (!comercio_id)
+    return res.status(400).json({ error: "comercio_id requerido" });
 
   try {
     // 1️⃣ Verificar stock
@@ -36,11 +50,14 @@ router.post("/", async (req, res) => {
       "SELECT stock FROM productos WHERE id = $1 AND comercio_id = $2",
       [producto_id, comercio_id]
     );
-    if (!productoRows[0]) return res.status(404).json({ error: "Producto no encontrado" });
+    if (!productoRows[0])
+      return res.status(404).json({ error: "Producto no encontrado" });
 
     const stockActual = Number(productoRows[0].stock);
     if (cantidad > stockActual) {
-      return res.status(400).json({ error: "Cantidad supera el stock disponible" });
+      return res
+        .status(400)
+        .json({ error: "Cantidad supera el stock disponible" });
     }
 
     // 2️⃣ Insertar venta
@@ -53,7 +70,17 @@ router.post("/", async (req, res) => {
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *
     `;
-    const { rows } = await db.query(q, [fecha, cliente_id, producto_id, cantidad, precio, descuento, metodo_pago, total, comercio_id]);
+    const { rows } = await db.query(q, [
+      fecha,
+      cliente_id,
+      producto_id,
+      cantidad,
+      precio,
+      descuento,
+      metodo_pago,
+      total,
+      comercio_id,
+    ]);
 
     // 3️⃣ Actualizar stock del producto
     await db.query(
@@ -90,7 +117,16 @@ router.delete("/:id", async (req, res) => {
 // ------------------------------
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { fecha, cliente_id, producto_id, cantidad, precio, descuento = 0, metodo_pago, comercio_id } = req.body;
+  const {
+    fecha,
+    cliente_id,
+    producto_id,
+    cantidad,
+    precio,
+    descuento = 0,
+    metodo_pago,
+    comercio_id,
+  } = req.body;
 
   try {
     // 1️⃣ Obtener venta original
@@ -98,7 +134,8 @@ router.put("/:id", async (req, res) => {
       "SELECT cantidad, producto_id FROM ventas WHERE id = $1 AND comercio_id = $2",
       [id, comercio_id]
     );
-    if (!ventaOriginalRows[0]) return res.status(404).json({ error: "Venta no encontrada" });
+    if (!ventaOriginalRows[0])
+      return res.status(404).json({ error: "Venta no encontrada" });
     const ventaOriginal = ventaOriginalRows[0];
 
     // 2️⃣ Ajustar stock: devolver cantidad original
@@ -112,11 +149,14 @@ router.put("/:id", async (req, res) => {
       "SELECT stock FROM productos WHERE id = $1 AND comercio_id = $2",
       [producto_id, comercio_id]
     );
-    if (!productoRows[0]) return res.status(404).json({ error: "Producto no encontrado" });
+    if (!productoRows[0])
+      return res.status(404).json({ error: "Producto no encontrado" });
 
     const stockDisponible = Number(productoRows[0].stock);
     if (cantidad > stockDisponible) {
-      return res.status(400).json({ error: "Cantidad supera el stock disponible" });
+      return res
+        .status(400)
+        .json({ error: "Cantidad supera el stock disponible" });
     }
 
     // 4️⃣ Actualizar venta
@@ -131,7 +171,18 @@ router.put("/:id", async (req, res) => {
       WHERE id=$9 AND comercio_id=$10
       RETURNING *
     `;
-    const { rows } = await db.query(q, [fecha, cliente_id, producto_id, cantidad, precio, descuento, metodo_pago, total, id, comercio_id]);
+    const { rows } = await db.query(q, [
+      fecha,
+      cliente_id,
+      producto_id,
+      cantidad,
+      precio,
+      descuento,
+      metodo_pago,
+      total,
+      id,
+      comercio_id,
+    ]);
 
     // 5️⃣ Restar nueva cantidad al stock
     await db.query(

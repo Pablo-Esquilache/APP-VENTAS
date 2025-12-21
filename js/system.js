@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       await res.json();
       alert("Conexión con la base actualizada");
-
     } catch (error) {
       alert("No se pudo reconectar con la base de datos");
     } finally {

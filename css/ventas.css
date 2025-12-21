@@ -43,7 +43,7 @@ body {
 #logout-btn {
   display: flex;
   align-items: center;
-  height: 32px;            /* CLAVE: misma altura */
+  height: 32px; /* CLAVE: misma altura */
   line-height: 32px;
   font-size: 14px;
 }
@@ -64,7 +64,7 @@ body {
   background: none;
   border: 1px solid #e74c3c;
   color: #e74c3c;
-  padding: 0 12px;         /* vertical controlado por height */
+  padding: 0 12px; /* vertical controlado por height */
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
@@ -87,6 +87,14 @@ body {
   z-index: 1000;
 }
 
+/* TAB REPORTES */
+#tab-reportes {
+  display: none;
+}
+
+body.role-admin #tab-reportes {
+  display: inline-flex;
+}
 
 /* ---------- CONTENEDOR ---------- */
 .v-container {
@@ -124,7 +132,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   border: none;
-  font-size: 15.5px !important
+  font-size: 15.5px !important;
 }
 
 .v-btn-primary {
@@ -156,7 +164,7 @@ body {
 
 .v-tabla {
   width: 100%;
-  border-collapse: collapse;  
+  border-collapse: collapse;
 }
 
 .v-tabla th,
@@ -302,4 +310,3 @@ body {
 #refresh-db-btn:active {
   transform: scale(0.96);
 }
-

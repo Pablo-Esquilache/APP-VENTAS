@@ -85,6 +85,15 @@ body {
   transform: scale(0.97);
 }
 
+/* TAB REPORTES */
+#tab-reportes {
+  display: none;
+}
+
+body.role-admin #tab-reportes {
+  display: inline-flex;
+}
+
 /* ---------- COMPENSO NAVBAR FIJA ---------- */
 .g-container {
   max-width: 1100px;
@@ -267,4 +276,3 @@ body {
 #refresh-db-btn:active {
   transform: scale(0.96);
 }
-

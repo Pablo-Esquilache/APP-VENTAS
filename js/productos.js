@@ -10,7 +10,6 @@ const API_BASE =
     ? "http://localhost:4000/api"
     : "https://app-ventas-gvdk.onrender.com/api";
 
-
 async function cargarComercio() {
   if (!firebaseUID) return;
 
@@ -299,18 +298,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("No se pudo obtener comercioId");
   }
-
-  // ------------------------------
-  // BLOQUEO DE TABS POR ROL
-  // ------------------------------
-  const session = JSON.parse(localStorage.getItem("session"));
-  const role = session?.role;
-  const tabReportes = document.getElementById("tab-reportes"); // id del li de reportes
-
-  if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none"; // usuarios no ven reportes
-  }
 });
-
-//<button class="p-btn-delete" data-id="${p.id}">Eliminar</button>
-

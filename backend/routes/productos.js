@@ -54,9 +54,8 @@ router.get("/categorias/lista", async (req, res) => {
       [comercio_id]
     );
 
-    const categorias = rows.map(r => r.categoria);
+    const categorias = rows.map((r) => r.categoria);
     res.json(categorias);
-
   } catch (error) {
     console.error("Error cargando categorías:", error);
     res.status(500).json({ error: "Error al obtener categorías" });
@@ -114,11 +113,10 @@ router.post("/", async (req, res) => {
       categoria || null,
       precio,
       stock ?? 0,
-      comercio_id
+      comercio_id,
     ]);
 
     res.status(201).json(rows[0]);
-
   } catch (error) {
     console.error("Error creando producto:", error);
     res.status(500).json({ error: "Error al crear el producto" });
@@ -153,7 +151,7 @@ router.put("/:id", async (req, res) => {
       precio,
       stock,
       id,
-      comercio_id
+      comercio_id,
     ]);
 
     if (!rows[0]) {
@@ -161,7 +159,6 @@ router.put("/:id", async (req, res) => {
     }
 
     res.json(rows[0]);
-
   } catch (error) {
     console.error("Error actualizando producto:", error);
     res.status(500).json({ error: "Error al actualizar el producto" });

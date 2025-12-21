@@ -193,15 +193,11 @@ async function cargarVentas() {
     const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
     let ventas = await res.json();
 
-  const hoy = new Date();
-hoy.setHours(0, 0, 0, 0);
+    const hoyStr = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
 
-ventas = ventas.filter(v => {
-  const fechaVenta = new Date(v.fecha);
-  fechaVenta.setHours(0, 0, 0, 0);
-  return fechaVenta.getTime() === hoy.getTime();
-});
-
+    ventas = ventas.filter((v) => {
+      return v.fecha?.slice(0, 10) === hoyStr;
+    });
 
     // Ordenar de mayor a menor por id
     ventas = ventas.sort((a, b) => b.id - a.id);
@@ -395,9 +391,11 @@ function renderVentasModal(lista) {
   });
 }
 
-// ------------------------------
+// FORMATO FECHA
 function formatearFecha(fechaISO) {
-  return new Date(fechaISO).toLocaleDateString("es-AR");
+  if (!fechaISO) return "—";
+  const [y, m, d] = fechaISO.slice(0, 10).split("-");
+  return `${d}/${m}/${y}`;
 }
 
 // ------------------------------
@@ -421,15 +419,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     await cargarVentas();
   } else {
     console.error("No se pudo obtener comercioId");
-  }
-
-  // ------------------------------
-  // BLOQUEO DE TABS POR ROL
-  // ------------------------------
-  const role = session?.role;
-  const tabReportes = document.getElementById("tab-reportes");
-
-  if (role !== "admin" && tabReportes) {
-    tabReportes.style.display = "none";
   }
 });

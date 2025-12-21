@@ -131,11 +131,14 @@ router.get("/categorias-vendidas", async (req, res) => {
   const { rows } = await db.query(q, params);
 
   // Calculamos el porcentaje del total
-  const totalImporte = rows.reduce((acc, r) => acc + Number(r.importe_total), 0);
-  const dataConPorcentaje = rows.map(r => ({
+  const totalImporte = rows.reduce(
+    (acc, r) => acc + Number(r.importe_total),
+    0
+  );
+  const dataConPorcentaje = rows.map((r) => ({
     categoria: r.categoria,
     importe_total: Number(r.importe_total),
-    porcentaje: ((Number(r.importe_total) / totalImporte) * 100).toFixed(2)
+    porcentaje: ((Number(r.importe_total) / totalImporte) * 100).toFixed(2),
   }));
 
   res.json(dataConPorcentaje);
@@ -223,11 +226,11 @@ router.get("/metodos-pago", async (req, res) => {
     0
   );
 
-  const data = rows.map(r => ({
+  const data = rows.map((r) => ({
     metodo_pago: r.metodo_pago,
     importe_total: Number(r.importe_total),
     cantidad_ventas: Number(r.cantidad_ventas),
-    porcentaje: ((Number(r.importe_total) / totalImporte) * 100).toFixed(2)
+    porcentaje: ((Number(r.importe_total) / totalImporte) * 100).toFixed(2),
   }));
 
   res.json(data);

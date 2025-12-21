@@ -85,6 +85,14 @@ body {
   transform: scale(0.97);
 }
 
+/* TAB REPORTES */
+#tab-reportes {
+  display: none;
+}
+
+body.role-admin #tab-reportes {
+  display: inline-flex;
+}
 
 /* ---------- CONTENEDOR ---------- */
 .p-container {
@@ -155,7 +163,7 @@ body {
 
 #tablaProductos {
   width: 100%;
-  border-collapse: collapse;  
+  border-collapse: collapse;
   table-layout: fixed; /* 🔥 CLAVE */
 }
 
@@ -254,5 +262,3 @@ body {
 #refresh-db-btn:active {
   transform: scale(0.96);
 }
-
-

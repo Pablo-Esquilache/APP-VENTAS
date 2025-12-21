@@ -28,7 +28,9 @@ router.post("/login", async (req, res) => {
 
     // Revisar si ya tiene sesión activa
     if (user.active_session) {
-      return res.status(403).json({ error: "Usuario ya tiene sesión activa en otro dispositivo" });
+      return res
+        .status(403)
+        .json({ error: "Usuario ya tiene sesión activa en otro dispositivo" });
     }
 
     // Generar token de sesión único
@@ -45,9 +47,8 @@ router.post("/login", async (req, res) => {
       uid: firebase_uid,
       role: user.role,
       comercio_id: user.comercio_id,
-      session_token: sessionToken
+      session_token: sessionToken,
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -56,7 +57,8 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", async (req, res) => {
   const { firebase_uid } = req.body;
-  if (!firebase_uid) return res.status(400).json({ error: "firebase_uid requerido" });
+  if (!firebase_uid)
+    return res.status(400).json({ error: "firebase_uid requerido" });
 
   try {
     await pool.query(
@@ -69,6 +71,5 @@ router.post("/logout", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
 
 export default router;

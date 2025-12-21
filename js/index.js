@@ -4,7 +4,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 // ===============================
@@ -55,14 +55,18 @@ form.addEventListener("submit", async (e) => {
 
   try {
     // 1️⃣ Login Firebase
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     const user = userCredential.user;
 
     // 2️⃣ Consultar backend (roles + comercio)
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firebase_uid: user.uid })
+      body: JSON.stringify({ firebase_uid: user.uid }),
     });
 
     if (!res.ok) throw new Error("No autorizado");
@@ -70,15 +74,17 @@ form.addEventListener("submit", async (e) => {
     const data = await res.json();
 
     // 3️⃣ Guardar sesión unificada
-    localStorage.setItem("session", JSON.stringify({
-      uid: user.uid,
-      role: data.role,
-      comercio_id: data.comercio_id
-    }));
+    localStorage.setItem(
+      "session",
+      JSON.stringify({
+        uid: user.uid,
+        role: data.role,
+        comercio_id: data.comercio_id,
+      })
+    );
 
     // 4️⃣ Redirección
     window.location.href = "pages/ventas.html";
-
   } catch (err) {
     // ❌ Error → ocultar loader y reactivar botón
     loader.classList.add("hidden");
