@@ -25,3 +25,7 @@ Thumbs.db
 # Python (si tu backend tiene algo en Python)
 __pycache__/
 *.pyc
+
+backend/firebaseServiceAccount.json
+
+firebaseServiceAccount.json
