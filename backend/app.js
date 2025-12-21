@@ -20,10 +20,6 @@ import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
 import clientesHistorialRoutes from "./routes/historial.js";
 
-// Middlewares
-import requireAuth from "./middleware/requireAuth.js";
-import { requiereRol } from "./middleware/requireRole.js";
-
 const app = express();
 
 // Middlewares globales
@@ -35,27 +31,17 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 
 // Rutas comunes → user y admin (solo logueados)
-app.use("/api/ventas", requireAuth, ventasRouter);
-app.use("/api/productos", requireAuth, productosRouter);
-app.use("/api/clientes", requireAuth, clientesRouter);
-app.use("/api/gastos", requireAuth, gastosRouter);
-app.use("/api/comercios", requireAuth, comerciosRouter);
-app.use("/api/exportar-tabla", requireAuth, exportarTablaRouter);
-app.use("/api/system", requireAuth, systemRouter);
+app.use("/api/ventas",ventasRouter);
+app.use("/api/productos",productosRouter);
+app.use("/api/clientes",clientesRouter);
+app.use("/api/gastos",gastosRouter);
+app.use("/api/comercios",comerciosRouter);
+app.use("/api/exportar-tabla",exportarTablaRouter);
+app.use("/api/system",systemRouter);
 
-app.use(
-  "/api/reportes",
-  requireAuth,
-  requiereRol("admin"),
-  reportesRoutes
-);
+app.use(  "/api/reportes",reportesRoutes);
 
-app.use(
-  "/api",
-  requireAuth,
-  requiereRol("admin"),
-  clientesHistorialRoutes
-);
+app.use(  "/api", clientesHistorialRoutes);
 
 
 // Puerto
