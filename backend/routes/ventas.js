@@ -108,9 +108,37 @@ router.get("/:id", async (req, res) => {
 // DELETE
 // ------------------------------
 router.delete("/:id", async (req, res) => {
-  await db.query("DELETE FROM ventas WHERE id = $1", [req.params.id]);
-  res.status(204).end();
+  const { id } = req.params;
+  const { comercio_id } = req.query; // necesitarías el comercio_id para verificar stock
+
+  if (!comercio_id) return res.status(400).json({ error: "comercio_id requerido" });
+
+  try {
+    // 1️⃣ Obtener la venta para saber producto y cantidad
+    const { rows: ventaRows } = await db.query(
+      "SELECT producto_id, cantidad FROM ventas WHERE id = $1 AND comercio_id = $2",
+      [id, comercio_id]
+    );
+
+    if (!ventaRows[0]) return res.status(404).json({ error: "Venta no encontrada" });
+    const venta = ventaRows[0];
+
+    // 2️⃣ Devolver cantidad al stock
+    await db.query(
+      "UPDATE productos SET stock = stock + $1 WHERE id = $2 AND comercio_id = $3",
+      [venta.cantidad, venta.producto_id, comercio_id]
+    );
+
+    // 3️⃣ Eliminar la venta
+    await db.query("DELETE FROM ventas WHERE id = $1 AND comercio_id = $2", [id, comercio_id]);
+
+    res.status(204).end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 });
+
 
 // ------------------------------
 // PUT actualizar venta

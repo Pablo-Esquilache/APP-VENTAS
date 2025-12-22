@@ -259,8 +259,17 @@ function activarBotonesAccion() {
       const id = btn.dataset.id;
       if (!confirm("¿Eliminar esta venta?")) return;
 
-      await fetch(`${API_URL}/ventas/${id}`, { method: "DELETE" });
-      cargarVentas();
+      try {
+        await fetch(`${API_URL}/ventas/${id}?comercio_id=${comercioId}`, {
+          method: "DELETE"
+        });
+
+        // recargar tablas
+        await cargarVentas();
+      } catch (err) {
+        console.error("Error eliminando venta:", err);
+        alert("No se pudo eliminar la venta.");
+      }
     });
   });
 
