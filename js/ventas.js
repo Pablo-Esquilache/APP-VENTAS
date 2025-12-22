@@ -53,13 +53,22 @@ const buscarVenta = document.getElementById("buscarVenta");
 const filtroDesde = document.getElementById("filtroDesde");
 const filtroHasta = document.getElementById("filtroHasta");
 
+// FILTROS MODAL VER TODAS
+const buscarVentaModal = document.getElementById("buscarVentaModal");
+const filtroDesdeModal = document.getElementById("filtroDesdeModal");
+const filtroHastaModal = document.getElementById("filtroHastaModal");
+const btnLimpiarFiltrosModal = document.getElementById("btnLimpiarFiltrosModal");
+
 // ------------------------------
 // ESTADO
 // ------------------------------
 let precioActual = 0;
 let isEditing = false;
 let editingId = null;
-let ventasCache = [];
+
+// caches separados
+let ventasCachePrincipal = []; // ventas de hoy para la tabla principal
+let ventasCacheModal = [];     // todas las ventas para el modal
 
 // ------------------------------
 // ABRIR MODAL NUEVA
@@ -173,7 +182,6 @@ async function cargarProductos(selectedId = null) {
     productoVenta.innerHTML = `<option value="">Seleccionar producto</option>`;
 
     productos.forEach((p) => {
-      // Mostrar producto si tiene stock > 0 o si es el que estamos editando
       if (p.stock > 0 || p.id == selectedId) {
         productoVenta.innerHTML += `<option value="${p.id}" ${
           p.id == selectedId ? "selected" : ""
@@ -186,29 +194,32 @@ async function cargarProductos(selectedId = null) {
 }
 
 // ------------------------------
-// CARGAR TABLA PRINCIPAL
+// CARGAR TABLA PRINCIPAL Y MODAL
 // ------------------------------
 async function cargarVentas() {
   try {
     const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
-    let ventas = await res.json();
+    const ventas = await res.json();
 
-    const hoyStr = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
+    // --- ventas de hoy para tabla principal ---
+    const hoyStr = new Date().toLocaleDateString("sv-SE");
+    const ventasHoy = ventas.filter(v => v.fecha?.slice(0,10) === hoyStr);
+    ventasHoy.sort((a,b)=>b.id - a.id);
+    ventasCachePrincipal = ventasHoy;
+    renderVentasPrincipal(ventasHoy);
 
-    ventas = ventas.filter((v) => {
-      return v.fecha?.slice(0, 10) === hoyStr;
-    });
+    // --- todas las ventas para modal ---
+    const todasOrdenadas = [...ventas].sort((a,b)=>b.id - a.id);
+    ventasCacheModal = todasOrdenadas;
 
-    // Ordenar de mayor a menor por id
-    ventas = ventas.sort((a, b) => b.id - a.id);
-    ventasCache = ventas;
-
-    renderVentasPrincipal(ventas);
   } catch (error) {
     console.error("Error al cargar ventas:", error);
   }
 }
 
+// ------------------------------
+// RENDER TABLA PRINCIPAL
+// ------------------------------
 function renderVentasPrincipal(lista) {
   tablaVentasBody.innerHTML = "";
 
@@ -287,7 +298,7 @@ async function abrirModalEdicion(id) {
 }
 
 // ------------------------------
-// GUARDAR (POST/PUT) con alerta por stock
+// GUARDAR (POST/PUT)
 formVenta.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -342,7 +353,7 @@ formVenta.addEventListener("submit", async (e) => {
 // FILTRO PRINCIPAL
 // ------------------------------
 function filtrarPrincipal() {
-  let lista = [...ventasCache];
+  let lista = [...ventasCachePrincipal];
 
   const txt = buscarVenta.value.toLowerCase();
   const desde = filtroDesde.value;
@@ -364,9 +375,7 @@ filtroHasta.addEventListener("change", filtrarPrincipal);
 // MODAL VER TODAS
 // ------------------------------
 btnVerVentas.addEventListener("click", async () => {
-  const res = await fetch(`${API_URL}/ventas?comercio_id=${comercioId}`);
-  const ventas = await res.json();
-  renderVentasModal(ventas);
+  renderVentasModal(ventasCacheModal);
   modalVerVentas.style.display = "flex";
 });
 
@@ -391,7 +400,37 @@ function renderVentasModal(lista) {
   });
 }
 
+// ------------------------------
+// FILTRO MODAL
+// ------------------------------
+function filtrarModal() {
+  let lista = [...ventasCacheModal];
+
+  const txt = buscarVentaModal.value.toLowerCase();
+  const desde = filtroDesdeModal.value;
+  const hasta = filtroHastaModal.value;
+
+  if (txt) lista = lista.filter(v => JSON.stringify(v).toLowerCase().includes(txt));
+  if (desde) lista = lista.filter(v => v.fecha >= desde);
+  if (hasta) lista = lista.filter(v => v.fecha <= hasta);
+
+  renderVentasModal(lista);
+}
+
+buscarVentaModal.addEventListener("input", filtrarModal);
+filtroDesdeModal.addEventListener("change", filtrarModal);
+filtroHastaModal.addEventListener("change", filtrarModal);
+
+btnLimpiarFiltrosModal.addEventListener("click", () => {
+  buscarVentaModal.value = "";
+  filtroDesdeModal.value = "";
+  filtroHastaModal.value = "";
+  renderVentasModal(ventasCacheModal);
+});
+
+// ------------------------------
 // FORMATO FECHA
+// ------------------------------
 function formatearFecha(fechaISO) {
   if (!fechaISO) return "—";
   const [y, m, d] = fechaISO.slice(0, 10).split("-");
@@ -399,7 +438,7 @@ function formatearFecha(fechaISO) {
 }
 
 // ------------------------------
-// LIMPIAR FILTROS
+// LIMPIAR FILTROS PRINCIPAL
 // ------------------------------
 const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
 
@@ -408,7 +447,7 @@ btnLimpiarFiltros.addEventListener("click", () => {
   filtroDesde.value = "";
   filtroHasta.value = "";
 
-  renderVentasPrincipal(ventasCache);
+  renderVentasPrincipal(ventasCachePrincipal);
 });
 
 // ------------------------------

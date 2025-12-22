@@ -310,3 +310,31 @@ body.role-admin #tab-reportes {
 #refresh-db-btn:active {
   transform: scale(0.96);
 }
+
+/* ---------- FILTROS MODAL VER TODAS ---------- */
+#modalVerVentas .v-filtros-ver {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+#modalVerVentas .v-filtros-ver input.v-input,
+#modalVerVentas .v-filtros-ver button.v-btn-secondary {
+  min-width: 130px;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 0.5rem 0.7rem;
+  border-radius: 4px;
+}
+
+#modalVerVentas .v-filtros-ver button.v-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+  cursor: pointer;
+}
+
+#modalVerVentas .v-filtros-ver button.v-btn-secondary:hover {
+  background: #444;
+}

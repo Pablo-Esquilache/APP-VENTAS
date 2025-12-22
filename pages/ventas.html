@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/normalize.css" />
     <link rel="stylesheet" href="../css/ventas.css" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png">
     <meta name="theme-color" content="#151515" />
   </head>
 
@@ -164,6 +165,16 @@
         <span class="v-close-ver">&times;</span>
 
         <h2 class="v-subtitle">Todas las ventas</h2>
+
+        <div class="v-controls v-filtros-ver">
+  <input type="text" id="buscarVentaModal" class="v-input" placeholder="Buscar..."/>
+  <label for="">Desde</label>
+  <input type="date" id="filtroDesdeModal" class="v-input"/>
+  <label for="">Hasta</label>
+  <input type="date" id="filtroHastaModal" class="v-input"/>
+  <button id="btnLimpiarFiltrosModal" class="v-btn-secondary">Limpiar filtros</button>
+</div>
+
 
         <div class="v-tabla-modal-container">
           <table class="v-tabla">
