@@ -268,4 +268,39 @@ router.get("/gastos-descripcion-tipo", async (req, res) => {
   res.json(rows);
 });
 
+// Ventas por localidad del cliente
+router.get("/ventas-por-localidad", async (req, res) => {
+  const { comercio_id, desde, hasta } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  let filtroFecha = "";
+  const params = [comercio_id];
+
+  if (desde && hasta) {
+    filtroFecha = "AND v.fecha BETWEEN $2 AND $3";
+    params.push(desde, hasta);
+  }
+
+  const q = `
+    SELECT
+      c.localidad,
+      COUNT(v.id) AS cantidad_ventas
+    FROM ventas v
+    JOIN clientes c ON c.id = v.cliente_id
+    WHERE v.comercio_id = $1
+      AND c.localidad IS NOT NULL
+      AND c.localidad <> ''
+      ${filtroFecha}
+    GROUP BY c.localidad
+    ORDER BY cantidad_ventas DESC;
+  `;
+
+  const { rows } = await db.query(q, params);
+  res.json(rows);
+});
+
+
 export default router;

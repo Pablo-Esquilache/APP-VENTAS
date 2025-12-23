@@ -13,6 +13,8 @@ let graficoCategorias = null;
 let graficoEdadEtarioGenero = null;
 let graficoMetodosPago = null;
 let graficoGastosDescripcionTipo = null;
+let graficoVentasLocalidad = null;
+
 
 // Paleta de colores unificada
 const paletaColores = [
@@ -493,6 +495,7 @@ async function cargarGastosDescripcionTipo() {
 
   const res = await fetch(url);
   const data = await res.json();
+  
   renderGastosDescripcionTipo(data);
 }
 
@@ -573,6 +576,99 @@ function renderGastosDescripcionTipo(data) {
     plugins: [ChartDataLabels],
   });
 }
+
+//VENTAS POR LOCALIDAD
+async function cargarVentasPorLocalidad() {
+  try {
+    const session = JSON.parse(localStorage.getItem("session"));
+    const comercioId = session.comercio_id;
+
+    const desde = document.getElementById("rDesde").value;
+    const hasta = document.getElementById("rHasta").value;
+
+    let url = `${API_BASE}/reportes/ventas-por-localidad?comercio_id=${comercioId}`;
+    if (desde) url += `&desde=${desde}`;
+    if (hasta) url += `&hasta=${hasta}`;
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Error al obtener ventas por localidad");
+
+    const data = await res.json();
+    renderVentasPorLocalidad(data);
+  } catch (error) {
+    console.error(error);
+    alert("No se pudo cargar el gráfico de ventas por localidad");
+  }
+}
+
+function renderVentasPorLocalidad(data) {
+  // Opcional: quedarte con top 10
+  const top = data.slice(0, 10);
+
+  const labels = top.map((d) => d.localidad);
+  const valores = top.map((d) => Number(d.cantidad_ventas));
+
+  const ctx = document
+    .getElementById("graficoVentasLocalidad")
+    .getContext("2d");
+
+  if (graficoVentasLocalidad) graficoVentasLocalidad.destroy();
+
+  graficoVentasLocalidad = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Cantidad de ventas",
+          data: valores,
+          backgroundColor: paletaColores[0],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `Ventas: ${context.parsed.y}`,
+          },
+        },
+
+        datalabels: {
+          display: true,
+          color: "#fff",
+          anchor: "end",
+          align: "top",
+          formatter: (value) => value,
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Localidad",
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Cantidad de ventas",
+          },
+          ticks: {
+            precision: 0,
+          },
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
 
 // ============================
 // Descargar PDF
@@ -657,6 +753,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cargarEdadEtarioGenero();
       cargarMetodosPago();
       cargarGastosDescripcionTipo();
+      cargarVentasPorLocalidad(); // 👈 NUEVO
 
       document.getElementById("btnDescargarPDF").disabled = false;
     });
