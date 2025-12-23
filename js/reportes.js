@@ -602,11 +602,8 @@ async function cargarVentasPorLocalidad() {
 }
 
 function renderVentasPorLocalidad(data) {
-  // Opcional: quedarte con top 10
-  const top = data.slice(0, 10);
-
-  const labels = top.map((d) => d.localidad);
-  const valores = top.map((d) => Number(d.cantidad_ventas));
+  const labels = data.map((d) => d.localidad);
+  const valores = data.map((d) => Number(d.cantidad_ventas));
 
   const ctx = document
     .getElementById("graficoVentasLocalidad")
@@ -622,7 +619,9 @@ function renderVentasPorLocalidad(data) {
         {
           label: "Cantidad de ventas",
           data: valores,
-          backgroundColor: paletaColores[0],
+          backgroundColor: labels.map(
+            (_, i) => paletaColores[i % paletaColores.length]
+          ),
         },
       ],
     },
@@ -630,14 +629,11 @@ function renderVentasPorLocalidad(data) {
       responsive: true,
       plugins: {
         legend: { display: false },
-
         tooltip: {
           callbacks: {
-            label: (context) =>
-              `Ventas: ${context.parsed.y}`,
+            label: (context) => `Ventas: ${context.parsed.y}`,
           },
         },
-
         datalabels: {
           display: true,
           color: "#fff",
@@ -648,27 +644,18 @@ function renderVentasPorLocalidad(data) {
       },
       scales: {
         x: {
-          title: {
-            display: true,
-            text: "Localidad",
-          },
+          title: { display: true, text: "Localidad" },
         },
         y: {
           beginAtZero: true,
-          title: {
-            display: true,
-            text: "Cantidad de ventas",
-          },
-          ticks: {
-            precision: 0,
-          },
+          title: { display: true, text: "Cantidad de ventas" },
+          ticks: { precision: 0 },
         },
       },
     },
     plugins: [ChartDataLabels],
   });
 }
-
 
 // ============================
 // Descargar PDF
