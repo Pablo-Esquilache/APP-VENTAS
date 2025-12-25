@@ -14,6 +14,7 @@ let graficoEdadEtarioGenero = null;
 let graficoMetodosPago = null;
 let graficoGastosDescripcionTipo = null;
 let graficoVentasLocalidad = null;
+let graficoTopClientes = null;
 
 
 // Paleta de colores unificada
@@ -657,6 +658,100 @@ function renderVentasPorLocalidad(data) {
   });
 }
 
+//TOP 10 CLIENTES+FRECUENDIA+TICKET RPOMEDIO
+async function cargarTopClientesFrecuenciaTicket() {
+  const session = JSON.parse(localStorage.getItem("session"));
+  const comercioId = session.comercio_id;
+
+  const desde = document.getElementById("rDesde").value;
+  const hasta = document.getElementById("rHasta").value;
+
+  let url = `${API_BASE}/reportes/top-clientes-frecuencia-ticket?comercio_id=${comercioId}&limit=10`;
+  if (desde) url += `&desde=${desde}`;
+  if (hasta) url += `&hasta=${hasta}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  renderTopClientesFrecuenciaTicket(data);
+}
+
+function renderTopClientesFrecuenciaTicket(data) {
+  const labels = data.map(d => d.cliente);
+  const cantidades = data.map(d => Number(d.cantidad_compras));
+  const tickets = data.map(d => Number(d.ticket_promedio));
+
+  const ctx = document
+    .getElementById("graficoTopClientes")
+    .getContext("2d");
+
+  if (graficoTopClientes) graficoTopClientes.destroy();
+
+  graficoTopClientes = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        {
+          type: "bar",
+          label: "Cantidad de compras",
+          data: cantidades,
+          backgroundColor: paletaColores[0],
+          xAxisID: "x",
+        },
+        {
+          type: "line",
+          label: "Ticket promedio",
+          data: tickets,
+          borderColor: paletaColores[1],
+          backgroundColor: paletaColores[1],
+          yAxisID: "y1",
+          tension: 0.3,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              return context.dataset.label === "Ticket promedio"
+                ? `${context.dataset.label}: ${formatoPesos.format(context.parsed.x)}`
+                : `${context.dataset.label}: ${context.parsed.x}`;
+            },
+          },
+        },
+        datalabels: {
+          display: true,
+          color: "#fff",
+          anchor: "end",
+          align: "right",
+          formatter: (value, ctx) =>
+            ctx.dataset.label === "Ticket promedio"
+              ? formatoPesos.format(value)
+              : value,
+        },
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Cantidad de compras" },
+        },
+        y1: {
+          position: "top",
+          grid: { drawOnChartArea: false },
+          ticks: {
+            callback: (v) => formatoPesos.format(v),
+          },
+          title: { display: true, text: "Ticket promedio" },
+        },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
 // ============================
 // Descargar PDF
 // ============================
@@ -740,7 +835,8 @@ document.addEventListener("DOMContentLoaded", () => {
       cargarEdadEtarioGenero();
       cargarMetodosPago();
       cargarGastosDescripcionTipo();
-      cargarVentasPorLocalidad(); // 👈 NUEVO
+      cargarVentasPorLocalidad();
+      cargarTopClientesFrecuenciaTicket();
 
       document.getElementById("btnDescargarPDF").disabled = false;
     });

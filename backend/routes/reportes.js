@@ -309,5 +309,39 @@ router.get("/ventas-por-localidad", async (req, res) => {
   res.json(rows);
 });
 
+// Top 10 clientes por cantidad de compras + ticket promedio
+router.get("/top-clientes-frecuencia-ticket", async (req, res) => {
+  const { comercio_id, desde, hasta, limit = 10 } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  let filtroFecha = "";
+  const params = [comercio_id];
+
+  if (desde && hasta) {
+    filtroFecha = "AND v.fecha BETWEEN $2 AND $3";
+    params.push(desde, hasta);
+  }
+
+  const q = `
+    SELECT
+      c.nombre AS cliente,
+      COUNT(v.id) AS cantidad_compras,
+      AVG(v.total) AS ticket_promedio
+    FROM ventas v
+    JOIN clientes c ON c.id = v.cliente_id
+    WHERE v.comercio_id = $1
+      ${filtroFecha}
+    GROUP BY c.nombre
+    ORDER BY cantidad_compras DESC
+    LIMIT ${Number(limit)};
+  `;
+
+  const { rows } = await db.query(q, params);
+  res.json(rows);
+});
+
 
 export default router;
