@@ -161,28 +161,35 @@ router.get("/edad-etario-genero", async (req, res) => {
   }
 
   const q = `
+    WITH edades AS (
+      SELECT
+        v.id,
+        v.total,
+        EXTRACT(YEAR FROM AGE(CURRENT_DATE, c.fecha_nacimiento))::int AS edad,
+        CASE
+          WHEN UPPER(c.genero) IN ('M', 'MASCULINO') THEN 'Masculino'
+          WHEN UPPER(c.genero) IN ('F', 'FEMENINO') THEN 'Femenino'
+          ELSE 'Otro'
+        END AS genero
+      FROM ventas v
+      JOIN clientes c ON c.id = v.cliente_id
+      WHERE v.comercio_id = $1
+        AND c.fecha_nacimiento IS NOT NULL
+        ${filtroFecha}
+    )
+
     SELECT
       CASE
-        WHEN c.edad BETWEEN 0 AND 12 THEN 'Niños (0–12)'
-        WHEN c.edad BETWEEN 13 AND 24 THEN 'Jóvenes (13–24)'
-        WHEN c.edad BETWEEN 25 AND 59 THEN 'Adultos (25–59)'
+        WHEN edad BETWEEN 0 AND 12 THEN 'Niños (0–12)'
+        WHEN edad BETWEEN 13 AND 24 THEN 'Jóvenes (13–24)'
+        WHEN edad BETWEEN 25 AND 59 THEN 'Adultos (25–59)'
         ELSE 'Adultos mayores (60+)'
       END AS grupo_etario,
-
-      CASE
-        WHEN UPPER(c.genero) IN ('M', 'MASCULINO') THEN 'Masculino'
-        WHEN UPPER(c.genero) IN ('F', 'FEMENINO') THEN 'Femenino'
-        ELSE 'Otro'
-      END AS genero,
-
-      AVG(c.edad)::numeric(10,2) AS edad_promedio,
-      SUM(v.total) AS importe_total,
-      COUNT(v.id) AS cantidad_compras
-
-    FROM ventas v
-    JOIN clientes c ON c.id = v.cliente_id
-    WHERE v.comercio_id = $1
-      ${filtroFecha}
+      genero,
+      AVG(edad)::numeric(10,2) AS edad_promedio,
+      SUM(total) AS importe_total,
+      COUNT(id) AS cantidad_compras
+    FROM edades
     GROUP BY grupo_etario, genero
     ORDER BY importe_total DESC;
   `;
