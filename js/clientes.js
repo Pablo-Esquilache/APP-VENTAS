@@ -3,7 +3,6 @@
 // ===========================================================
 const session = JSON.parse(localStorage.getItem("session"));
 const firebaseUID = session?.uid;
-// const role = session?.role;
 let comercioId = session?.comercio_id || null;
 
 const API_BASE =
@@ -27,7 +26,7 @@ const tituloModal = document.querySelector(".c-subtitle");
 
 const campoId = document.getElementById("idCliente");
 const campoNombre = document.getElementById("nombre");
-const campoEdad = document.getElementById("edad");
+const campoFechaNacimiento = document.getElementById("fechaNacimiento");
 const campoGenero = document.getElementById("genero");
 const campoTelefono = document.getElementById("telefono");
 const campoEmail = document.getElementById("email");
@@ -52,6 +51,25 @@ let modoEdicion = false;
 let clienteEditandoId = null;
 let clientes = [];
 let localidades = [];
+
+// ===========================================================
+// HELPERS
+// ===========================================================
+function calcularEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const m = hoy.getMonth() - nacimiento.getMonth();
+
+  if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+
+  return edad;
+}
 
 // ===========================================================
 // CARGAR COMERCIO
@@ -125,7 +143,7 @@ window.addEventListener("click", (e) => {
 function limpiarFormulario() {
   campoId.value = "";
   campoNombre.value = "";
-  campoEdad.value = "";
+  campoFechaNacimiento.value = "";
   campoGenero.value = "";
   campoTelefono.value = "";
   campoEmail.value = "";
@@ -160,7 +178,7 @@ document.getElementById("formCliente").addEventListener("submit", async (e) => {
 
   const data = {
     nombre: campoNombre.value.trim(),
-    edad: campoEdad.value ? parseInt(campoEdad.value) : null,
+    fecha_nacimiento: campoFechaNacimiento.value || null,
     genero: campoGenero.value || "",
     telefono: campoTelefono.value.trim() || "",
     email: campoEmail.value.trim() || "",
@@ -220,7 +238,7 @@ function renderTablaClientes() {
       <tr>
         <td>${c.id}</td>
         <td>${c.nombre}</td>
-        <td>${c.edad ?? "-"}</td>
+        <td>${calcularEdad(c.fecha_nacimiento) ?? "-"}</td>
         <td>${c.genero || "-"}</td>
         <td>${c.telefono || "-"}</td>
         <td>${c.email || "-"}</td>
@@ -228,11 +246,11 @@ function renderTablaClientes() {
         <td>${c.comentarios || "-"}</td>
         <td>
           <div class="acciones-clientes">
-  <button class="c-btn-edit" data-id="${c.id}">Editar</button>
-  <button class="c-btn-historial only-admin" data-id="${c.id}">
-    Historial
-  </button>
-</div>
+            <button class="c-btn-edit" data-id="${c.id}">Editar</button>
+            <button class="c-btn-historial only-admin" data-id="${c.id}">
+              Historial
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -266,7 +284,9 @@ function editarCliente(id) {
 
   campoId.value = c.id;
   campoNombre.value = c.nombre;
-  campoEdad.value = c.edad ?? "";
+  campoFechaNacimiento.value = c.fecha_nacimiento
+    ? c.fecha_nacimiento.slice(0, 10)
+    : "";
   campoGenero.value = c.genero ?? "";
   campoTelefono.value = c.telefono ?? "";
   campoEmail.value = c.email ?? "";
@@ -286,8 +306,6 @@ function editarCliente(id) {
 // ===========================================================
 // HISTORIAL CLIENTE
 // ===========================================================
-
-// FORMATO FECHA
 function formatearFecha(fechaISO) {
   if (!fechaISO) return "—";
   const [y, m, d] = fechaISO.slice(0, 10).split("-");
@@ -385,9 +403,8 @@ window.addEventListener("click", (e) => {
 // INIT
 // ===========================================================
 document.addEventListener("DOMContentLoaded", async () => {
-  const role = session?.role; // <-- mover arriba
+  const role = session?.role;
 
-  // Seteo de rol para control visual por CSS
   if (role) {
     document.body.classList.add(`role-${role}`);
   }
