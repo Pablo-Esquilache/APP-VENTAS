@@ -659,6 +659,23 @@ function renderVentasPorLocalidad(data) {
 }
 
 //TOP 10 CLIENTES+FRECUENDIA+TICKET RPOMEDIO
+async function cargarTopClientesFrecuenciaTicket() {
+  const session = JSON.parse(localStorage.getItem("session"));
+  const comercioId = session.comercio_id;
+
+  const desde = document.getElementById("rDesde").value;
+  const hasta = document.getElementById("rHasta").value;
+
+  let url = `${API_BASE}/reportes/top-clientes-frecuencia-ticket?comercio_id=${comercioId}&limit=10`;
+  if (desde) url += `&desde=${desde}`;
+  if (hasta) url += `&hasta=${hasta}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  renderTopClientesFrecuenciaTicket(data);
+}
+
 function renderTopClientesFrecuenciaTicket(data) {
   const labels = data.map(d => d.cliente);
   const cantidades = data.map(d => Number(d.cantidad_compras));
@@ -687,7 +704,7 @@ function renderTopClientesFrecuenciaTicket(data) {
           data: tickets,
           borderColor: paletaColores[1],
           backgroundColor: paletaColores[1],
-          xAxisID: "x1", // 👈 eje correcto
+          yAxisID: "y1",
           tension: 0.3,
         },
       ],
@@ -699,10 +716,11 @@ function renderTopClientesFrecuenciaTicket(data) {
       plugins: {
         tooltip: {
           callbacks: {
-            label: (context) =>
-              context.dataset.label === "Ticket promedio"
+            label: (context) => {
+              return context.dataset.label === "Ticket promedio"
                 ? `${context.dataset.label}: ${formatoPesos.format(context.parsed.x)}`
-                : `${context.dataset.label}: ${context.parsed.x}`,
+                : `${context.dataset.label}: ${context.parsed.x}`;
+            },
           },
         },
         datalabels: {
@@ -718,20 +736,15 @@ function renderTopClientesFrecuenciaTicket(data) {
       },
       scales: {
         x: {
-          position: "bottom",
           title: { display: true, text: "Cantidad de compras" },
-          ticks: { precision: 0 },
         },
-        x1: {
+        y1: {
           position: "top",
           grid: { drawOnChartArea: false },
           ticks: {
             callback: (v) => formatoPesos.format(v),
           },
           title: { display: true, text: "Ticket promedio" },
-        },
-        y: {
-          title: { display: true, text: "Cliente" },
         },
       },
     },
