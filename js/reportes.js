@@ -16,7 +16,6 @@ let graficoGastosDescripcionTipo = null;
 let graficoVentasLocalidad = null;
 let graficoTopClientes = null;
 
-
 // Paleta de colores unificada
 const paletaColores = [
   "#3fd18c", // verde principal
@@ -37,6 +36,12 @@ const formatoPesos = new Intl.NumberFormat("es-AR", {
   currency: "ARS",
   minimumFractionDigits: 0,
 });
+
+//
+function setDescripcion(selector, texto) {
+  const el = document.querySelector(selector);
+  if (el) el.textContent = texto;
+}
 
 // ============================
 // Ventas vs gastos + ticket promedio
@@ -73,6 +78,19 @@ function renderGraficoVentasGastos(data) {
 
   const canvas = document.getElementById("graficoVentasGastos");
   const ctx = canvas.getContext("2d");
+
+  const maxVentas = Math.max(...ventas);
+  const maxGastos = Math.max(...gastos);
+  const maxTicket = Math.max(...ticket.filter((v) => v !== null));
+
+  setDescripcion(
+    ".r-ventas-gastos",
+    `Este gráfico muestra la evolución de las ventas, los gastos y el ticket promedio en el período seleccionado. 
+   El mayor nivel de ventas fue de ${formatoPesos.format(
+     maxVentas
+   )}, el gasto máximo alcanzó ${formatoPesos.format(maxGastos)} 
+   y el ticket promedio más alto fue de ${formatoPesos.format(maxTicket)}.`
+  );
 
   if (graficoVG) graficoVG.destroy();
 
@@ -179,6 +197,17 @@ function renderTopProductos(data) {
 
   const ctx = document.getElementById("graficoTopProductos").getContext("2d");
   if (graficoTopProductos) graficoTopProductos.destroy();
+
+  const topProducto = data[0];
+
+  setDescripcion(
+    ".r-top-productos",
+    `Este gráfico presenta los 10 productos más vendidos, ordenados por cantidad. 
+   El producto con mayor salida es ${topProducto.producto}, con ${
+      topProducto.cantidad_vendida
+    } unidades vendidas 
+   y un importe total de ${formatoPesos.format(topProducto.total_vendido)}.`
+  );
 
   graficoTopProductos = new Chart(ctx, {
     type: "bar",
@@ -291,6 +320,19 @@ function renderCategoriasVendidas(data) {
   canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
+  const topCategoria = data.reduce((a, b) =>
+    a.importe_total > b.importe_total ? a : b
+  );
+
+  setDescripcion(
+    ".r-categorias",
+    `Este gráfico muestra la distribución de las ventas por categoría de producto. 
+   En el período analizado, la categoría con mayor facturación fue ${
+     topCategoria.categoria
+   }, 
+   con un importe total de ${formatoPesos.format(topCategoria.importe_total)}.`
+  );
+
   if (graficoCategorias) graficoCategorias.destroy();
 
   graficoCategorias = new Chart(ctx, {
@@ -375,6 +417,27 @@ function renderEdadEtarioGenero(data) {
     .getContext("2d");
   if (graficoEdadEtarioGenero) graficoEdadEtarioGenero.destroy();
 
+  const grupoTop = Object.entries(importePorGrupo).sort(
+    (a, b) => b[1] - a[1]
+  )[0][0];
+
+  const registrosGrupo = data.filter((d) => d.grupo_etario === grupoTop);
+  const totalCompras = registrosGrupo.reduce(
+    (a, b) => a + Number(b.cantidad_compras),
+    0
+  );
+  const totalImporte = registrosGrupo.reduce(
+    (a, b) => a + Number(b.importe_total),
+    0
+  );
+
+  setDescripcion(
+    ".r-etario-genero",
+    `Este gráfico muestra la distribución de los clientes por grupo etario y género. 
+   El grupo con mayor participación es ${grupoTop}, con ${totalCompras} compras realizadas 
+   y un importe total de ${formatoPesos.format(totalImporte)}.`
+  );
+
   graficoEdadEtarioGenero = new Chart(ctx, {
     type: "bar",
     data: { labels: grupos, datasets },
@@ -442,6 +505,17 @@ function renderMetodosPago(data) {
   canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
+  const topMetodo = data[0];
+
+  setDescripcion(
+    ".r-metodos-pago",
+    `Este gráfico refleja cómo se distribuyen las ventas según el método de pago utilizado. 
+   El método más utilizado fue ${topMetodo.metodo_pago}, con ${
+      topMetodo.cantidad_ventas
+    } ventas 
+   y un importe total de ${formatoPesos.format(topMetodo.importe_total)}.`
+  );
+
   if (graficoMetodosPago) graficoMetodosPago.destroy();
 
   graficoMetodosPago = new Chart(ctx, {
@@ -496,7 +570,7 @@ async function cargarGastosDescripcionTipo() {
 
   const res = await fetch(url);
   const data = await res.json();
-  
+
   renderGastosDescripcionTipo(data);
 }
 
@@ -518,6 +592,19 @@ function renderGastosDescripcionTipo(data) {
     .getContext("2d");
 
   if (graficoGastosDescripcionTipo) graficoGastosDescripcionTipo.destroy();
+
+  const gastoTop = data.reduce((a, b) =>
+    Number(a.importe) > Number(b.importe) ? a : b
+  );
+
+  setDescripcion(
+    ".r-gastos",
+    `Este gráfico muestra la distribución de los gastos según su descripción y tipo. 
+   El gasto más alto corresponde a "${gastoTop.descripcion}", de tipo ${
+      gastoTop.tipo
+    }, 
+   con un importe total de ${formatoPesos.format(gastoTop.importe)}.`
+  );
 
   graficoGastosDescripcionTipo = new Chart(ctx, {
     type: "bar",
@@ -612,6 +699,15 @@ function renderVentasPorLocalidad(data) {
 
   if (graficoVentasLocalidad) graficoVentasLocalidad.destroy();
 
+  const topLocalidad = data[0];
+
+  setDescripcion(
+    ".r-localidad",
+    `Este gráfico presenta la cantidad de ventas realizadas por localidad del cliente. 
+   La localidad con mayor volumen de ventas es ${topLocalidad.localidad}, 
+   con un total de ${topLocalidad.cantidad_ventas} ventas.`
+  );
+
   graficoVentasLocalidad = new Chart(ctx, {
     type: "bar",
     data: {
@@ -677,15 +773,24 @@ async function cargarTopClientesFrecuenciaTicket() {
 }
 
 function renderTopClientesFrecuenciaTicket(data) {
-  const labels = data.map(d => d.cliente);
-  const cantidades = data.map(d => Number(d.cantidad_compras));
-  const tickets = data.map(d => Number(d.ticket_promedio));
+  const labels = data.map((d) => d.cliente);
+  const cantidades = data.map((d) => Number(d.cantidad_compras));
+  const tickets = data.map((d) => Number(d.ticket_promedio));
 
-  const ctx = document
-    .getElementById("graficoTopClientes")
-    .getContext("2d");
+  const ctx = document.getElementById("graficoTopClientes").getContext("2d");
 
   if (graficoTopClientes) graficoTopClientes.destroy();
+
+  const topCliente = data[0];
+
+  setDescripcion(
+    ".r-top-clientes",
+    `Este gráfico muestra los clientes con mayor frecuencia de compra y su ticket promedio. 
+   El cliente más habitual es ${topCliente.cliente}, con ${
+      topCliente.cantidad_compras
+    } compras realizadas 
+   y un ticket promedio de ${formatoPesos.format(topCliente.ticket_promedio)}.`
+  );
 
   graficoTopClientes = new Chart(ctx, {
     data: {
@@ -704,7 +809,7 @@ function renderTopClientesFrecuenciaTicket(data) {
           data: tickets,
           borderColor: paletaColores[1],
           backgroundColor: paletaColores[1],
-          yAxisID: "y1",
+          xAxisID: "x1", // 👈 eje independiente
           tension: 0.3,
         },
       ],
@@ -718,13 +823,14 @@ function renderTopClientesFrecuenciaTicket(data) {
           callbacks: {
             label: (context) => {
               return context.dataset.label === "Ticket promedio"
-                ? `${context.dataset.label}: ${formatoPesos.format(context.parsed.x)}`
+                ? `${context.dataset.label}: ${formatoPesos.format(
+                    context.parsed.x
+                  )}`
                 : `${context.dataset.label}: ${context.parsed.x}`;
             },
           },
         },
         datalabels: {
-          display: true,
           color: "#fff",
           anchor: "end",
           align: "right",
@@ -736,15 +842,32 @@ function renderTopClientesFrecuenciaTicket(data) {
       },
       scales: {
         x: {
-          title: { display: true, text: "Cantidad de compras" },
+          position: "bottom",
+          title: {
+            display: true,
+            text: "Cantidad de compras",
+          },
+          ticks: {
+            precision: 0,
+          },
         },
-        y1: {
+        x1: {
           position: "top",
-          grid: { drawOnChartArea: false },
+          grid: {
+            drawOnChartArea: false,
+          },
+          title: {
+            display: true,
+            text: "Ticket promedio",
+          },
           ticks: {
             callback: (v) => formatoPesos.format(v),
           },
-          title: { display: true, text: "Ticket promedio" },
+        },
+        y: {
+          ticks: {
+            autoSkip: false,
+          },
         },
       },
     },
