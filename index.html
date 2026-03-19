@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
+    <!-- Metadatos básicos -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Título -->
     <title>Login | Sistema de Ventas</title>
+
+    <!-- Estilos -->
     <link rel="stylesheet" href="css/normalize.css" />
     <link rel="stylesheet" href="css/index.css" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" href="./icons/icon-192.png" type="image/png">
+
+    <!-- Icono de la aplicación -->
+    <link rel="icon" href="./icons/icon-192.png" type="image/png" />
+
+    <!-- Color de la barra del navegador (PWA / móviles) -->
     <meta name="theme-color" content="#151515" />
   </head>
+
   <body>
-    <!-- Contenedor del Login -->
+    <!-- Contenedor principal del login -->
     <div class="login-container">
+      <!-- Título del formulario -->
       <h1 class="login-title">Ingresar</h1>
 
+      <!-- Formulario de autenticación -->
       <form id="login-form" class="login-form" autocomplete="off">
+        <!-- Campo usuario -->
         <div class="input-group">
           <label for="login-usuario">Usuario</label>
           <input
@@ -27,6 +39,7 @@
           />
         </div>
 
+        <!-- Campo contraseña -->
         <div class="input-group">
           <label for="login-password">Contraseña</label>
           <input
@@ -38,56 +51,18 @@
           />
         </div>
 
+        <!-- Botón de envío -->
         <button type="submit" class="btn-primary">Ingresar</button>
       </form>
+
+      <!-- Loader mostrado mientras se procesa el login -->
       <div id="loader" class="loader hidden">
         <div class="spinner"></div>
         <p>Conectando…</p>
       </div>
-      <!-- <p class="register-link">
-        ¿No tenés usuario?
-        <a href="#" id="abrir-modal">Crear nuevo usuario</a>
-      </p> -->
     </div>
 
-    <!-- Modal para crear nuevo usuario -->
-    <!-- <div class="modal" id="modal-registro">
-      <div class="modal-content">
-        <span class="modal-close" id="cerrar-modal">&times;</span>
-
-        <h2>Crear nuevo usuario</h2>
-
-        <form id="registro-form" class="registro-form" autocomplete="off">
-
-          <div class="input-group">
-            <label for="reg-email">Email</label>
-            <input
-              type="email"
-              id="reg-email"
-              placeholder="Email"
-              autocomplete="new-email"
-              required
-            />
-          </div>
-
-          <div class="input-group">
-            <label for="reg-password">Contraseña</label>
-            <input
-              type="password"
-              id="reg-password"
-              placeholder="Contraseña"
-              autocomplete="new-password"
-              required
-            />
-          </div>
-
-          <button type="submit" class="btn-primary">Crear usuario</button>
-        </form>
-      </div>
-    </div> -->
-    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
+    <!-- Script principal del login -->
     <script type="module" src="js/index.js"></script>
-    <script src="/js/app.js"></script>
   </body>
 </html>

@@ -22,6 +22,11 @@ build/
 .DS_Store
 Thumbs.db
 
+# Bases de datos SQLite
+*.sqlite
+*.sqlite3
+*.db
+
 # Python (si tu backend tiene algo en Python)
 __pycache__/
 *.pyc

@@ -1,0 +1,535 @@
+<!-- Archivo refactorizado: orden y comentarios, sin cambios funcionales -->
+<!doctype html>
+<html lang="es">
+  <head>
+    <!-- ========================= -->
+    <!-- META -->
+    <!-- ========================= -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#151515" />
+
+    <title>Gestión de Ventas</title>
+
+    <!-- ========================= -->
+    <!-- ESTILOS -->
+    <!-- ========================= -->
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/ventas.css" />
+
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+  </head>
+
+  <body>
+    <!-- ========================= -->
+    <!-- NAVBAR -->
+    <!-- ========================= -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li><a href="ventas.html" class="app-active">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+
+        <li class="app-navbar-refresh">
+          <button id="refresh-db-btn">⟳ Actualizar</button>
+        </li>
+
+        <li>
+          <button id="logout-btn">Cerrar Sesión</button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ========================= -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ========================= -->
+    <main class="app-container">
+      <h1 class="app-title">Gestión de Ventas</h1>
+
+      <!-- ========================= -->
+      <!-- FILTROS PRINCIPALES -->
+      <!-- ========================= -->
+      <div class="app-controls">
+        <div>
+          <input
+            type="text"
+            id="buscarVenta"
+            class="app-input"
+            placeholder="Buscar..."
+          />
+          <button id="btnLimpiarFiltros" class="app-btn-secondary">
+            Limpiar
+          </button>
+        </div>
+        <div>
+          <button id="btnDevolucion" class="btn-secundario">Devolución</button>
+          <button id="btnVerDevoluciones" class="app-btn-secondary">
+            Ver devoluciones
+          </button>
+        </div>
+        <div>
+          <button id="btnVerVentas" class="app-btn-secondary">Ver todas</button>
+          <button id="btnNuevaVenta" class="app-btn-primary">
+            Registrar venta
+          </button>
+        </div>
+      </div>
+
+      <!-- ========================= -->
+      <!-- TABLA PRINCIPAL -->
+      <!-- ========================= -->
+      <div class="app-tabla-container">
+        <table class="app-tabla">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Total Bruto</th>
+              <th>Desc.</th>
+              <th>Total</th>
+              <th>Método</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaVentasBody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- ====================================================== -->
+    <!-- MODAL: NUEVA VENTA -->
+    <!-- ====================================================== -->
+    <div id="modalVenta" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Registrar venta</h2>
+          <button type="button" class="app-close">Cerrar</button>
+        </div>
+
+        <form class="app-form-venta">
+          <!-- DATOS GENERALES -->
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Fecha</label>
+              <input
+                type="date"
+                id="fechaVenta"
+                class="app-input"
+                required
+                readonly
+              />
+            </div>
+
+            <div class="app-form-group">
+              <label>Cliente</label>
+              <select id="clienteVenta" class="app-input" required></select>
+            </div>
+          </div>
+
+          <!-- AGREGAR PRODUCTO -->
+          <div class="app-carrito-add">
+            <select id="productoVenta" class="app-input"></select>
+            <button
+              type="button"
+              id="btnBuscarProducto"
+              class="app-btn-secondary"
+            >
+              🔍
+            </button>
+            <input
+              type="number"
+              id="cantidadVenta"
+              min="1"
+              class="app-input"
+              placeholder="Cant."
+            />
+            <button
+              type="button"
+              id="btnAgregarProducto"
+              class="app-btn-secondary"
+            >
+              Agregar
+            </button>
+          </div>
+
+          <!-- CARRITO -->
+          <div class="app-carrito-container">
+            <table class="app-tabla">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="carritoBody"></tbody>
+            </table>
+          </div>
+
+          <!-- RESUMEN -->
+          <div class="app-resumen">
+            <div>Subtotal: $<span id="subtotalVenta">0.00</span></div>
+
+            <div class="app-form-group">
+              <label>Método de pago</label>
+              <select id="metodoPagoVenta" class="app-input" required>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Debito">Débito</option>
+                <option value="QR">QR</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Cuenta Corriente">Cuenta Corriente</option>
+              </select>
+            </div>
+
+            <div class="app-form-group">
+              <label>Descuento</label>
+              <select id="descuentoVenta" class="app-input app-input-small">
+                <option value="0">0%</option>
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+                <option value="15">15%</option>
+                <option value="20">20%</option>
+              </select>
+            </div>
+
+            <div class="app-total-final">
+              Total Final: $<span id="totalFinalVenta">0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" class="app-btn-primary app-btn-guardar">
+            Guardar venta
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- MODAL: VER TODAS LAS VENTAS -->
+    <!-- ====================================================== -->
+    <div id="modalVerVentas" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Todas las ventas</h2>
+          <button type="button" class="app-close app-close-ver">Cerrar</button>
+        </div>
+
+        <!-- FILTROS MODAL -->
+        <div class="app-controls">
+          <input
+            type="text"
+            id="buscarVentaModal"
+            class="app-input"
+            placeholder="Buscar..."
+          />
+          <input type="date" id="filtroDesdeModal" class="app-input" />
+          <input type="date" id="filtroHastaModal" class="app-input" />
+          <button id="btnLimpiarFiltrosModal" class="app-btn-secondary">
+            Limpiar
+          </button>
+        </div>
+
+        <!-- TABLA -->
+        <div class="app-tabla-container">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Método</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaVerVentasBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- MODAL: TICKET -->
+    <!-- ====================================================== -->
+    <div id="modalTicket" class="app-modal">
+      <div class="app-modal-content app-modal-ticket">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Ticket</h2>
+          <button type="button" class="app-close" id="cerrarModalTicket">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-ticket-body">
+          <!-- INFO GENERAL -->
+          <div class="v-ticket-info">
+            <p><strong>ID:</strong> <span id="ticketId"></span></p>
+            <p><strong>Fecha:</strong> <span id="ticketFecha"></span></p>
+            <p><strong>Cliente:</strong> <span id="ticketCliente"></span></p>
+            <p><strong>Método:</strong> <span id="ticketMetodo"></span></p>
+          </div>
+
+          <!-- DETALLE -->
+          <div class="app-ticket-tabla-container">
+            <table class="app-tabla">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="ticketDetalleBody"></tbody>
+            </table>
+          </div>
+
+          <!-- TOTAL -->
+          <div class="app-ticket-total">
+            Total: $<span id="ticketTotal"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ========================= -->
+    <!-- MODAL BUSCAR PRODUCTO -->
+    <!-- ========================= -->
+    <div id="modalProductos" class="app-modal">
+      <div class="app-modal-content app-modal-productos">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Seleccionar producto</h2>
+          <button type="button" class="app-close" id="cerrarModalProductos">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-controls">
+          <input
+            type="text"
+            id="buscarProductoModal"
+            class="app-input"
+            placeholder="Buscar producto..."
+          />
+        </div>
+
+        <div class="app-tabla-container">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody id="tablaProductosModalBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- ========================= -->
+    <!-- MODAL DEVOLUCIÓN - CLIENTE -->
+    <!-- ========================= -->
+    <div id="modalDevolucion" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Buscar Cliente</h2>
+          <button type="button" class="app-close" id="cerrarModalDevolucion">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-controls">
+          <select id="clienteDevolucion" class="app-input">
+            <option value="">Seleccionar cliente</option>
+          </select>
+
+          <button id="btnBuscarVentasCliente" class="app-btn-primary">
+            Buscar ventas
+          </button>
+        </div>
+
+        <hr
+          style="
+            border-top: 1px solid #333;
+            margin: 20px 0;
+            border-bottom: none;
+          "
+        />
+
+        <div class="app-tabla-container" style="flex: 1; min-height: 0">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tablaVentasClienteBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- MODAL DEVOLUCIÓN - PRODUCTOS -->
+    <!-- ========================= -->
+    <div id="modalProductosDevolucion" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Seleccionar Productos a Devolver</h2>
+          <button
+            type="button"
+            class="app-close"
+            id="cerrarModalProductosDevolucion"
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-tabla-container" style="flex: 1; min-height: 0">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cant. Vendida</th>
+                <th>Precio</th>
+                <th>Cant. a devolver</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaDetalleVentaBody"></tbody>
+          </table>
+        </div>
+
+        <hr
+          style="
+            border-top: 1px solid #333;
+            margin: 20px 0;
+            border-bottom: none;
+          "
+        />
+
+        <h3 class="app-subtitle">Carrito Devolución</h3>
+
+        <div class="app-tabla-container" style="flex: 1; min-height: 0">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="carritoDevolucionBody"></tbody>
+          </table>
+        </div>
+
+        <div class="app-resumen" style="margin-top: 20px">
+          <div
+            class="app-total-final"
+            style="grid-column: span 3; color: #3fd18c"
+          >
+            Total devolución: $<span id="totalDevolucion">0.00</span>
+          </div>
+          <button
+            id="btnConfirmarDevolucion"
+            class="app-btn-primary"
+            style="justify-self: end; margin-top: 0"
+          >
+            Confirmar Devolución
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- MODAL VER DEVOLUCIONES -->
+    <!-- ========================= -->
+    <div id="modalVerDevoluciones" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Devoluciones</h2>
+          <button
+            type="button"
+            class="app-close"
+            id="cerrarModalVerDevoluciones"
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-tabla-container">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tablaDevolucionesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- MODAL TICKET DEVOLUCION -->
+    <!-- ========================= -->
+    <div id="modalTicketDevolucion" class="app-modal">
+      <div class="app-modal-content app-modal-ticket">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Ticket Devolución</h2>
+          <button
+            type="button"
+            class="app-close"
+            id="cerrarModalTicketDevolucion"
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-ticket-body">
+          <div class="v-ticket-info">
+            <p><strong>ID:</strong> <span id="ticketDevId"></span></p>
+            <p><strong>Fecha:</strong> <span id="ticketDevFecha"></span></p>
+            <p><strong>Cliente:</strong> <span id="ticketDevCliente"></span></p>
+          </div>
+
+          <div class="app-ticket-tabla-container">
+            <table class="app-tabla">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="ticketDevDetalleBody"></tbody>
+            </table>
+          </div>
+
+          <div class="app-ticket-total">
+            Total Devuelto: $<span id="ticketDevTotal"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- SCRIPTS -->
+    <!-- ========================= -->
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/ventas.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+  </body>
+</html>

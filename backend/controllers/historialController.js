@@ -1,0 +1,65 @@
+import db from "../db.js";
+
+// =======================================================
+// GET HISTORIAL DE VENTAS POR CLIENTE (TRANSACCIONES)
+// =======================================================
+export const getHistorialCliente = async (req, res) => {
+  const { id } = req.params;
+  const { comercio_id } = req.query;
+
+  if (!comercio_id) {
+    return res.status(400).json({ error: "comercio_id requerido" });
+  }
+
+  try {
+    const { rows } = await db.query(
+      `
+      SELECT
+        v.id,
+        DATE(v.fecha) AS fecha,
+        v.metodo_pago,
+        v.total
+      FROM ventas v
+      WHERE v.cliente_id = $1
+        AND v.comercio_id = $2
+      ORDER BY v.fecha DESC
+      `,
+      [id, comercio_id]
+    );
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error historial cliente:", error);
+    res.status(500).json({ error: "Error al obtener historial" });
+  }
+};
+
+// =======================================================
+// GET DETALLE DE UNA VENTA
+// =======================================================
+export const getDetalleVenta = async (req, res) => {
+  const { ventaId } = req.params;
+
+  try {
+    const { rows } = await db.query(
+      `
+      SELECT
+        p.nombre AS nombre,
+        vd.cantidad,
+        vd.precio_unitario,
+        vd.subtotal
+      FROM ventas_detalle vd
+      INNER JOIN productos p ON p.id = vd.producto_id
+      INNER JOIN ventas v ON v.id = vd.venta_id
+      WHERE vd.venta_id = $1
+      ORDER BY vd.id ASC
+      `,
+      [ventaId]
+    );
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error detalle venta:", error);
+    res.status(500).json({ error: "Error al obtener detalle" });
+  }
+};

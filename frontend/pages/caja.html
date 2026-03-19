@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <!-- ============================
+         METADATOS BÁSICOS
+    ============================ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Título -->
+    <title>Caja</title>
+
+    <!-- ============================
+         ESTILOS
+    ============================ -->
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/caja.css" />
+
+    <!-- Icono de la aplicación -->
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+  </head>
+
+  <body>
+    <!-- ============================
+         NAVBAR PRINCIPAL
+    ============================ -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html" class="app-active">Caja</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+
+        <!-- Botón refrescar base de datos -->
+        <li class="app-navbar-refresh">
+          <button id="refresh-db-btn">⟳ Actualizar</button>
+        </li>
+
+        <!-- Cerrar sesión -->
+        <li>
+          <button id="logout-btn">Cerrar Sesión</button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ============================
+         CONTENIDO PRINCIPAL
+    ============================ -->
+    <main class="app-container">
+      <!-- Título de la pantalla -->
+      <h1 class="app-title">Caja del Día</h1>
+
+      <!-- Tarjeta principal de caja -->
+      <div class="caja-card">
+
+        <!-- Información general de la caja -->
+        <div class="caja-info">
+          <p><strong>Fecha:</strong> <span id="fechaHoy"></span></p>
+          <p><strong>Estado:</strong> <span id="estadoCaja"></span></p>
+        </div>
+
+        <!-- ============================
+             BLOQUE APERTURA DE CAJA
+        ============================ -->
+        <div id="bloqueApertura" class="caja-apertura">
+          <input
+            type="number"
+            id="saldoInicial"
+            class="app-input"
+            placeholder="Saldo inicial"
+          />
+
+          <button id="btnAbrirCaja" class="app-btn-primary">
+            Abrir Caja
+          </button>
+        </div>
+
+        <!-- ============================
+             BLOQUE RESUMEN DE CAJA
+        ============================ -->
+        <div id="bloqueResumen" class="caja-resumen" style="display: none">
+
+          <!-- Tabla de movimientos -->
+          <div class="tabla-movimientos-container">
+            <table class="tabla-movimientos">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Descripción</th>
+                  <th>Ingreso</th>
+                  <th>Egreso</th>
+                  <th>Saldo</th>
+                </tr>
+              </thead>
+
+              <tbody id="tablaMovimientosBody"></tbody>
+            </table>
+          </div>
+
+          <!-- ============================
+               RESUMEN DE TOTALES
+          ============================ -->
+          <div class="caja-footer">
+            <div>Efectivo: $<span id="totalEfectivo">0.00</span></div>
+            <div>Digital: $<span id="totalDigital">0.00</span></div>
+
+            <div>
+              Cuenta Corriente:
+              $<span id="totalCuentaCorriente">0.00</span>
+            </div>
+
+            <div>Egresos: $<span id="totalEgresos">0.00</span></div>
+
+            <div class="resultado">
+              Resultado: $<span id="resultadoFinal">0.00</span>
+            </div>
+          </div>
+
+          <!-- Botón cerrar caja -->
+          <button id="btnCerrarCaja" class="app-btn-primary">
+            Cerrar Caja
+          </button>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================
+         SCRIPTS
+    ============================ -->
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/caja.js"></script>
+    <script type="module" src="../js/system.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+==================================================
+GUÍA DE INSTALACIÓN - SISTEMA DE VENTAS (MODO LOCAL)
+==================================================
+
+Esta guía detalla los pasos para instalar y ejecutar el sistema desde cero en una computadora nueva, ejecutando de manera local tanto la Base de Datos como la Aplicación empaquetada (.exe).
+
+---
+PASO 1: INSTALAR LA BASE DE DATOS (POSTGRESQL)
+---
+1. Descarga el instalador de PostgreSQL para Windows desde la página oficial: 
+   https://www.postgresql.org/download/windows/
+2. Ejecuta el archivo descargado.
+3. Durante la instalación:
+   - Deja los componentes por defecto marcados.
+   - Cuando te pida una contraseña para el superusuario ("postgres"), ingresa una contraseña que sea fácil de recordar (ejemplo: "admin123" o la que prefieras). 
+   IMPORTANTE: ¡Anota y recuerda esta contraseña, la vas a necesitar!
+   - Deja el puerto por defecto (5432).
+   - Al finalizar, NO es necesario lanzar "Stack Builder" (puedes desmarcar esa casilla).
+
+---
+PASO 2: INSTALAR UN ADMINISTRADOR DE BASE DE DATOS (DBEAVER)
+---
+1. Descarga DBeaver Community Edition (es gratuito) desde su página oficial:
+   https://dbeaver.io/download/
+2. Ejecuta el instalador y completa la instalación con las opciones por defecto que marca ("Siguiente", "Siguiente").
+3. Abre DBeaver.
+
+---
+PASO 3: CREAR LA BASE Y ESTRUCTURA CON SCHEMA.SQL
+---
+1. En DBeaver, haz clic en el ícono del "Enchufe" (Nueva Conexión) en la esquina superior izquierda.
+2. Selecciona "PostgreSQL" de la lista y presiona "Siguiente".
+3. En la configuración que aparece, rellena los siguientes datos:
+   - Host: localhost
+   - Database: postgres
+   - Username: postgres
+   - Password: (la contraseña que inventaste en el PASO 1).
+4. Presiona "Finalizar".
+5. Verás tu nueva conexión en el panel de la izquierda. Desplégala, haz clic derecho sobre "Databases" (o "Bases de datos") y selecciona "Create New Database" (Crear Nueva Base de Datos).
+6. Escribe el nombre de tu base de datos (por ejemplo: "ventas_db") y presiona "Aceptar".
+7. Haz doble clic en esa nueva base de datos para conectarte.
+8. Ve al menú superior y elige "SQL Editor" -> "New SQL Script" (Nuevo Script SQL).
+9. Busca en los archivos de la aplicación tu archivo llamado "schema.sql". Ábrelo con el bloc de notas, copia todo su contenido y pégalo en la ventana en blanco de DBeaver.
+10. Presiona el botón "Ejecutar Script" (el ícono de las dos flechas naranjas o presionando Alt + X) para crear todas las tablas y configuraciones de la base.
+
+---
+PASO 4: INSTALAR LA APLICACIÓN DE VENTAS
+---
+1. Ejecuta el archivo instalador (.exe) de la aplicación que fue generado.
+2. Sigue los pasos del asistente de instalación ("Siguiente", "Siguiente") hasta que finalice y la aplicación se instale en la computadora.
+
+---
+PASO 5: CONFIGURAR LA COMUNICACIÓN CON LA APP (.env)
+---
+Para que el sistema se pueda conectar a la base de datos que acabas de crear, la aplicación necesita leer esas credenciales. 
+Dependiendo de cómo o dónde se haya instalado la aplicación, seguramente requerirá que a su lado (en la misma carpeta de instalación) haya un archivo físico llamado ".env" con la configuración apuntando a "localhost".
+
+En la carpeta de instalación de destino, debes crear un archivo de texto llamado estrictamente ".env" con un contenido similar a este:
+
+PORT=4000
+DATABASE_URL=postgresql://postgres:TU_CONTRASEÑA@localhost:5432/ventas_db
+PGHOST=localhost
+PGDATABASE=ventas_db
+PGUSER=postgres
+PGPASSWORD=TU_CONTRASEÑA
+PGPORT=5432
+
+*(Asegúrate de cambiar "TU_CONTRASEÑA" por la contraseña del PASO 1, y "ventas_db" por el nombre que le diste a la base en el PASO 3)*.
+
+---
+PASO 6: EJECUTAR LA APLICACIÓN
+---
+1. Asegúrate de tener el archivo ejecutable del sistema (por ejemplo, "AppVentas.exe") en una carpeta junto a tu archivo de configuración ".env" correctamente apuntado a localhost.
+2. Haz doble clic sobre el archivo .exe.
+3. El frontend y backend empaquetados se abrirán, y al estar bien configurados, se conectarán a tu base de datos local de PostgreSQL sin problemas. ¡El sistema está listo para utilizarse!

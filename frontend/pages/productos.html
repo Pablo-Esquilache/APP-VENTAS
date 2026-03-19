@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Productos</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/productos.css" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li id="tab-ventas"><a href="ventas.html">Ventas</a></li>
+        <li id="tab-productos">
+          <a href="productos.html" class="app-active">Productos</a>
+        </li>
+        <li id="tab-clientes"><a href="clientes.html">Clientes</a></li>
+        <li id="tab-gastos"><a href="gastos.html">Gastos</a></li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+        <li class="app-navbar-refresh">
+          <button id="refresh-db-btn" title="Actualizar datos">
+            ⟳ Actualizar
+          </button>
+        </li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="app-container">
+      <h1 class="app-title">Gestión de Productos</h1>
+
+      <!-- CONTROLES SUPERIORES -->
+      <div class="app-controls">
+        <div>
+          <input
+            type="text"
+            id="buscarProducto"
+            class="app-input"
+            placeholder="Buscar producto..."
+          />
+
+          <select id="filtroCategoria" class="app-input">
+            <option value="">Todas las categorías</option>
+          </select>
+
+          <button id="btnLimpiarFiltrosProd" class="app-btn-secondary">
+            Limpiar filtros
+          </button>
+        </div>
+        <div>
+          <button id="btnImportarExcel" class="app-btn-secondary">
+            Importar Excel
+          </button>
+          <button id="btnNuevoProducto" class="app-btn-primary">
+            Crear nuevo producto
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLA -->
+      <div class="app-tabla-container">
+        <table id="tablaProductos" class="app-tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Precio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductosBody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL NUEVO / EDITAR PRODUCTO -->
+    <div id="modalProducto" class="app-modal">
+      <div class="app-modal-content-producto">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle" id="tituloModalProducto">Nuevo producto</h2>
+          <button type="button" class="app-close">Cerrar</button>
+        </div>
+
+        <form id="formProducto" class="app-form-venta">
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Nombre</label>
+              <input
+                type="text"
+                id="nombreProducto"
+                class="app-input"
+                required
+              />
+            </div>
+
+            <div class="app-form-group">
+              <label>Categoría</label>
+              <select id="categoriaProducto" class="app-input">
+                <option value="" disabled selected>
+                  Seleccionar categoría
+                </option>
+              </select>
+            </div>
+            <div
+              class="app-form-group"
+              style="display: flex; gap: 8px; align-items: center"
+            >
+              <button
+                type="button"
+                id="btnNuevaCategoria"
+                class="app-btn-secondary"
+              >
+                Nueva
+              </button>
+              <input
+                type="text"
+                id="nuevaCategoriaProducto"
+                class="app-input"
+                placeholder="Escribí nueva categoría"
+                style="display: none; margin-top: 8px"
+              />
+            </div>
+          </div>
+
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Stock inicial</label>
+              <input
+                type="number"
+                id="stockProducto"
+                min="0"
+                class="app-input"
+                required
+              />
+            </div>
+
+            <div class="app-form-group">
+              <label>Precio</label>
+              <input
+                type="number"
+                id="precioProducto"
+                min="0"
+                step="0.01"
+                class="app-input"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" id="btnGuardarProducto" class="app-btn-primary">
+            Guardar
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- MODAL IMPORTAR EXCEL -->
+    <div id="modalImportarExcel" class="app-modal">
+      <div class="app-modal-content app-modal-sm">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Importar productos desde Excel</h2>
+          <button type="button" class="app-close" id="cerrarModalExcel">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-info-excel">
+          <p><strong>El archivo debe tener estas columnas:</strong></p>
+          <ul>
+            <li>nombre</li>
+            <li>categoria</li>
+            <li>precio</li>
+            <li>stock</li>
+          </ul>
+          <p>⚠ El ID se genera automáticamente.</p>
+          <p>⚠ Productos con el mismo nombre serán ignorados.</p>
+        </div>
+
+        <input type="file" id="inputExcelProductos" accept=".xlsx,.xls" />
+
+        <button id="btnProcesarExcel" class="app-btn-primary">
+          Cargar productos
+        </button>
+      </div>
+    </div>
+    <script src="../js/libs/xlsx.full.min.js"></script>
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/productos.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+  </body>
+</html>

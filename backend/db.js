@@ -1,14 +1,18 @@
-// db.js
 import pkg from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  host: process.env.PGHOST || "localhost",
+  database: process.env.PGDATABASE || "postgres",
+  user: process.env.PGUSER || "app_ventas",
+  password: process.env.PGPASSWORD || "123456",
+  port: process.env.PGPORT || 5432,
 });
+
 
 pool.on("connect", () => {
   console.log("🔌 PostgreSQL conectado");

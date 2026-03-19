@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <!-- Metadatos básicos -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Título -->
+  <title>Login | Sistema de Ventas</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/normalize.css" />
+  <link rel="stylesheet" href="css/globals.css" />
+  <link rel="stylesheet" href="css/index.css" />
+
+  <!-- Icono de la aplicación -->
+  <link rel="icon" href="./icons/icon-192.png" type="image/png" />
+
+  <!-- Color de la barra del navegador (PWA / móviles) -->
+  <meta name="theme-color" content="#151515" />
+</head>
+
+<body class="login-body">
+  <!-- Contenedor principal del login -->
+  <div class="login-container">
+    <!-- Título del formulario -->
+    <h1 class="login-title">Ingresar</h1>
+
+    <!-- Formulario de autenticación -->
+    <form id="login-form" class="login-form" autocomplete="off">
+      <!-- Campo usuario -->
+      <div class="input-group">
+        <label for="login-usuario">Usuario</label>
+        <input type="text" id="login-usuario" placeholder="Ingresá tu usuario" autocomplete="new-email" required />
+      </div>
+
+      <!-- Campo contraseña -->
+      <div class="input-group">
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" placeholder="Ingresá tu contraseña" autocomplete="new-password"
+          required />
+      </div>
+
+      <!-- Botón de envío -->
+      <button type="submit" class="app-btn-primary app-btn-guardar-login">Ingresar</button>
+    </form>
+
+    <!-- Loader mostrado mientras se procesa el login -->
+    <div id="loader" class="loader hidden">
+      <div class="spinner"></div>
+      <p>Conectando…</p>
+    </div>
+  </div>
+
+  <!-- Script principal del login -->
+  <script type="module" src="js/index.js"></script>
+</body>
+
+</html>

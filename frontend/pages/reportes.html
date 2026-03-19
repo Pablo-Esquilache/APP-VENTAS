@@ -1,0 +1,144 @@
+<!-- reportes.html -->
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/reportes.css" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li>
+          <a href="reportes.html" class="app-active">Reportes</a>
+        </li>
+        <li class="app-navbar-refresh">
+          <button id="refresh-db-btn" title="Actualizar datos">
+            ⟳ Actualizar
+          </button>
+        </li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="app-container">
+      <h1 class="app-title">Reportes</h1>
+
+      <!-- FILTROS -->
+      <div class="r-filtros">
+        <div class="app-form-group">
+          <label for="rDesde">Desde</label>
+          <input type="date" id="rDesde" class="app-input" />
+        </div>
+
+        <div class="app-form-group">
+          <label for="rHasta">Hasta</label>
+          <input type="date" id="rHasta" class="app-input" />
+        </div>
+
+        <button class="app-btn-primary" id="btnGenerarReportes">Generar</button>
+        <button class="app-btn-secondary" id="btnDescargarPDF" disabled>
+          Descargar PDF
+        </button>
+
+        <!-- NUEVO BLOQUE PARA DESCARGA DE TABLAS -->
+        <div class="app-form-group">
+          <label for="selectTablaDescargar">Descargar tabla</label>
+          <select id="selectTablaDescargar" class="app-input">
+            <option value="" disabled selected>Seleccioná una tabla</option>
+            <option value="ventas">Ventas</option>
+            <option value="clientes">Clientes</option>
+            <option value="productos">Productos</option>
+            <option value="gastos">Gastos</option>
+          </select>
+        </div>
+        <button class="app-btn-primary" id="btnDescargarTabla">
+          Descargar Excel
+        </button>
+      </div>
+
+      <!-- TODO LO EXPORTABLE -->
+      <div id="reportePDF">
+        <section class="r-card">
+          <h2 class="app-subtitle">Ventas / Gastos / Ticket promedio</h2>
+          <p class="r-descripcion app-ventas-gastos"></p>
+          <br />
+          <canvas id="graficoVentasGastos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Top 10 de productos más vendidos</h2>
+          <p class="r-descripcion app-top-productos"></p>
+          <br />
+          <canvas id="graficoTopProductos"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Categorías vendidas</h2>
+          <p class="r-descripcion app-categorias"></p>
+          <br />
+          <canvas id="graficoCategorias"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Métodos de pago</h2>
+          <p class="r-descripcion app-metodos-pago"></p>
+          <br />
+          <canvas id="graficoMetodosPago"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">
+            Top 10 clientes por frecuencia y ticket promedio
+          </h2>
+          <p class="r-descripcion app-top-clientes"></p>
+          <br />
+          <canvas id="graficoTopClientes"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Edad promedio por grupo etario y género</h2>
+          <p class="r-descripcion app-etario-genero"></p>
+          <br />
+          <canvas id="graficoEdadEtarioGenero"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Ventas por localidad del cliente</h2>
+          <p class="r-descripcion app-localidad"></p>
+          <br />
+          <canvas id="graficoVentasLocalidad"></canvas>
+        </section>
+
+        <section class="r-card">
+          <h2 class="app-subtitle">Gastos por descripción y tipo</h2>
+          <p class="r-descripcion app-gastos"></p>
+          <br />
+          <canvas id="graficoGastosDescripcionTipo"></canvas>
+        </section>
+      </div>
+    </main>
+    <script src="../js/libs/chart.umd.js"></script>
+    <script src="../js/libs/chartjs-plugin-datalabels.min.js"></script>
+    <script src="../js/libs/html2canvas.min.js"></script>
+    <script src="../js/libs/jspdf.umd.min.js"></script>
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/reportes.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+  </body>
+</html>

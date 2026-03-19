@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Clientes</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/clientes.css" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li id="tab-ventas"><a href="ventas.html">Ventas</a></li>
+        <li id="tab-productos"><a href="productos.html">Productos</a></li>
+        <li id="tab-clientes">
+          <a href="clientes.html" class="app-active">Clientes</a>
+        </li>
+        <li id="tab-gastos"><a href="gastos.html">Gastos</a></li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+        <li class="app-navbar-refresh">
+          <button id="refresh-db-btn" title="Actualizar datos">
+            ⟳ Actualizar
+          </button>
+        </li>
+        <li><button id="logout-btn">Cerrar Sesión</button></li>
+      </ul>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="app-container">
+      <h1 class="app-title">Gestión de Clientes</h1>
+
+      <!-- CONTROLS -->
+      <div class="app-controls">
+        <div>
+        <input
+          type="text"
+          id="c-buscar"
+          class="app-input"
+          placeholder="Buscar por nombre..."
+        />
+        <select id="c-filtro-localidad" class="app-input">
+          <option value="">Todas las localidades</option>
+        </select>
+        <button id="c-btn-limpiar" class="app-btn-secondary">
+          Limpiar filtros
+        </button>
+        </div>
+        <button id="c-btn-nuevo" class="app-btn-primary">Nuevo cliente</button>
+      </div>
+
+      <!-- TABLE LIST -->
+      <div class="app-tabla-container">
+        <table class="app-tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Edad</th>
+              <th>Género</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Localidad</th>
+              <th>Comentarios</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaClientes"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- MODAL -->
+    <div id="app-modal" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Nuevo cliente</h2>
+          <button type="button" class="app-close">Cerrar</button>
+        </div>
+
+        <form id="formCliente" class="app-form-venta">
+          <div class="app-form-row">
+            <div
+              class="app-form-group"
+              id="fila-id-cliente"
+              style="display: none"
+            >
+              <label>ID (generado)</label>
+              <input type="text" id="idCliente" class="app-input" readonly />
+            </div>
+
+            <div class="app-form-group">
+              <label>Nombre</label>
+              <input type="text" id="nombre" class="app-input" required />
+            </div>
+
+            <div class="app-form-group app-col">
+              <label>Fecha de nacimiento</label>
+              <input
+                type="date"
+                id="fechaNacimiento"
+                class="app-input"
+                required
+              />
+            </div>
+            <div class="app-form-group app-col">
+              <label>Género</label>
+              <select id="genero" class="app-input">
+                <option value="">Seleccionar</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Teléfono</label>
+              <input type="text" id="telefono" class="app-input" />
+            </div>
+
+            <div class="app-form-group">
+              <label>Email</label>
+              <input type="email" id="email" class="app-input" />
+            </div>
+            <div class="app-form-group">
+              <label>Localidad</label>
+              <div style="display: flex; gap: 8px; align-items: center">
+                <select id="localidad" class="app-input">
+                  <option value="">Seleccionar localidad</option>
+                </select>
+                <button
+                  type="button"
+                  id="btnNuevaLocalidad"
+                  class="app-btn-secondary"
+                >
+                  Nueva
+                </button>
+              </div>
+              <input
+                type="text"
+                id="nuevaLocalidad"
+                class="app-input"
+                placeholder="Escribí nueva localidad"
+                style="display: none; margin-top: 8px"
+              />
+            </div>
+          </div>
+
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Comentarios</label>
+              <textarea id="comentarios" class="app-input" rows="2"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="app-btn-primary app-btn-guardar">
+            Guardar cliente
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DETALLE VENTA (Formato Ticket) -->
+    <div id="app-modal-detalle" class="app-modal">
+      <div class="app-modal-content app-modal-ticket">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Detalle de Venta</h2>
+          <button
+            type="button"
+            class="app-close-detalle app-close"
+            style="
+              background-color: #e53935;
+              color: #fff;
+              border: none;
+              padding: 6px 14px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 14px;
+            "
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-ticket-body">
+          <!-- INFO GENERAL -->
+          <div class="v-ticket-info">
+            <p><strong>ID Venta:</strong> <span id="ticketIdDetalle"></span></p>
+            <p><strong>Fecha:</strong> <span id="ticketFechaDetalle"></span></p>
+            <p>
+              <strong>Método de pago:</strong>
+              <span id="ticketMetodoDetalle"></span>
+            </p>
+          </div>
+
+          <div class="app-ticket-tabla-container">
+            <table class="app-tabla">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cant.</th>
+                  <th>Precio U.</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="tablaDetalleBody"></tbody>
+            </table>
+          </div>
+
+          <div class="app-ticket-total">
+            Total: $<span id="detalleTotal"></span>
+          </div>
+
+          <button
+            id="btnDescargarDetalle"
+            class="app-btn-primary"
+            style="align-self: flex-start; margin-top: 10px"
+          >
+            Descargar en Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL HISTORIAL -->
+    <div id="app-modal-historial" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Historial de Ventas</h2>
+          <button
+            type="button"
+            class="app-close-historial app-close"
+            style="
+              background-color: #e53935;
+              color: #fff;
+              border: none;
+              padding: 6px 14px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 14px;
+            "
+          >
+            Cerrar
+          </button>
+        </div>
+
+        <!-- CAJAS DE RESUMEN (REEMPLAZA A span totales) -->
+        <div id="resumenHistorial" class="resumen-container">
+          <!-- Se inyecta desde clientes.js -->
+        </div>
+
+        <button
+          id="btnCuentaCorriente"
+          class="app-btn-secondary"
+          style="align-self: flex-start; margin-bottom: 20px"
+        >
+          Ver Cuenta Corriente
+        </button>
+
+        <div class="app-tabla-container" style="max-height: 45vh">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Método de Pago</th>
+                <th>Total Venta</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaHistorialBody"></tbody>
+          </table>
+        </div>
+        <button
+          id="btnDescargarHistorial"
+          class="app-btn-primary"
+          style="align-self: flex-start; margin-top: 15px"
+        >
+          Descargar Resumen Ventas en Excel
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL CUENTA CORRIENTE -->
+    <div id="app-modal-cc" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Cuenta Corriente</h2>
+          <button
+            type="button"
+            class="app-close-cc app-close"
+            style="
+              background-color: #e53935;
+              color: #fff;
+              border: none;
+              padding: 6px 14px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 14px;
+            "
+          >
+            Cerrar
+          </button>
+        </div>
+        <div class="cc-total" id="ccSaldo">Saldo: $0.00</div>
+
+        <div class="cc-registro">
+          <input
+            type="number"
+            id="ccMontoPago"
+            class="app-input"
+            placeholder="Monto a pagar..."
+            min="0"
+            step="0.01"
+            style="width: 200px"
+          />
+          <button id="ccRegistrarPago" class="app-btn-primary">
+            Registrar Pago
+          </button>
+        </div>
+
+        <div class="app-tabla-container" style="max-height: 40vh">
+          <table class="app-tabla">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Concepto</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody id="tablaCuentaCorriente"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="../js/libs/xlsx.full.min.js"></script>
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/clientes.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+    <script type="module" src="../js/system.js"></script>
+  </body>
+</html>

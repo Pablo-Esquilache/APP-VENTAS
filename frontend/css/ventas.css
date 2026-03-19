@@ -1,0 +1,608 @@
+/* =========================================================
+   ARCHIVO: ventas.css
+   OBJETIVO:
+   - Mantener estilos existentes
+   - Mejorar organización visual
+   - Facilitar mantenimiento
+   NOTA: No se modificaron clases, selectores ni comportamiento.
+   ========================================================= */
+/* =========================================================
+   1. RESET BASE / GENERAL
+========================================================= */
+
+body {
+  background: #1f1f1f;
+  color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding-top: 64px;
+}
+
+/* Mostrar pestaña reportes solo para admin */
+#tab-reportes {
+  display: none;
+}
+
+body.role-admin #tab-reportes {
+  display: inline-flex;
+}
+
+/* =========================================================
+   2. NAVBAR
+========================================================= */
+
+.v-navbar {
+  background: #151515;
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.v-navbar-logo {
+  font-weight: 700;
+  color: #fff;
+}
+
+.v-navbar-menu {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.v-navbar-menu li {
+  display: flex;
+  align-items: center;
+}
+
+.v-navbar-menu a {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  font-size: 14px;
+  color: #c8c8c8;
+  text-decoration: none;
+}
+
+.v-navbar-menu a:hover,
+.v-active {
+  color: #3fd18c !important;
+}
+
+/* Logout */
+
+#logout-btn {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  font-size: 14px;
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#logout-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* Refresh DB */
+
+.v-navbar-refresh {
+  margin-left: 32px;
+}
+
+#refresh-db-btn {
+  background: #222;
+  border: 1px solid #3fd18c;
+  color: #3fd18c;
+  padding: 0 14px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+#refresh-db-btn:hover {
+  background: #3fd18c;
+  color: #000;
+}
+
+#refresh-db-btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================================================
+   3. CONTENEDOR PRINCIPAL
+========================================================= */
+
+.v-container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.v-title {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+/* =========================================================
+   4. CONTROLES E INPUTS
+========================================================= */
+
+.v-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.v-input {
+  background: #222;
+  border: 1px solid #444;
+  padding: 0.5rem 0.7rem;
+  color: #fff;
+  border-radius: 4px;
+  min-width: 130px;
+}
+
+.v-input-small {
+  width: 100px;
+}
+
+/* =========================================================
+   5. BOTONES GENERALES
+========================================================= */
+
+.v-btn-primary,
+.v-btn-secondary {
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+/* Primario */
+
+.v-btn-primary {
+  background-color: #4caf50;
+  color: #000;
+}
+
+.v-btn-primary:hover {
+  background: #35c77f;
+}
+
+/* Secundario */
+
+.v-btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+}
+
+.v-btn-secondary:hover {
+  background: #444;
+}
+
+/* Guardar */
+
+.v-btn-guardar {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Eliminar */
+
+.btn-eliminar,
+.btn-eliminar-item {
+  background-color: #e53935;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.btn-eliminar:hover,
+.btn-eliminar-item:hover {
+  background-color: #ff6b6b;
+}
+
+/* Ver ticket */
+
+.btn-ver-ticket {
+  background-color: #3fd18c;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: 6px;
+  transition: 0.2s ease;
+}
+
+.btn-ver-ticket:hover {
+  background-color: #2bbf78;
+}
+
+/* Editar */
+
+.btn-editar {
+  background-color: #f39c12;
+  color: #000;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.btn-editar:hover {
+  background-color: #ffb347;
+}
+
+/* =========================================================
+   6. TABLAS
+========================================================= */
+
+.v-tabla-container {
+  max-height: 420px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+}
+
+.v-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.v-tabla th,
+.v-tabla td {
+  padding: 10px;
+  text-align: left;
+}
+
+.v-tabla th {
+  background: #222;
+  font-weight: bold;
+}
+
+/* =========================================================
+   7. MODALES (BASE v-)
+========================================================= */
+
+.v-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  justify-content: center;
+  align-items: center;
+  padding-top: 55px;
+}
+
+.v-modal-content {
+  background: #1d1d1d;
+  width: 96%;
+  max-width: 1200px;
+  height: 90vh;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+#modalVerVentas .v-modal-content {
+  height: 85vh;
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 8px;
+}
+
+.v-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.v-close {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.v-close:hover {
+  background-color: #ff6b6b;
+}
+
+/* =========================================================
+   8. FORMULARIO VENTA
+========================================================= */
+
+.v-form-venta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.v-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.v-form-group {
+  margin-bottom: 1rem;
+}
+
+/* =========================================================
+   9. CARRITO
+========================================================= */
+
+.v-carrito-add {
+  display: flex;
+  gap: 12px;
+  margin: 1rem 0;
+}
+
+.v-carrito-container {
+  flex: 2;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background: #111;
+}
+
+/* =========================================================
+   10. RESUMEN
+========================================================= */
+
+.v-resumen {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  align-items: center;
+  gap: 12px 20px;
+  background: #181818;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+}
+
+.v-total-final {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3fd18c;
+}
+
+/* =========================================================
+   11. MODAL TICKET
+========================================================= */
+
+.v-modal-ticket {
+  max-width: 700px;
+  width: 95%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-ticket-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.v-ticket-tabla-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+
+.v-ticket-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: right;
+  color: #3fd18c;
+}
+
+/* =========================================================
+   12. MODAL PRODUCTOS
+========================================================= */
+
+.v-modal-productos {
+  width: 70%;
+  max-width: 800px;
+  height: 70vh;
+  border-radius: 10px;
+}
+
+.v-modal-productos .v-tabla-container {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   13. MODALES DEVOLUCIONES (sistema antiguo)
+========================================================= */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.modal-contenido {
+  background: #1d1d1d;
+  color: #f1f1f1;
+  padding: 2rem;
+  width: 85%;
+  max-width: 1200px;
+  height: 85vh;
+  border-radius: 12px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-contenido.grande {
+  width: 90%;
+  max-width: 1400px;
+  height: 90vh;
+}
+
+/* Botón cerrar */
+
+.cerrar {
+  align-self: flex-end;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.cerrar:hover {
+  color: #fff;
+}
+
+/* Botones devoluciones */
+
+.btn-primario {
+  background: #3fd18c;
+  color: #000;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+  width: auto;
+  align-self: flex-start;
+}
+
+.btn-primario:hover {
+  background: #35c77f;
+}
+
+.btn-secundario {
+  background: #333;
+  color: #f1f1f1;
+  padding: 8px 14px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secundario:hover {
+  background: #444;
+}
+
+/* Tablas devoluciones */
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: #111;
+  border-radius: 6px;
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.tabla th,
+.tabla td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #222;
+  word-wrap: break-word;
+}
+
+.tabla th {
+  background: #222;
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+}
+
+.tabla tr:hover {
+  background: #1a1a1a;
+}
+
+/* Scroll contenedores */
+
+.tabla-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+/* Inputs devoluciones */
+
+.modal select,
+.modal input {
+  width: 250px;
+  padding: 8px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+
+/* Total devolución */
+
+#totalDevolucion {
+  font-weight: bold;
+  font-size: 18px;
+  color: #3fd18c;
+  margin-top: 10px;
+}
+
+#modalDevolucion hr {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 20px 0;
+}

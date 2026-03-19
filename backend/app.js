@@ -1,14 +1,14 @@
-// app.js
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-dotenv.config();
+import pool from "./db.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { app as electronApp } from "electron";
+import net from "net";
 
-// DB
-import "./db.js";
-
-// Rutas
+import cajasRoutes from "./routes/cajas.js";
 import ventasRouter from "./routes/ventas.js";
 import productosRouter from "./routes/productos.js";
 import clientesRouter from "./routes/clientes.js";
@@ -19,33 +19,82 @@ import reportesRoutes from "./routes/reportes.js";
 import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
 import clientesHistorialRoutes from "./routes/historial.js";
+import devolucionesRoutes from "./routes/devoluciones.js";
+
+dotenv.config();
 
 const app = express();
 
-// Middlewares globales
+/* ===== RUTAS ABSOLUTAS ===== */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* ===== TEST CONEXIÓN DB ===== */
+pool.query("SELECT NOW()")
+  .then(res => console.log("✅ Base conectada:", res.rows[0]))
+  .catch(err => console.error("❌ Error conexión DB:", err));
+
+/* ===== MIDDLEWARES ===== */
 app.use(helmet());
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(express.json());
 
-// Auth (login / register)
+/* ===== RUTA FRONTEND ===== */
+let frontendPath;
+
+if (electronApp?.isPackaged) {
+  frontendPath = path.join(process.resourcesPath, "app.asar", "frontend");
+} else {
+  frontendPath = path.join(__dirname, "..", "frontend");
+}
+
+console.log("📁 Frontend path:", frontendPath);
+
+/* ===== SERVIR FRONTEND ===== */
+app.use(express.static(frontendPath));
+
+/* ===== RUTAS API ===== */
 app.use("/api/auth", authRouter);
+app.use("/api/ventas", ventasRouter);
+app.use("/api/productos", productosRouter);
+app.use("/api/clientes", clientesRouter);
+app.use("/api/gastos", gastosRouter);
+app.use("/api/comercios", comerciosRouter);
+app.use("/api/exportar-tabla", exportarTablaRouter);
+app.use("/api/system", systemRouter);
+app.use("/api/reportes", reportesRoutes);
+app.use("/api", clientesHistorialRoutes);
+app.use("/api/devoluciones", devolucionesRoutes);
+app.use("/api/cajas", cajasRoutes);
 
-// Rutas comunes → user y admin (solo logueados)
-app.use("/api/ventas",ventasRouter);
-app.use("/api/productos",productosRouter);
-app.use("/api/clientes",clientesRouter);
-app.use("/api/gastos",gastosRouter);
-app.use("/api/comercios",comerciosRouter);
-app.use("/api/exportar-tabla",exportarTablaRouter);
-app.use("/api/system",systemRouter);
-
-app.use(  "/api/reportes",reportesRoutes);
-
-app.use(  "/api", clientesHistorialRoutes);
-
-
-// Puerto
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en puerto ${PORT}`);
+/* ===== FALLBACK SPA ===== */
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
+
+/* ===== BUSCAR PUERTO DISPONIBLE ===== */
+
+function findAvailablePort(startPort) {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+
+    server.listen(startPort, () => {
+      server.close(() => resolve(startPort));
+    });
+
+    server.on("error", async () => {
+      resolve(await findAvailablePort(startPort + 1));
+    });
+  });
+}
+
+const BASE_PORT = 4000;
+const PORT = await findAvailablePort(BASE_PORT);
+
+/* ===== INICIAR SERVIDOR ===== */
+
+const server = app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+});
+
+export default server;
