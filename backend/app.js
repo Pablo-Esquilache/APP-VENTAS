@@ -20,6 +20,8 @@ import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
 import clientesHistorialRoutes from "./routes/historial.js";
 import devolucionesRoutes from "./routes/devoluciones.js";
+import syncConfigRoutes from "./routes/syncConfigRoutes.js";
+import { initSyncWorker } from "./services/syncWorker.js";
 
 dotenv.config();
 
@@ -66,6 +68,7 @@ app.use("/api/reportes", reportesRoutes);
 app.use("/api", clientesHistorialRoutes);
 app.use("/api/devoluciones", devolucionesRoutes);
 app.use("/api/cajas", cajasRoutes);
+app.use("/api/config-sync", syncConfigRoutes);
 
 /* ===== FALLBACK SPA ===== */
 app.get("*", (req, res) => {
@@ -95,6 +98,7 @@ const PORT = await findAvailablePort(BASE_PORT);
 
 const server = app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  initSyncWorker(); // Iniciar cron de sincronización en segundo plano
 });
 
 export default server;

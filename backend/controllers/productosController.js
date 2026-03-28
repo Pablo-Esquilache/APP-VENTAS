@@ -113,7 +113,47 @@ export const createProducto = async (req, res) => {
       comercio_id,
     ]);
 
-    res.status(201).json(rows[0]);
+    const finalProduct = rows[0];
+
+    // ==========================================
+    // HOOK Sincronización Web en Tiempo Real
+    // ==========================================
+    try {
+      db.query("SELECT api_token, sync_enabled, api_url FROM configuracion_sync WHERE comercio_id = $1", [comercio_id])
+        .then(resConfig => {
+          const config = resConfig.rows[0];
+          console.log(`[HOOK CREATE] Estado Sync: ${config?.sync_enabled}, Token presente: ${!!config?.api_token}`);
+          if (config && config.sync_enabled && config.api_token) {
+            const targetUrl = (config.api_url || "http://127.0.0.1:3000/api/sync") + "/upsert-product";
+            console.log(`[HOOK CREATE] Disparando a la nube: ${targetUrl}`);
+            fetch(targetUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${config.api_token}`
+              },
+              body: JSON.stringify({ 
+                id: finalProduct.id,
+                nombre: finalProduct.nombre || "Producto Sync",
+                descripcion: "", 
+                precio: finalProduct.precio,
+                precio_oferta: 0,
+                stock: finalProduct.stock,
+                url_imagen: "",
+                categoria: finalProduct.categoria || ""
+              })
+            }).then(resp => console.log(`[HOOK CREATE] Respuesta Nube: ${resp.status}`))
+              .catch(err => console.error("[HOOK CREATE] Error de red hacia la Nube:", err.message));
+          } else {
+            console.log("[HOOK CREATE] Ignorado (Configuración inactiva o sin token).");
+          }
+        })
+        .catch(err => console.error("[HOOK CREATE] Error bd:", err));
+    } catch (e) {
+      console.error("[HOOK CREATE] Catch externo", e);
+    }
+
+    res.status(201).json(finalProduct);
   } catch (error) {
     console.error("Error creando producto:", error);
     res.status(500).json({ error: "Error al crear el producto" });
@@ -153,6 +193,51 @@ export const updateProducto = async (req, res) => {
 
     if (!rows[0]) {
       return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    const finalProduct = rows[0];
+
+    // ==========================================
+    // HOOK Sincronización Web en Tiempo Real
+    // ==========================================
+    try {
+      db.query("SELECT api_token, sync_enabled, api_url FROM configuracion_sync WHERE comercio_id = $1", [comercio_id])
+        .then(resConfig => {
+          const config = resConfig.rows[0];
+          console.log(`[HOOK UPDATE] Estado Sync: ${config?.sync_enabled}, Token: ${!!config?.api_token}`);
+          
+          if (config && config.sync_enabled && config.api_token) {
+            const targetUrl = (config.api_url || "http://127.0.0.1:3000/api/sync") + "/upsert-product";
+            console.log(`[HOOK UPDATE] Disparando a la nube: ${targetUrl} con ID ${finalProduct.id}`);
+            
+            fetch(targetUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${config.api_token}`
+              },
+              body: JSON.stringify({ 
+                id: finalProduct.id,
+                nombre: finalProduct.nombre || "Producto Sync",
+                descripcion: "", 
+                precio: finalProduct.precio,
+                precio_oferta: 0,
+                stock: finalProduct.stock,
+                url_imagen: "",
+                categoria: finalProduct.categoria || ""
+              })
+            }).then(async resp => {
+                 console.log(`[HOOK UPDATE] Respuesta Nube STATUS: ${resp.status}`);
+                 if(!resp.ok) console.log(`[HOOK UPDATE] Falló body:`, await resp.text());
+              })
+              .catch(err => console.error("[HOOK UPDATE] Error de red hacia la Nube:", err.message));
+          } else {
+             console.log("[HOOK UPDATE] Ignorado (Configuración inactiva o sin token).");
+          }
+        })
+        .catch(err => console.error("[HOOK UPDATE] Error query bd:", err));
+    } catch (e) {
+      console.error("[HOOK UPDATE] Catch externo", e);
     }
 
     res.json(rows[0]);
