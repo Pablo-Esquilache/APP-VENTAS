@@ -91,7 +91,7 @@ export const getProductoById = async (req, res) => {
    POST - CREAR PRODUCTO
    ========================== */
 export const createProducto = async (req, res) => {
-  const { nombre, categoria, precio, stock, comercio_id } = req.body;
+  const { nombre, categoria, precio, stock, comercio_id, codigo_barras } = req.body;
 
   if (!comercio_id) {
     return res.status(400).json({ error: "comercio_id requerido" });
@@ -100,8 +100,8 @@ export const createProducto = async (req, res) => {
   try {
     const query = `
       INSERT INTO productos
-      (nombre, categoria, precio, stock, comercio_id)
-      VALUES ($1, $2, $3, $4, $5)
+      (nombre, categoria, precio, stock, comercio_id, codigo_barras)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
     `;
 
@@ -111,6 +111,7 @@ export const createProducto = async (req, res) => {
       precio,
       stock ?? 0,
       comercio_id,
+      codigo_barras || null,
     ]);
 
     const finalProduct = rows[0];
@@ -165,7 +166,7 @@ export const createProducto = async (req, res) => {
    ========================== */
 export const updateProducto = async (req, res) => {
   const { id } = req.params;
-  const { nombre, categoria, precio, stock, comercio_id } = req.body;
+  const { nombre, categoria, precio, stock, comercio_id, codigo_barras } = req.body;
 
   if (!comercio_id) {
     return res.status(400).json({ error: "comercio_id requerido" });
@@ -177,7 +178,8 @@ export const updateProducto = async (req, res) => {
       SET nombre = $1,
           categoria = $2,
           precio = $3,
-          stock = $4
+          stock = $4,
+          codigo_barras = $7
       WHERE id = $5 AND comercio_id = $6
       RETURNING *
     `;
@@ -189,6 +191,7 @@ export const updateProducto = async (req, res) => {
       stock,
       id,
       comercio_id,
+      codigo_barras || null,
     ]);
 
     if (!rows[0]) {

@@ -36,6 +36,7 @@ const tablaVerVentasBody = document.getElementById("tablaVerVentasBody");
 const fechaVenta = document.getElementById("fechaVenta");
 const clienteVenta = document.getElementById("clienteVenta");
 const productoVenta = document.getElementById("productoVenta");
+const barcodeVenta = document.getElementById("barcodeVenta");
 const cantidadVenta = document.getElementById("cantidadVenta");
 const btnAgregarProducto = document.getElementById("btnAgregarProducto");
 
@@ -189,6 +190,42 @@ async function cargarProductos() {
 // ==============================
 // AGREGAR AL CARRITO
 // ==============================
+function procesarAgregarProducto(productoId, cantidadAgregada) {
+  const producto = productosCache.find((p) => p.id == productoId);
+  if (!producto) return;
+
+  const stockDisponible = Number(producto.stock);
+
+  // 🔎 Ver cuánto ya está en carrito
+  const cantidadEnCarrito = carrito
+    .filter((i) => i.producto_id == productoId)
+    .reduce((acc, i) => acc + i.cantidad, 0);
+
+  const nuevaCantidadTotal = cantidadEnCarrito + cantidadAgregada;
+
+  if (nuevaCantidadTotal > stockDisponible) {
+    alert(`Stock insuficiente. Disponible en total: ${stockDisponible}`);
+    return;
+  }
+
+  const itemExistente = carrito.find((i) => i.producto_id == productoId);
+  if (itemExistente) {
+    itemExistente.cantidad += cantidadAgregada;
+    itemExistente.subtotal = itemExistente.precio_unitario * itemExistente.cantidad;
+  } else {
+    const precio = Number(producto.precio);
+    carrito.push({
+      producto_id: producto.id,
+      nombre: producto.nombre,
+      cantidad: cantidadAgregada,
+      precio_unitario: precio,
+      subtotal: precio * cantidadAgregada,
+    });
+  }
+
+  renderCarrito();
+}
+
 if (btnAgregarProducto) {
   btnAgregarProducto.addEventListener("click", () => {
     const productoId = productoVenta.value;
@@ -196,37 +233,34 @@ if (btnAgregarProducto) {
 
     if (!productoId || cantidad <= 0) return;
 
-    const producto = productosCache.find((p) => p.id == productoId);
-    if (!producto) return;
-
-    const stockDisponible = Number(producto.stock);
-
-    // 🔎 Ver cuánto ya está en carrito
-    const cantidadEnCarrito = carrito
-      .filter((i) => i.producto_id == productoId)
-      .reduce((acc, i) => acc + i.cantidad, 0);
-
-    const nuevaCantidadTotal = cantidadEnCarrito + cantidad;
-
-    if (nuevaCantidadTotal > stockDisponible) {
-      alert(`Stock insuficiente. Disponible: ${stockDisponible}`);
-      return;
-    }
-
-    const precio = Number(producto.precio);
-
-    carrito.push({
-      producto_id: producto.id,
-      nombre: producto.nombre,
-      cantidad,
-      precio_unitario: precio,
-      subtotal: precio * cantidad,
-    });
+    procesarAgregarProducto(productoId, cantidad);
 
     productoVenta.value = "";
     cantidadVenta.value = 1;
+  });
+}
 
-    renderCarrito();
+if (barcodeVenta) {
+  barcodeVenta.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const code = barcodeVenta.value.trim();
+      if (!code) return;
+
+      const producto = productosCache.find((p) => p.codigo_barras && p.codigo_barras.trim() === code);
+      
+      if (!producto) {
+        alert("Producto no encontrado con ese código.");
+        barcodeVenta.value = "";
+        return;
+      }
+
+      // Add 1 by default when scanning
+      procesarAgregarProducto(producto.id, 1);
+      
+      barcodeVenta.value = "";
+      barcodeVenta.focus();
+    }
   });
 }
 
@@ -1026,5 +1060,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (comercioId) {
     await cargarVentas();
     await cargarProductos();
+
+    // Show modal if redirected by F10
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("openModal") === "true") {
+      window.history.replaceState({}, document.title, "ventas.html");
+      setTimeout(() => {
+        if (btnNuevaVenta) btnNuevaVenta.click();
+      }, 300);
+    }
+  } else {
+    console.error("No se pudo obtener comercioId en Ventas");
   }
 });

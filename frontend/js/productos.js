@@ -32,6 +32,7 @@ const nuevaCategoriaProducto = document.getElementById(
   "nuevaCategoriaProducto"
 );
 const btnNuevaCategoria = document.getElementById("btnNuevaCategoria");
+const codigoBarrasProducto = document.getElementById("codigoBarrasProducto");
 const stockProducto = document.getElementById("stockProducto");
 const precioProducto = document.getElementById("precioProducto");
 
@@ -130,6 +131,7 @@ function limpiarFormulario() {
   nombreProducto.value = "";
   categoriaProducto.value = "";
   nuevaCategoriaProducto.value = "";
+  codigoBarrasProducto.value = "";
   stockProducto.value = "";
   precioProducto.value = "";
   nuevaCategoriaProducto.style.display = "none";
@@ -149,6 +151,7 @@ document
     const data = {
       nombre: nombreProducto.value.trim(),
       categoria: categoriaFinal,
+      codigo_barras: codigoBarrasProducto.value.trim() || null,
       stock: parseInt(stockProducto.value),
       precio: parseFloat(precioProducto.value),
       comercio_id: comercioId,
@@ -196,6 +199,7 @@ function renderTablaProductos() {
       <tr>
         <td>${p.nombre}</td>
         <td>${p.categoria || "-"}</td>
+        <td>${p.codigo_barras || "-"}</td>
         <td>${p.stock}</td>
         <td>$${p.precio.toFixed(2)}</td>
         <td>
@@ -239,6 +243,7 @@ function editarProducto(id) {
   tituloModal.textContent = "Editar producto";
   nombreProducto.value = p.nombre;
   categoriaProducto.value = p.categoria || "";
+  codigoBarrasProducto.value = p.codigo_barras || "";
   stockProducto.value = p.stock;
   precioProducto.value = p.precio;
 
