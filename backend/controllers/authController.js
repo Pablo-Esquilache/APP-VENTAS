@@ -55,6 +55,7 @@ export const login = async (req, res) => {
     );
 
     res.json({
+      uid: user.id,
       token,
       role: user.role,
       comercio_id: user.comercio_id,

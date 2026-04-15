@@ -39,6 +39,7 @@ CREATE TABLE public.cajas (
     total_gastos numeric(12,2) DEFAULT 0,
     total_devoluciones numeric(12,2) DEFAULT 0,
     total_resultado numeric(12,2) DEFAULT 0,
+    total_cuenta_corriente numeric(12,2) DEFAULT 0,
     created_at timestamp without time zone DEFAULT now()
 );
 
@@ -115,7 +116,8 @@ ALTER SEQUENCE public.clientes_id_seq OWNED BY public.clientes.id;
 
 CREATE TABLE public.comercios (
     id integer NOT NULL,
-    nombre character varying(100) NOT NULL
+    nombre character varying(100) NOT NULL,
+    umbral_stock integer DEFAULT 3
 );
 
 
@@ -267,13 +269,12 @@ ALTER SEQUENCE public.devoluciones_id_seq OWNED BY public.devoluciones.id;
 CREATE TABLE public.gastos (
     id integer NOT NULL,
     descripcion character varying(200) NOT NULL,
-    tipo character varying(20),
+    tipo character varying(50),
     fecha timestamp without time zone NOT NULL,
     importe numeric(14,2) NOT NULL,
     comercio_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT gastos_importe_check CHECK ((importe >= (0)::numeric)),
-    CONSTRAINT gastos_tipo_check CHECK (((tipo)::text = ANY ((ARRAY['fijo'::character varying, 'variable'::character varying])::text[])))
+    CONSTRAINT gastos_importe_check CHECK ((importe >= (0)::numeric))
 );
 
 
@@ -312,6 +313,7 @@ CREATE TABLE public.productos (
     precio numeric(12,2) NOT NULL,
     stock integer DEFAULT 0,
     comercio_id integer NOT NULL,
+    codigo_barras character varying(100),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT productos_precio_check CHECK ((precio >= (0)::numeric)),
     CONSTRAINT productos_stock_check CHECK ((stock >= 0))
@@ -464,6 +466,131 @@ ALTER SEQUENCE public.ventas_id_seq OWNED BY public.ventas.id;
 
 
 --
+-- Name: configuracion_sync; Type: TABLE; Schema: public; Owner: app_ventas
+--
+
+CREATE TABLE public.configuracion_sync (
+    id integer NOT NULL,
+    comercio_id integer NOT NULL,
+    api_token text,
+    sync_enabled boolean DEFAULT false,
+    api_url character varying(255) DEFAULT 'http://127.0.0.1:3000/api/sync'::character varying
+);
+
+ALTER TABLE public.configuracion_sync OWNER TO app_ventas;
+
+--
+-- Name: metodos_pago; Type: TABLE; Schema: public; Owner: app_ventas
+--
+
+CREATE TABLE public.metodos_pago (
+    id integer NOT NULL,
+    comercio_id integer NOT NULL,
+    nombre character varying(100) NOT NULL,
+    activo boolean DEFAULT true
+);
+
+ALTER TABLE public.metodos_pago OWNER TO app_ventas;
+
+--
+-- Name: metodos_pago_id_seq; Type: SEQUENCE; Schema: public; Owner: app_ventas
+--
+
+CREATE SEQUENCE public.metodos_pago_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.metodos_pago_id_seq OWNER TO app_ventas;
+ALTER SEQUENCE public.metodos_pago_id_seq OWNED BY public.metodos_pago.id;
+ALTER TABLE ONLY public.metodos_pago ALTER COLUMN id SET DEFAULT nextval('public.metodos_pago_id_seq'::regclass);
+
+--
+-- Name: descuentos_config; Type: TABLE; Schema: public; Owner: app_ventas
+--
+
+CREATE TABLE public.descuentos_config (
+    id integer NOT NULL,
+    comercio_id integer NOT NULL,
+    porcentaje numeric(5,2) NOT NULL,
+    activo boolean DEFAULT true
+);
+
+ALTER TABLE public.descuentos_config OWNER TO app_ventas;
+
+--
+-- Name: gastos_categorias; Type: TABLE; Schema: public; Owner: app_ventas
+--
+
+CREATE TABLE public.gastos_categorias (
+    id integer NOT NULL,
+    comercio_id integer NOT NULL,
+    nombre character varying(100) NOT NULL,
+    activo boolean DEFAULT true
+);
+
+ALTER TABLE public.gastos_categorias OWNER TO app_ventas;
+
+--
+-- Name: gastos_categorias_id_seq; Type: SEQUENCE; Schema: public; Owner: app_ventas
+--
+
+CREATE SEQUENCE public.gastos_categorias_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.gastos_categorias_id_seq OWNER TO app_ventas;
+ALTER SEQUENCE public.gastos_categorias_id_seq OWNED BY public.gastos_categorias.id;
+ALTER TABLE ONLY public.gastos_categorias ALTER COLUMN id SET DEFAULT nextval('public.gastos_categorias_id_seq'::regclass);
+
+--
+-- Name: descuentos_config_id_seq; Type: SEQUENCE; Schema: public; Owner: app_ventas
+--
+
+CREATE SEQUENCE public.descuentos_config_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.descuentos_config_id_seq OWNER TO app_ventas;
+ALTER SEQUENCE public.descuentos_config_id_seq OWNED BY public.descuentos_config.id;
+ALTER TABLE ONLY public.descuentos_config ALTER COLUMN id SET DEFAULT nextval('public.descuentos_config_id_seq'::regclass);
+
+
+
+--
+-- Name: configuracion_sync_id_seq; Type: SEQUENCE; Schema: public; Owner: app_ventas
+--
+
+CREATE SEQUENCE public.configuracion_sync_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.configuracion_sync_id_seq OWNER TO app_ventas;
+
+--
+-- Name: configuracion_sync_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_ventas
+--
+
+ALTER SEQUENCE public.configuracion_sync_id_seq OWNED BY public.configuracion_sync.id;
+
+
+--
 -- Name: cajas id; Type: DEFAULT; Schema: public; Owner: app_ventas
 --
 
@@ -541,6 +668,13 @@ ALTER TABLE ONLY public.ventas_detalle ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: configuracion_sync id; Type: DEFAULT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.configuracion_sync ALTER COLUMN id SET DEFAULT nextval('public.configuracion_sync_id_seq'::regclass);
+
+
+--
 -- Name: cajas cajas_pkey; Type: CONSTRAINT; Schema: public; Owner: app_ventas
 --
 
@@ -605,6 +739,31 @@ ALTER TABLE ONLY public.productos
 
 
 --
+-- Name: metodos_pago metodos_pago_pkey; Type: CONSTRAINT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.metodos_pago
+    ADD CONSTRAINT metodos_pago_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: descuentos_config descuentos_config_pkey; Type: CONSTRAINT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.descuentos_config
+    ADD CONSTRAINT descuentos_config_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gastos_categorias gastos_categorias_pkey; Type: CONSTRAINT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.gastos_categorias
+    ADD CONSTRAINT gastos_categorias_pkey PRIMARY KEY (id);
+
+
+
+--
 -- Name: cajas unica_caja_por_dia; Type: CONSTRAINT; Schema: public; Owner: app_ventas
 --
 
@@ -642,6 +801,14 @@ ALTER TABLE ONLY public.ventas_detalle
 
 ALTER TABLE ONLY public.ventas
     ADD CONSTRAINT ventas_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: configuracion_sync configuracion_sync_pkey; Type: CONSTRAINT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.configuracion_sync
+    ADD CONSTRAINT configuracion_sync_pkey PRIMARY KEY (id);
 
 
 --
@@ -703,6 +870,14 @@ ALTER TABLE ONLY public.cuenta_corriente_movimientos
 
 
 --
+-- Name: configuracion_sync fk_configuracion_sync_comercio; Type: FK CONSTRAINT; Schema: public; Owner: app_ventas
+--
+
+ALTER TABLE ONLY public.configuracion_sync
+    ADD CONSTRAINT fk_configuracion_sync_comercio FOREIGN KEY (comercio_id) REFERENCES public.comercios(id) ON DELETE CASCADE;
+
+
+--
 -- Name: ventas_detalle fk_producto; Type: FK CONSTRAINT; Schema: public; Owner: app_ventas
 --
 
@@ -737,5 +912,11 @@ GRANT ALL ON SCHEMA public TO app_ventas;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict M3XkGqA3tgMUHCRZzFjhhWJGFTEgcKui9eARvHfwzMuduj7jBr2vVvV5RjKEZYk
+-- Seeder de Primer Usuario Administrador (Usuario: admin | Clave: admin)
+INSERT INTO public.comercios (id, nombre) VALUES (1, 'Comercio Principal') ON CONFLICT DO NOTHING;
+SELECT setval('public.comercios_id_seq', (SELECT MAX(id) FROM public.comercios));
 
+INSERT INTO public.usuarios (usuario, password, role, comercio_id) VALUES ('pipicucu', '$2b$10$gsALfYT/NkOc2QRqtsQ7tu8q.k3S6Twk4h5BlzNG5WCXL.n0yOh4e', 'admin', 1) ON CONFLICT (usuario) DO NOTHING;
+
+
+\unrestrict M3XkGqA3tgMUHCRZzFjhhWJGFTEgcKui9eARvHfwzMuduj7jBr2vVvV5RjKEZYk

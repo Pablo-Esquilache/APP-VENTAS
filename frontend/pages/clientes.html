@@ -23,12 +23,11 @@
         </li>
         <li id="tab-gastos"><a href="gastos.html">Gastos</a></li>
         <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn" title="Actualizar datos">
-            ⟳ Actualizar
-          </button>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
         </li>
-        <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
 
@@ -343,7 +342,6 @@
     <!-- SCRIPTS -->
     <script src="../js/libs/xlsx.full.min.js"></script>
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/clientes.js"></script>
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/system.js"></script>

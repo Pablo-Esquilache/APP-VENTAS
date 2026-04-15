@@ -25,12 +25,11 @@
           <a href="gastos.html" class="app-active">Gastos</a>
         </li>
         <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn" title="Actualizar datos">
-            ⟳ Actualizar
-          </button>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
         </li>
-        <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
 
@@ -49,8 +48,7 @@
 
         <select id="filtroTipo" class="app-input">
           <option value="">Todos</option>
-          <option value="fijo">Fijo</option>
-          <option value="variable">Variable</option>
+          <!-- Dynamic -->
         </select>
         <label for="">Desde</label>
         <input type="date" id="filtroDesde" class="app-input" />
@@ -112,8 +110,7 @@
               <label for="tipoGasto">Tipo</label>
               <select id="tipoGasto" class="app-input" required>
                 <option value="">Seleccionar</option>
-                <option value="fijo">Fijo</option>
-                <option value="variable">Variable</option>
+                <!-- Dynamic -->
               </select>
             </div>
 
@@ -136,7 +133,6 @@
       </div>
     </div>
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/gastos.js"></script>
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/system.js"></script>

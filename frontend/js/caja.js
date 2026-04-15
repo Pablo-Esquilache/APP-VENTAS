@@ -136,10 +136,17 @@ async function calcularResumen() {
   let totalDigital = 0;
   let totalCuentaCorriente = 0;
   let totalEgresos = 0;
+  let totalDevoluciones = 0;
 
   movimientos.forEach((m) => {
 
-    saldo += m.ingreso - m.egreso;
+    if (m.tipo === "VENTA" && m.metodo_pago === "Cuenta Corriente") {
+      // No sumamos al saldo físico
+    } else if (m.tipo === "DEVOLUCION" && m.metodo_pago === "Cuenta Corriente") {
+      // No restamos del saldo físico
+    } else {
+      saldo += m.ingreso - m.egreso;
+    }
 
     if (m.tipo === "VENTA") {
 
@@ -158,7 +165,11 @@ async function calcularResumen() {
       }
     }
 
-    totalEgresos += m.egreso;
+    if (m.tipo === "DEVOLUCION") {
+      totalDevoluciones += m.egreso;
+    } else if (m.tipo === "GASTO") {
+      totalEgresos += m.egreso;
+    }
 
     const tr = document.createElement("tr");
 
@@ -176,7 +187,11 @@ async function calcularResumen() {
   document.getElementById("totalEfectivo").textContent = totalEfectivo.toFixed(2);
   document.getElementById("totalDigital").textContent = totalDigital.toFixed(2);
   document.getElementById("totalCuentaCorriente").textContent = totalCuentaCorriente.toFixed(2);
-  document.getElementById("totalEgresos").textContent = totalEgresos.toFixed(2);
+  document.getElementById("totalEgresos").textContent = (totalEgresos + totalDevoluciones).toFixed(2);
+  // Guardamos los valores particionados en el DOM invisible o como variable global temporal si hiciera falta.
+  // Pero lo ideal es que al cerrar la caja, usemos re-calcular o sumemos todo.
+  window.tempDevoluciones = totalDevoluciones;
+  window.tempGastos = totalEgresos;
   document.getElementById("resultadoFinal").textContent = saldo.toFixed(2);
 }
 
@@ -233,15 +248,15 @@ btnCerrarCaja?.addEventListener("click", async () => {
     document.getElementById("resultadoFinal").textContent
   );
 
-  const totalIngresos =
-    totalEfectivo + totalDigital + totalCuentaCorriente;
+  const totalVentasLimpias = totalEfectivo + totalDigital;
 
   try {
     await CajasAPI.cerrar(cajaActual.id, {
-      total_ventas: totalIngresos,
-      total_gastos: totalEgresos,
-      total_devoluciones: 0,
+      total_ventas: totalVentasLimpias,
+      total_gastos: window.tempGastos || 0,
+      total_devoluciones: window.tempDevoluciones || 0,
       total_resultado: resultado,
+      total_cuenta_corriente: totalCuentaCorriente
     });
   } catch (err) {
     alert("Error al cerrar la caja");
@@ -265,4 +280,88 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (comercioId) {
     await obtenerCaja();
   }
+});
+
+// =================================================
+// HISTORIAL DE CAJAS
+// =================================================
+
+const btnHistorialCajas = document.getElementById("btnHistorialCajas");
+const modalHistorialCajas = document.getElementById("modalHistorialCajas");
+const cerrarModalHistorial = document.getElementById("cerrarModalHistorial");
+const btnDescargarExcelHistorial = document.getElementById("btnDescargarExcelHistorial");
+const historialCajasBody = document.getElementById("historialCajasBody");
+let datosHistorialExcel = [];
+
+btnHistorialCajas?.addEventListener("click", async () => {
+  modalHistorialCajas.style.display = "flex";
+  historialCajasBody.innerHTML = "<tr><td colspan='8' style='text-align: center'>Cargando...</td></tr>";
+  
+  try {
+    const historial = await CajasAPI.getHistorial(comercioId);
+    historialCajasBody.innerHTML = "";
+    datosHistorialExcel = [];
+
+    if (!historial || historial.length === 0) {
+      historialCajasBody.innerHTML = "<tr><td colspan='8' style='text-align: center'>No hay historial de cajas</td></tr>";
+      return;
+    }
+
+    historial.forEach((c) => {
+      // Ajuste para evitar desfasaje de fecha UTC
+      const fechaLocalArray = c.fecha ? c.fecha.split("T")[0].split("-") : null;
+      let dateAperturaStr = fechaLocalArray ? `${fechaLocalArray[2]}/${fechaLocalArray[1]}/${fechaLocalArray[0]}` : "";
+      
+      const fechaCierre = c.hora_cierre 
+        ? new Date(c.hora_cierre).toLocaleDateString("es-AR") 
+        : `Sin Cerrar (${dateAperturaStr})`;
+      
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${fechaCierre}</td>
+        <td>${c.estado.toUpperCase()}</td>
+        <td>$${Number(c.saldo_inicial).toFixed(2)}</td>
+        <td>$${Number(c.total_ventas || 0).toFixed(2)}</td>
+        <td>$${Number(c.total_cuenta_corriente || 0).toFixed(2)}</td>
+        <td>$${Number(c.total_gastos || 0).toFixed(2)}</td>
+        <td>$${Number(c.total_devoluciones || 0).toFixed(2)}</td>
+        <td>$${Number(c.total_resultado || 0).toFixed(2)}</td>
+      `;
+      historialCajasBody.appendChild(tr);
+
+      datosHistorialExcel.push({
+        "Fecha": fechaCierre,
+        "Estado": c.estado.toUpperCase(),
+        "Saldo Inicial": Number(c.saldo_inicial),
+        "Ventas": Number(c.total_ventas || 0),
+        "Cuenta Corri.": Number(c.total_cuenta_corriente || 0),
+        "Gastos": Number(c.total_gastos || 0),
+        "Devoluciones": Number(c.total_devoluciones || 0),
+        "Resultado Final": Number(c.total_resultado || 0)
+      });
+    });
+
+  } catch (err) {
+    console.error(err);
+    historialCajasBody.innerHTML = "<tr><td colspan='8' style='text-align: center; color: red;'>Error al cargar historial</td></tr>";
+  }
+});
+
+cerrarModalHistorial?.addEventListener("click", () => {
+  modalHistorialCajas.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modalHistorialCajas) modalHistorialCajas.style.display = "none";
+});
+
+btnDescargarExcelHistorial?.addEventListener("click", () => {
+  if (datosHistorialExcel.length === 0) {
+    alert("No hay datos para exportar");
+    return;
+  }
+  const ws = XLSX.utils.json_to_sheet(datosHistorialExcel);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Historial_Cajas");
+  XLSX.writeFile(wb, `Historial_Cajas_${new Date().toLocaleDateString("es-AR").replace(/\//g,'-')}.xlsx`);
 });

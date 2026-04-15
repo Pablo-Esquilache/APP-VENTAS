@@ -1,5 +1,7 @@
 import { SystemAPI } from "./api.js";
 
+// (beforeunload quitado temporalmente)
+
 document.addEventListener("DOMContentLoaded", () => {
   const refreshBtn = document.getElementById("refresh-db-btn");
   if (!refreshBtn) return;
@@ -34,6 +36,21 @@ document.addEventListener("keydown", (e) => {
     } else {
       window.location.href = "ventas.html?openModal=true";
     }
+  }
+
+  // F9: Hack Desatascador de Foco en Modales (Electron Bug)
+  if (e.key === "F9") {
+    e.preventDefault();
+    const modales = document.querySelectorAll(".app-modal");
+    modales.forEach((m) => {
+      if (m.style.display === "flex" || m.style.display === "block") {
+        const firstVisibleInput = m.querySelector("input:not([type='hidden']), select, textarea");
+        if (firstVisibleInput) {
+          firstVisibleInput.blur();
+          setTimeout(() => firstVisibleInput.focus(), 10);
+        }
+      }
+    });
   }
 
   // ESC: Cerrar Modales

@@ -36,13 +36,10 @@
         <li><a href="gastos.html">Gastos</a></li>
         <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
 
-        <!-- Botón refrescar base de datos -->
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn">⟳ Actualizar</button>
-        </li>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
 
-        <!-- Cerrar sesión -->
         <li>
+          <span class="user-role-badge"></span>
           <button id="logout-btn">Cerrar Sesión</button>
         </li>
       </ul>
@@ -53,7 +50,10 @@
     ============================ -->
     <main class="app-container">
       <!-- Título de la pantalla -->
-      <h1 class="app-title">Caja del Día</h1>
+      <div class="app-controls" style="margin-bottom: 20px;">
+        <h1 class="app-title" style="margin-bottom: 0;">Caja del Día</h1>
+        <button id="btnHistorialCajas" class="app-btn-secondary">Ver Historial de Cajas</button>
+      </div>
 
       <!-- Tarjeta principal de caja -->
       <div class="caja-card">
@@ -131,10 +131,48 @@
     </main>
 
     <!-- ============================
+         MODAL HISTORIAL DE CAJAS
+    ============================ -->
+    <div id="modalHistorialCajas" class="app-modal">
+      <div class="app-modal-content">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Historial de Cajas</h2>
+          <button type="button" class="app-close" id="cerrarModalHistorial">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="app-controls" style="margin-bottom: 15px; justify-content: flex-end;">
+          <button id="btnDescargarExcelHistorial" class="app-btn-primary" style="background-color: #217346; color: white; border-color: #1e6b40;">
+            📥 Descargar Excel
+          </button>
+        </div>
+
+        <div class="app-tabla-container">
+          <table class="app-tabla" id="tablaHistorialCajas" style="font-size: 0.9em;">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Sal. Inicial</th>
+                <th>Ventas</th>
+                <th>Cuenta Corri.</th>
+                <th>Gastos</th>
+                <th>Devol.</th>
+                <th>Resultado Final</th>
+              </tr>
+            </thead>
+            <tbody id="historialCajasBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================
          SCRIPTS
     ============================ -->
+    <script src="../js/libs/xlsx.full.min.js"></script>
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/caja.js"></script>
     <script type="module" src="../js/system.js"></script>
     <script type="module" src="../js/logout.js"></script>

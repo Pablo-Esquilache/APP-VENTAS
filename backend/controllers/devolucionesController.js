@@ -20,7 +20,7 @@ export const registrarDevolucion = async (req, res) => {
     // 1️⃣ Validar venta
     const ventaRes = await client.query(
       `
-      SELECT id
+      SELECT id, metodo_pago
       FROM ventas
       WHERE id = $1 AND comercio_id = $2
       FOR UPDATE
@@ -49,8 +49,22 @@ export const registrarDevolucion = async (req, res) => {
 
       const cantidadVendida = Number(detalleRes.rows[0].cantidad);
 
-      if (item.cantidad > cantidadVendida)
-        throw new Error("Cantidad mayor a la vendida");
+      const devolucionesPrevias = await client.query(
+         `
+         SELECT COALESCE(SUM(dd.cantidad), 0) AS cant_devuelta
+         FROM devoluciones_detalle dd
+         JOIN devoluciones d ON d.id = dd.devolucion_id
+         WHERE d.venta_id = $1 AND dd.producto_id = $2
+         `,
+         [venta_id, item.producto_id]
+      );
+      
+      const cantidadYaDevuelta = Number(devolucionesPrevias.rows[0].cant_devuelta);
+      const cantidadDisponibleParaDevolver = cantidadVendida - cantidadYaDevuelta;
+
+      if (item.cantidad > cantidadDisponibleParaDevolver) {
+        throw new Error(`Cantidad mayor a la disponible. Original: ${cantidadVendida}, Ya devolvió: ${cantidadYaDevuelta}. Quedan: ${cantidadDisponibleParaDevolver}.`);
+      }
 
       const precio = Number(detalleRes.rows[0].precio_unitario);
       totalDevolucion += precio * Number(item.cantidad);
@@ -99,6 +113,18 @@ export const registrarDevolucion = async (req, res) => {
         WHERE id = $2 AND comercio_id = $3
         `,
         [item.cantidad, item.producto_id, comercio_id],
+      );
+    }
+
+    // 5️⃣ Si fue en cuenta corriente, abonar saldo compensatorio como "pago"
+    if (ventaRes.rows[0].metodo_pago === 'Cuenta Corriente' && cliente_id) {
+      await client.query(
+        `
+        INSERT INTO cuenta_corriente_movimientos
+        (cliente_id, comercio_id, tipo, monto, venta_id)
+        VALUES ($1, $2, 'pago', $3, $4)
+        `,
+        [cliente_id, comercio_id, totalDevolucion, venta_id]
       );
     }
 

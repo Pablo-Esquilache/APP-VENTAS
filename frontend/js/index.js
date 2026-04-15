@@ -1,6 +1,17 @@
 import { AuthAPI } from "./api.js";
 
 // =================================================
+// RUTINA DE AUTO-LOGIN
+// =================================================
+// Si ya hay una sesión guardada, saltear el login e ir a caja
+document.addEventListener("DOMContentLoaded", () => {
+  const sessionUser = localStorage.getItem("session");
+  if (sessionUser) {
+    window.location.href = "pages/caja.html";
+  }
+});
+
+// =================================================
 // REFERENCIAS DEL DOM
 // =================================================
 
@@ -52,6 +63,7 @@ form.addEventListener("submit", async (e) => {
     localStorage.setItem(
       "session",
       JSON.stringify({
+        uid: data.uid,
         token: data.token,
         role: data.role,
         comercio_id: data.comercio_id,

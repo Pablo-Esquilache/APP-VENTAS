@@ -131,6 +131,7 @@ if (btnNuevaVenta) {
 
     await cargarClientes();
     await cargarProductos();
+    await cargarMetodosYDescuentos();
     modalVenta.style.display = "flex";
   });
 }
@@ -170,6 +171,27 @@ async function cargarClientes() {
   clientes.forEach((c) => {
     clienteVenta.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
   });
+}
+
+// ==============================
+// METODOS DE PAGO Y DESCUENTOS
+// ==============================
+async function cargarMetodosYDescuentos() {
+  try {
+    const rMetodos = await fetch(`/api/ajustes/metodos_pago/${comercioId}`);
+    if (rMetodos.ok) {
+      const metodos = await rMetodos.json();
+      metodoPagoVenta.innerHTML = metodos.filter(m => m.activo).map(m => `<option value="${m.nombre}">${m.nombre}</option>`).join("");
+    }
+
+    const rDescuentos = await fetch(`/api/ajustes/descuentos/${comercioId}`);
+    if (rDescuentos.ok) {
+      const descuentos = await rDescuentos.json();
+      descuentoVenta.innerHTML = descuentos.filter(d => d.activo).map(d => `<option value="${d.porcentaje}">${d.porcentaje}%</option>`).join("");
+    }
+  } catch (err) { 
+    console.error("Error cargando metodos y descuentos", err);
+  }
 }
 
 // ==============================
@@ -575,6 +597,7 @@ function activarBotonesEditar() {
       // 🔹 Cargar selects
       await cargarClientes();
       await cargarProductos();
+      await cargarMetodosYDescuentos();
 
       // 🔹 Precargar datos básicos
       const d = new Date(venta.fecha);
@@ -1073,3 +1096,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("No se pudo obtener comercioId en Ventas");
   }
 });
+
+// ==============================
+// CREACIÓN RÁPIDA DE CLIENTE
+// ==============================
+const btnCrearClienteRapido = document.getElementById("btnCrearClienteRapido");
+const modalCrearClienteRapido = document.getElementById("modalCrearClienteRapido");
+const cerrarModalClienteRapido = document.getElementById("cerrarModalClienteRapido");
+const formClienteRapido = document.getElementById("formClienteRapido");
+
+// Elementos de localidad
+const SelectLocalidadRapido = document.getElementById("localidadClienteRapido");
+const btnNuevaLocalidadRapida = document.getElementById("btnNuevaLocalidadClienteRapido");
+const inputNuevaLocalidadRapida = document.getElementById("nuevaLocalidadClienteRapido");
+
+async function cargarLocalidadesRapido() {
+  try {
+    const localidades = await ClientesAPI.getLocalidades(comercioId);
+    SelectLocalidadRapido.innerHTML = '<option value="">Seleccionar localidad</option>';
+    localidades.forEach((loc) => {
+      if (loc) {
+        SelectLocalidadRapido.innerHTML += `<option value="${loc}">${loc}</option>`;
+      }
+    });
+  } catch (error) {
+    console.error("Error al cargar localidades", error);
+  }
+}
+
+if (btnNuevaLocalidadRapida) {
+  btnNuevaLocalidadRapida.addEventListener("click", () => {
+    if (inputNuevaLocalidadRapida.style.display === "none") {
+      inputNuevaLocalidadRapida.style.display = "block";
+      SelectLocalidadRapido.value = "";
+      SelectLocalidadRapido.disabled = true;
+      btnNuevaLocalidadRapida.textContent = "Cancelar";
+    } else {
+      inputNuevaLocalidadRapida.style.display = "none";
+      inputNuevaLocalidadRapida.value = "";
+      SelectLocalidadRapido.disabled = false;
+      btnNuevaLocalidadRapida.textContent = "Nueva";
+    }
+  });
+}
+
+if (btnCrearClienteRapido) {
+  btnCrearClienteRapido.addEventListener("click", async () => {
+    // Reset form
+    formClienteRapido.reset();
+    inputNuevaLocalidadRapida.style.display = "none";
+    inputNuevaLocalidadRapida.value = "";
+    SelectLocalidadRapido.disabled = false;
+    btnNuevaLocalidadRapida.textContent = "Nueva";
+
+    await cargarLocalidadesRapido();
+    modalCrearClienteRapido.style.display = "flex";
+  });
+}
+
+if (cerrarModalClienteRapido) {
+  cerrarModalClienteRapido.addEventListener("click", () => {
+    modalCrearClienteRapido.style.display = "none";
+  });
+}
+
+window.addEventListener("click", (e) => {
+  if (e.target === modalCrearClienteRapido) {
+    modalCrearClienteRapido.style.display = "none";
+  }
+});
+
+if (formClienteRapido) {
+  formClienteRapido.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let localidadFinal = SelectLocalidadRapido.value;
+    if (inputNuevaLocalidadRapida.style.display === "block" && inputNuevaLocalidadRapida.value.trim() !== "") {
+      localidadFinal = inputNuevaLocalidadRapida.value.trim();
+    }
+
+    const data = {
+      nombre: document.getElementById("nombreClienteRapido").value.trim(),
+      telefono: document.getElementById("telefonoClienteRapido").value.trim(),
+      localidad: localidadFinal,
+      fecha_nacimiento: document.getElementById("fechaNacimientoClienteRapido").value,
+      genero: document.getElementById("generoClienteRapido").value,
+      email: document.getElementById("emailClienteRapido").value.trim(),
+      comentarios: document.getElementById("comentariosClienteRapido").value.trim(),
+      comercio_id: comercioId,
+    };
+
+    try {
+      const nuevoCliente = await ClientesAPI.create(data);
+      alert("Cliente guardado correctamente");
+      modalCrearClienteRapido.style.display = "none";
+      
+      // Recargar lista y seleccionar al recién creado
+      await cargarClientes();
+      clienteVenta.value = nuevoCliente.id;
+    } catch (err) {
+      alert("Error guardando cliente rápido: " + (err.message || "Error interno"));
+    }
+  });
+}

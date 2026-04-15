@@ -70,6 +70,35 @@ async function cargarGastos() {
 }
 
 // ------------------------------
+// CARGAR CATEGORÍAS GASTOS
+// ------------------------------
+async function cargarCategoriasGasto() {
+  if (!comercioId) return;
+  try {
+    const token = JSON.parse(localStorage.getItem("token") || '"{}"');
+    const res = await fetch(`/api/ajustes/gastos_categorias/${comercioId}`);
+    if (res.ok) {
+      const data = await res.json();
+      const activas = data.filter(c => c.activo);
+      
+      const selectModal = document.getElementById("tipoGasto");
+      const selectFiltro = document.getElementById("filtroTipo");
+      
+      // Limpiar selects (mantener la opción de Todos/Seleccionar)
+      selectModal.innerHTML = '<option value="">Seleccionar</option>';
+      selectFiltro.innerHTML = '<option value="">Todos</option>';
+      
+      activas.forEach(c => {
+        selectModal.innerHTML += `<option value="${c.nombre}">${c.nombre}</option>`;
+        selectFiltro.innerHTML += `<option value="${c.nombre}">${c.nombre}</option>`;
+      });
+    }
+  } catch (err) {
+    console.error("Error cargando categorias de gastos:", err);
+  }
+}
+
+// ------------------------------
 // RENDER TABLA
 // ------------------------------
 function renderTablaGastos() {
@@ -263,6 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await cargarComercio();
   console.log("comercioId:", comercioId); // debe mostrar un número
   if (comercioId) {
+    await cargarCategoriasGasto();
     await cargarGastos();
   } else {
     console.error("No se pudo obtener comercioId");

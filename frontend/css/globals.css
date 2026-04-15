@@ -18,12 +18,13 @@ body {
   padding-top: 64px;
 }
 
-/* Mostrar pestaña reportes solo para admin */
-#tab-reportes {
+/* Mostrar pestaña reportes y ajustes solo para admin */
+#tab-reportes, #tab-ajustes {
   display: none;
 }
 
-body.role-admin #tab-reportes {
+body.role-admin #tab-reportes,
+body.role-admin #tab-ajustes {
   display: inline-flex;
 }
 

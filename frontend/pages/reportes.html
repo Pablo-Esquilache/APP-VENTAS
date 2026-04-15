@@ -25,12 +25,11 @@
         <li>
           <a href="reportes.html" class="app-active">Reportes</a>
         </li>
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn" title="Actualizar datos">
-            ⟳ Actualizar
-          </button>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
         </li>
-        <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
 
@@ -137,7 +136,6 @@
     <script src="../js/libs/html2canvas.min.js"></script>
     <script src="../js/libs/jspdf.umd.min.js"></script>
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/reportes.js"></script>
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/system.js"></script>

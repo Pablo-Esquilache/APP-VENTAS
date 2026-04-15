@@ -52,7 +52,7 @@ export const abrirCaja = async (req, res) => {
  */
 export const cerrarCaja = async (req, res) => {
   const { id } = req.params;
-  const { total_ventas, total_gastos, total_devoluciones, total_resultado } =
+  const { total_ventas, total_gastos, total_devoluciones, total_resultado, total_cuenta_corriente } =
     req.body;
 
   try {
@@ -63,10 +63,11 @@ export const cerrarCaja = async (req, res) => {
            total_ventas = $1,
            total_gastos = $2,
            total_devoluciones = $3,
-           total_resultado = $4
-       WHERE id = $5
+           total_resultado = $4,
+           total_cuenta_corriente = $5
+       WHERE id = $6
        RETURNING *`,
-      [total_ventas, total_gastos, total_devoluciones, total_resultado, id],
+      [total_ventas, total_gastos, total_devoluciones, total_resultado, total_cuenta_corriente || 0, id],
     );
 
     res.json(rows[0]);
@@ -100,10 +101,11 @@ export const getMovimientosDia = async (req, res) => {
     );
 
     const devoluciones = await pool.query(
-      `SELECT id, fecha, total
-       FROM devoluciones
-       WHERE comercio_id = $1
-       AND DATE(fecha) = CURRENT_DATE`,
+      `SELECT d.id, d.fecha, d.total, v.metodo_pago
+       FROM devoluciones d
+       LEFT JOIN ventas v ON v.id = d.venta_id
+       WHERE d.comercio_id = $1
+       AND DATE(d.fecha) = CURRENT_DATE`,
       [comercioId],
     );
 
@@ -131,11 +133,13 @@ export const getMovimientosDia = async (req, res) => {
     });
 
     devoluciones.rows.forEach((d) => {
+      let descripcionBase = d.metodo_pago === 'Cuenta Corriente' ? 'Devolución (Cta. Cte.)' : 'Devolución';
       movimientos.push({
         hora: d.fecha,
         tipo: "DEVOLUCION",
         //descripcion: `Devolución #${d.id}`,
-        descripcion: `Devolución`,
+        descripcion: descripcionBase,
+        metodo_pago: d.metodo_pago,
         ingreso: 0,
         egreso: Number(d.total),
       });
@@ -147,5 +151,26 @@ export const getMovimientosDia = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error obteniendo movimientos" });
+  }
+};
+
+/**
+ * GET - Historial de cajas
+ */
+export const getHistorial = async (req, res) => {
+  const { comercioId } = req.params;
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM cajas 
+       WHERE comercio_id = $1 
+       ORDER BY fecha DESC`,
+      [comercioId]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error obteniendo historial de cajas:", err);
+    res.status(500).json({ error: "Error obteniendo historial" });
   }
 };

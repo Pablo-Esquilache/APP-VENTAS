@@ -7,12 +7,12 @@ export const getComercioByUid = async (req, res) => {
   const { uid } = req.params;
 
   try {
-    // Antes buscábamos firebase_uid en la tabla comercios, lo correcto es buscar en usuarios
+    // Antes buscábamos firebase_uid en la tabla comercios, lo correcto es buscar en usuarios por su ID
     const result = await pool.query(
       `SELECT c.id, c.nombre
        FROM usuarios u
        JOIN comercios c ON u.comercio_id = c.id
-       WHERE u.firebase_uid = $1`,
+       WHERE u.id = $1`,
       [uid]
     );
 

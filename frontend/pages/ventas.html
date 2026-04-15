@@ -36,11 +36,10 @@
         <li><a href="gastos.html">Gastos</a></li>
         <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
 
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn">⟳ Actualizar</button>
-        </li>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
 
         <li>
+          <span class="user-role-badge"></span>
           <button id="logout-btn">Cerrar Sesión</button>
         </li>
       </ul>
@@ -64,7 +63,7 @@
             placeholder="Buscar..."
           />
           <button id="btnLimpiarFiltros" class="app-btn-secondary">
-            Limpiar
+            Limpiar filtros
           </button>
         </div>
         <div>
@@ -128,7 +127,10 @@
 
             <div class="app-form-group">
               <label>Cliente</label>
-              <select id="clienteVenta" class="app-input" required></select>
+              <div style="display: flex; gap: 8px; width: 100%;">
+                <select id="clienteVenta" class="app-input" style="flex: 1;" required></select>
+                <button type="button" id="btnCrearClienteRapido" class="app-btn-secondary" style="padding: 0 12px; font-weight: bold; font-size: 1.2rem; flex: 0 0 auto;" title="Crear nuevo cliente">+</button>
+              </div>
             </div>
           </div>
 
@@ -188,22 +190,14 @@
             <div class="app-form-group">
               <label>Método de pago</label>
               <select id="metodoPagoVenta" class="app-input" required>
-                <option value="Efectivo">Efectivo</option>
-                <option value="Debito">Débito</option>
-                <option value="QR">QR</option>
-                <option value="Transferencia">Transferencia</option>
-                <option value="Cuenta Corriente">Cuenta Corriente</option>
+                <!-- Llenado dinámicamente -->
               </select>
             </div>
 
             <div class="app-form-group">
               <label>Descuento</label>
               <select id="descuentoVenta" class="app-input app-input-small">
-                <option value="0">0%</option>
-                <option value="5">5%</option>
-                <option value="10">10%</option>
-                <option value="15">15%</option>
-                <option value="20">20%</option>
+                <!-- Llenado dinámicamente -->
               </select>
             </div>
 
@@ -240,7 +234,7 @@
           <input type="date" id="filtroDesdeModal" class="app-input" />
           <input type="date" id="filtroHastaModal" class="app-input" />
           <button id="btnLimpiarFiltrosModal" class="app-btn-secondary">
-            Limpiar
+            Limpiar filtros
           </button>
         </div>
 
@@ -532,10 +526,83 @@
     </div>
 
     <!-- ========================= -->
+    <!-- MODAL CREACIÓN RÁPIDA CLIENTE -->
+    <!-- ========================= -->
+    <div id="modalCrearClienteRapido" class="app-modal" style="z-index: 10000;">
+      <div class="app-modal-content-producto">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle">Nuevo Cliente Rápido</h2>
+          <button type="button" class="app-close" id="cerrarModalClienteRapido">Cerrar</button>
+        </div>
+
+        <form id="formClienteRapido" class="app-form-venta">
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Nombre</label>
+              <input type="text" id="nombreClienteRapido" class="app-input" required />
+            </div>
+
+            <div class="app-form-group app-col">
+              <label>Fecha de nacimiento</label>
+              <input type="date" id="fechaNacimientoClienteRapido" class="app-input" required />
+            </div>
+            <div class="app-form-group app-col">
+              <label>Género</label>
+              <select id="generoClienteRapido" class="app-input">
+                <option value="">Seleccionar</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Teléfono</label>
+              <input type="text" id="telefonoClienteRapido" class="app-input" />
+            </div>
+
+            <div class="app-form-group">
+              <label>Email</label>
+              <input type="email" id="emailClienteRapido" class="app-input" />
+            </div>
+            <div class="app-form-group">
+              <label>Localidad</label>
+              <div style="display: flex; gap: 8px; align-items: center">
+                <select id="localidadClienteRapido" class="app-input">
+                  <option value="">Seleccionar localidad</option>
+                </select>
+                <button type="button" id="btnNuevaLocalidadClienteRapido" class="app-btn-secondary">
+                  Nueva
+                </button>
+              </div>
+              <input
+                type="text"
+                id="nuevaLocalidadClienteRapido"
+                class="app-input"
+                placeholder="Escribí nueva localidad"
+                style="display: none; margin-top: 8px"
+              />
+            </div>
+          </div>
+
+          <div class="app-form-row">
+            <div class="app-form-group">
+              <label>Comentarios</label>
+              <textarea id="comentariosClienteRapido" class="app-input" rows="2"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" id="btnGuardarClienteRapido" class="app-btn-primary">Guardar Cliente</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================= -->
     <!-- SCRIPTS -->
     <!-- ========================= -->
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/ventas.js"></script>
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/system.js"></script>

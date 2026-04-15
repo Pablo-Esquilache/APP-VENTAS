@@ -185,6 +185,7 @@ export const GastosAPI = {
 export const CajasAPI = {
   getHoy: (comercioId) => apiFetch(`/cajas/hoy/${comercioId}`),
   getMovimientos: (comercioId) => apiFetch(`/cajas/movimientos/${comercioId}`),
+  getHistorial: (comercioId) => apiFetch(`/cajas/historial/${comercioId}`),
   abrir: (data) => apiFetch("/cajas/abrir", { method: "POST", body: data }),
   cerrar: (id, data) =>
     apiFetch(`/cajas/cerrar/${id}`, { method: "PUT", body: data }),

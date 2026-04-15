@@ -15,21 +15,32 @@ import clientesRouter from "./routes/clientes.js";
 import gastosRouter from "./routes/gastos.js";
 import comerciosRouter from "./routes/comercios.js";
 import authRouter from "./routes/auth.js";
+import usuariosRouter from "./routes/usuarios.js";
 import reportesRoutes from "./routes/reportes.js";
 import exportarTablaRouter from "./routes/deacragaExcel.js";
 import systemRouter from "./routes/system.js";
 import clientesHistorialRoutes from "./routes/historial.js";
 import devolucionesRoutes from "./routes/devoluciones.js";
 import syncConfigRoutes from "./routes/syncConfigRoutes.js";
+import backupRoutes from "./routes/backupRoutes.js";
+import ajustesRoutes from "./routes/ajustes.js";
 import { initSyncWorker } from "./services/syncWorker.js";
-
-dotenv.config();
-
-const app = express();
+import { initBackupCron } from "./services/backupService.js";
 
 /* ===== RUTAS ABSOLUTAS ===== */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const app = express();
+
+/* ===== CONFIGURAR DOTENV ===== */
+if (electronApp?.isPackaged) {
+  // En producción, buscamos estrictamente el .env al lado del Ejecutable (.exe)
+  dotenv.config({ path: path.join(path.dirname(process.execPath), ".env") });
+} else {
+  // En desarrollo, usamos el .env de la carpeta backend
+  dotenv.config({ path: path.join(__dirname, ".env") });
+}
 
 /* ===== TEST CONEXIÓN DB ===== */
 pool.query("SELECT NOW()")
@@ -57,6 +68,7 @@ app.use(express.static(frontendPath));
 
 /* ===== RUTAS API ===== */
 app.use("/api/auth", authRouter);
+app.use("/api/usuarios", usuariosRouter);
 app.use("/api/ventas", ventasRouter);
 app.use("/api/productos", productosRouter);
 app.use("/api/clientes", clientesRouter);
@@ -69,6 +81,8 @@ app.use("/api", clientesHistorialRoutes);
 app.use("/api/devoluciones", devolucionesRoutes);
 app.use("/api/cajas", cajasRoutes);
 app.use("/api/config-sync", syncConfigRoutes);
+app.use("/api/backup", backupRoutes);
+app.use("/api/ajustes", ajustesRoutes);
 
 /* ===== FALLBACK SPA ===== */
 app.get("*", (req, res) => {
@@ -99,6 +113,7 @@ const PORT = await findAvailablePort(BASE_PORT);
 const server = app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
   initSyncWorker(); // Iniciar cron de sincronización en segundo plano
+  initBackupCron(); // Chequear si corresponde generar un backup automático
 });
 
 export default server;

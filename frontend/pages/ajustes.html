@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajustes de Administrador</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/ajustes.css" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+    <meta name="theme-color" content="#151515" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li><a href="reportes.html">Reportes</a></li>
+        <li class="app-admin-only"><a href="ajustes.html" class="app-active">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="app-container">
+      <h1 class="app-title">Ajustes Generales</h1>
+      <p style="color: #aaa; margin-bottom: 20px;">Opciones y configuraciones exclusivas para perfil Administrador.</p>
+
+      <div class="ajustes-grid">
+        <!-- 1. MÉTODOS DE PAGO -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Métodos de Pago</h2>
+          <div class="app-form-group" style="display: flex; gap: 5px;">
+            <input type="text" id="nuevoMetodoInput" class="app-input" placeholder="Nuevo método..." style="flex:1;" />
+            <button id="btnNuevoMetodo" class="app-btn-secondary">Agregar</button>
+          </div>
+          <ul id="listaMetodos" class="opciones-lista">
+            <!-- Renderizado dinámico -->
+          </ul>
+        </section>
+
+        <!-- 2. DESCUENTOS -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Descuentos (%)</h2>
+          <div class="app-form-group" style="display: flex; gap: 5px;">
+            <input type="number" id="nuevoDescuentoInput" class="app-input" placeholder="Ej: 25" style="flex:1;" />
+            <button id="btnNuevoDescuento" class="app-btn-secondary">Agregar</button>
+          </div>
+          <ul id="listaDescuentos" class="opciones-lista">
+            <!-- Renderizado dinámico -->
+          </ul>
+        </section>
+
+        <!-- 3. E-COMMERCE -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Conexión E-Commerce</h2>
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+            Configura la sincronización con tu tienda web.
+          </p>
+          <form id="formCloudSync" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="app-form-group">
+               <label>URL de E-commerce</label>
+               <input type="text" id="apiUrlSync" class="app-input" placeholder="http://127.0.0.1:3000/api/sync" autocomplete="off" />
+            </div>
+
+            <div class="app-form-group">
+               <label>Token de Conexión</label>
+               <input type="text" id="apiTokenSync" class="app-input" autocomplete="off" />
+            </div>
+
+            <div class="switch-container">
+               <label>Sincronización Automática</label>
+               <label class="switch-ui">
+                 <input type="checkbox" id="syncEnabledSwitch">
+                 <span class="slider">
+                   <span class="slider-dot"></span>
+                 </span>
+               </label>
+            </div>
+
+            <button type="submit" class="app-btn-primary" id="btnGuardarSync">
+               Guardar Configuración
+            </button>
+          </form>
+        </section>
+
+        <!-- 4. CATEGORÍAS DE GASTOS -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Categorías de Gastos</h2>
+          <div class="app-form-group" style="display: flex; gap: 5px;">
+            <input type="text" id="nuevaCategoriaGastoInput" class="app-input" placeholder="Ej: Alquiler" style="flex:1;" />
+            <button id="btnNuevaCategoriaGasto" class="app-btn-secondary">Agregar</button>
+          </div>
+          <ul id="listaCategoriasGasto" class="opciones-lista">
+            <!-- Renderizado dinámico -->
+          </ul>
+        </section>
+
+        <!-- 5. SISTEMA / BD -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Sistema y Datos</h2>
+          <div class="ajustes-actions">
+            <button id="refresh-db-btn" class="app-btn-secondary" title="Actualizar datos forzosamente">
+              ⟳ Actualizar Tablas
+            </button>
+            <button id="backup-btn" class="app-btn-secondary" title="Hacer un respaldo manual">
+              💾 Descargar Backup
+            </button>
+          </div>
+        </section>
+
+        <!-- 6. UMBRAL DE STOCK -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Alertas de Stock</h2>
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+            Define cuándo el stock figura como bajo.
+          </p>
+          <div class="app-form-group" style="display: flex; gap: 5px; align-items: center;">
+            <input type="number" id="inputUmbralStock" class="app-input" placeholder="Mínimo (Ej: 3)" style="flex:1;" />
+            <button id="btnGuardarUmbral" class="app-btn-secondary">Guardar</button>
+          </div>
+        </section>
+
+        <!-- 7. GESTIÓN DE USUARIOS -->
+        <section class="ajustes-card" style="grid-column: 1 / -1;">
+          <h2 class="app-subtitle">Usuarios del Sistema</h2>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+            <p style="font-size: 0.9em; color: #ccc;">Administra los usuarios con acceso al sistema.</p>
+            <button id="btnNuevoUsuario" class="app-btn-primary">Crear Usuario</button>
+          </div>
+          <div class="app-tabla-container select-tabla-container" style="max-height: 250px;">
+            <table class="app-tabla">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaUsuariosBody">
+                <!-- Render dinámico -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- MODAL USUARIO -->
+    <div id="modalUsuario" class="app-modal">
+      <div class="app-modal-content-producto" style="max-width: 400px; padding: 20px;">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle" id="tituloModalUsuario">Crear Usuario</h2>
+          <button type="button" class="app-close" id="cerrarModalUsuario">Cerrar</button>
+        </div>
+
+        <form id="formUsuario" style="display: flex; flex-direction: column; gap: 15px;">
+          <input type="hidden" id="usuarioIdMode" value="" />
+          
+          <div class="app-form-group">
+            <label>Nombre de Usuario</label>
+            <input type="text" id="usernameInput" class="app-input" required autocomplete="off" />
+          </div>
+
+          <div class="app-form-group">
+            <label>Contraseña</label>
+            <input type="password" id="passwordInput" class="app-input" placeholder="***" autocomplete="new-password" />
+            <span style="font-size: 0.8em; color: #aaa;">Si estás editando, déjala vacía para no cambiarla.</span>
+          </div>
+
+          <div class="app-form-group">
+             <label>Rol</label>
+             <select id="roleInput" class="app-input">
+               <option value="user">Usuario (Solo Ventas/Gastos)</option>
+               <option value="admin">Administrador (Acceso Total)</option>
+             </select>
+          </div>
+
+          <button type="submit" id="btnGuardarUsuario" class="app-btn-primary" style="margin-top: 10px;">
+            Guardar Usuario
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/ajustes.js"></script>
+    <script type="module" src="../js/system.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+  </body>
+</html>

@@ -4,6 +4,8 @@ GUÍA DE INSTALACIÓN - SISTEMA DE VENTAS (MODO LOCAL)
 
 Esta guía detalla los pasos para instalar y ejecutar el sistema desde cero en una computadora nueva, ejecutando de manera local tanto la Base de Datos como la Aplicación empaquetada (.exe).
 
+IMPORTANTE (ENTORNOS SIN INTERNET): Si la computadora del cliente no tiene conexión a internet (offline), asegúrate de descargar previamente en un pendrive los instaladores de PostgreSQL, DBeaver y el instalador de tu Aplicación antes de realizar la visita.
+
 ---
 PASO 1: INSTALAR LA BASE DE DATOS (POSTGRESQL)
 ---
@@ -31,7 +33,7 @@ PASO 3: CREAR LA BASE Y ESTRUCTURA CON SCHEMA.SQL
 1. En DBeaver, haz clic en el ícono del "Enchufe" (Nueva Conexión) en la esquina superior izquierda.
 2. Selecciona "PostgreSQL" de la lista y presiona "Siguiente".
 3. En la configuración que aparece, rellena los siguientes datos:
-   - Host: localhost
+   - Host: 127.0.0.1
    - Database: postgres
    - Username: postgres
    - Password: (la contraseña que inventaste en el PASO 1).
@@ -56,10 +58,11 @@ Para que el sistema se pueda conectar a la base de datos que acabas de crear, la
 Dependiendo de cómo o dónde se haya instalado la aplicación, seguramente requerirá que a su lado (en la misma carpeta de instalación) haya un archivo físico llamado ".env" con la configuración apuntando a "localhost".
 
 En la carpeta de instalación de destino, debes crear un archivo de texto llamado estrictamente ".env" con un contenido similar a este:
+*(ATENCIÓN: Cuidado con las extensiones ocultas de Windows. Asegúrate de que el archivo no quede nombrado por accidente como ".env.txt").*
 
 PORT=4000
-DATABASE_URL=postgresql://postgres:TU_CONTRASEÑA@localhost:5432/ventas_db
-PGHOST=localhost
+DATABASE_URL=postgresql://postgres:TU_CONTRASEÑA@127.0.0.1:5432/ventas_db
+PGHOST=127.0.0.1
 PGDATABASE=ventas_db
 PGUSER=postgres
 PGPASSWORD=TU_CONTRASEÑA
@@ -73,6 +76,7 @@ PASO 6: EJECUTAR LA APLICACIÓN
 1. Asegúrate de tener el archivo ejecutable del sistema (por ejemplo, "AppVentas.exe") en una carpeta junto a tu archivo de configuración ".env" correctamente apuntado a localhost.
 2. Haz doble clic sobre el archivo .exe.
 3. El frontend y backend empaquetados se abrirán, y al estar bien configurados, se conectarán a tu base de datos local de PostgreSQL sin problemas. ¡El sistema está listo para utilizarse!
+4. (Importante): Si al abrir la app o iniciar procesos internos Windows muestra una alerta del "Firewall de Windows Defender" bloqueando redes, dile a tu cliente que presione "Permitir acceso".
 
 ---
 PASO 7: CONECTAR LECTOR DE CÓDIGOS DE BARRA (HARDWARE)
@@ -81,3 +85,31 @@ PASO 7: CONECTAR LECTOR DE CÓDIGOS DE BARRA (HARDWARE)
 2. Simplemente enchufá el cable USB o la antena receptora a tu computadora.
 3. Windows lo reconocerá al instante como si le hubieras enchufado un "Teclado adicional".
 4. ¡Eso es todo! Para usarlo en esta App, sólo tenés que estar en la pantalla de Ventas o crear producto, y disparar el gatillo apuntando a la etiqueta. La pistola escribirá el número sola y enviará la orden (Enter) a la velocidad de la luz.
+
+---
+PASO 8: CREAR USUARIOS PERSONALIZADOS (SOLO PARA EL INSTALADOR)
+---
+1. La base de datos "schema.sql" crea por defecto el usuario "admin" con la contraseña "admin". 
+2. Si el cliente solicita un usuario a medida (por ejemplo usuario "juan" y contraseña "suDNI"), NO debés instalar Node.js ni dejar el código fuente en la computadora del cliente.
+3. El proceso es: en TU computadora (la del instalador), abrís una terminal dentro de la carpeta "backend" del código fuente de la aplicación.
+4. Escribís el comando: node generar_pass.js <usuario_nuevo> <contraseña_nueva>
+5. Tu computadora generará una línea de comando SQL con la contraseña encriptada de forma segura.
+6. Copiás esa línea SQL y la pegás/ejecutás directamente en el DBeaver de la computadora del cliente.
+7. De esta manera, el cliente obtiene su usuario personalizado y tu código fuente/script generador queda protegido exclusivamente en tu computadora.
+
+---
+PASO 9: SOLUCIÓN A BUG DE TEXTO EN MODALES (TECLA F9)
+---
+1. En raras ocasiones, Windows puede quitarle el "foco" del teclado a los formularios flotantes (Modales) debido a un bug gráfico de Electron. Si esto ocurre, el usuario sentirá que el teclado "dejó de funcionar" porque las letras no se escriben en pantalla.
+2. Si un cliente te reporta esto, instuile enseñar el "Botón de Desatasco": la tecla F9.
+3. Al presionar F9, el sistema buscará el modal abierto y forzará internamente una reconexión del foco del teclado. No borra datos, no recarga la página, simplemente destraba el input al instante.
+
+---
+PASO 10: COPIAS DE SEGURIDAD (BACKUP AUTOMÁTICO Y MANUAL)
+---
+1. Al ser un sistema 100% local, el resguardo de la información es vital en caso de roturas eléctricas o fallas del disco duro.
+2. El sistema incorpora un Motor de Backups nativo, inteligente y de "Cero Configuración", que rastrea por su cuenta las herramientas de PostgreSQL instaladas en la PC y se encarga de todo.
+3. BACKUP AUTOMÁTICO: Cada 15 días, el servidor detectará automáticamente la antigüedad del último respaldo y de manera transparente, generará una copia nueva al ejecutar el programa.
+4. BACKUP MANUAL: A su vez, el cliente siempre cuenta con un botón de "💾 Backup" en la barra de navegación del programa para generar archivos instantáneos al momento.
+5. DESTINO DE ARCHIVOS: Los archivos generados se ubican en la carpeta "backups/" dentro de la propia ruta de instalación de la app.
+6. (IMPORTANTE): Instruir al cliente que cada cierta cantidad de reportes, tiene que acordarse de copiar los archivos ".backup" de su carpeta hacia un pendrive externo físico (de poco sirve el backup si el disco de la PC explota).

@@ -48,3 +48,54 @@ const logoutBtn = document.getElementById("logout-btn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", cerrarSesion);
 }
+
+// ==========================================
+// Botón de Copia de Seguridad Manual
+// ==========================================
+const backupBtn = document.getElementById("backup-btn");
+
+if (backupBtn) {
+  backupBtn.addEventListener("click", async () => {
+    try {
+      // Bloquear botón durante el proceso
+      backupBtn.disabled = true;
+      const originalText = backupBtn.textContent;
+      backupBtn.textContent = "Guardando...";
+
+      // Llamar al endpoint del backend (se ocupa de pg_dump y de guardarlo en /backups)
+      const response = await fetch("/api/backup/manual", { method: "POST" });
+      const data = await response.json();
+
+      if (data.ok) {
+        if (typeof Swal !== "undefined") {
+            Swal.fire({
+                icon: "success",
+                title: "Copia Resguardada",
+                text: "La copia de seguridad se ha guardado exitosamente.",
+                timer: 3000,
+                showConfirmButton: false
+            });
+        } else {
+            alert("Copia de seguridad guardada exitosamente.");
+        }
+      } else {
+        throw new Error(data.error || "Error desconocido del servidor");
+      }
+    } catch (err) {
+      console.error(err);
+      if (typeof Swal !== "undefined") {
+          Swal.fire({
+              icon: "error",
+              title: "Error al generar backup",
+              text: "Hubo un problema. Revisa la consola o asegúrate de que PostgreSQL está activo.",
+          });
+      } else {
+          alert("Error al generar copia de seguridad.");
+      }
+    } finally {
+      // Restaurar el botón
+      backupBtn.disabled = false;
+      backupBtn.textContent = "Backup";
+    }
+  });
+}

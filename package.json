@@ -37,7 +37,8 @@
         "from": "backend",
         "to": "backend",
         "filter": [
-          "**/*"
+          "**/*",
+          "!generar_pass.js"
         ]
       },
       {

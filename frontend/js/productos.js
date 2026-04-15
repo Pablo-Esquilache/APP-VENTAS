@@ -6,12 +6,14 @@ import { ComercioAPI, ProductosAPI } from "./api.js";
 const session = JSON.parse(localStorage.getItem("session"));
 const firebaseUID = session?.uid; // antes era session?.firebase_uid
 let comercioId = session?.comercio_id || null;
+let umbralStock = 3; // Default
 
 async function cargarComercio() {
   if (!firebaseUID) return;
 
   const data = await ComercioAPI.getByUid(firebaseUID);
   comercioId = data.id;
+  umbralStock = data.umbral_stock !== undefined ? data.umbral_stock : 3;
 }
 
 // ------------------------------
@@ -19,6 +21,7 @@ async function cargarComercio() {
 // ------------------------------
 const buscarProducto = document.getElementById("buscarProducto");
 const filtroCategoria = document.getElementById("filtroCategoria");
+const filtroBajoStock = document.getElementById("filtroBajoStock");
 const btnNuevoProducto = document.getElementById("btnNuevoProducto");
 
 const modalProducto = document.getElementById("modalProducto");
@@ -133,8 +136,13 @@ function limpiarFormulario() {
   nuevaCategoriaProducto.value = "";
   codigoBarrasProducto.value = "";
   stockProducto.value = "";
+  document.getElementById("stockIngresarProducto").value = "";
   precioProducto.value = "";
   nuevaCategoriaProducto.style.display = "none";
+
+  document.getElementById("stockProducto").readOnly = false;
+  document.getElementById("grupoStockIngresar").style.display = "none";
+  document.getElementById("labelStockProducto").textContent = "Stock inicial";
 }
 
 // ------------------------------
@@ -152,7 +160,9 @@ document
       nombre: nombreProducto.value.trim(),
       categoria: categoriaFinal,
       codigo_barras: codigoBarrasProducto.value.trim() || null,
-      stock: parseInt(stockProducto.value),
+      stock: modoEdicion 
+        ? (parseInt(document.getElementById("stockIngresarProducto").value) || 0) 
+        : parseInt(stockProducto.value),
       precio: parseFloat(precioProducto.value),
       comercio_id: comercioId,
     };
@@ -178,6 +188,7 @@ document
 // ------------------------------
 buscarProducto.addEventListener("input", renderTablaProductos);
 filtroCategoria.addEventListener("change", renderTablaProductos);
+if (filtroBajoStock) filtroBajoStock.addEventListener("change", renderTablaProductos);
 
 // ------------------------------
 // RENDER TABLA
@@ -185,28 +196,40 @@ filtroCategoria.addEventListener("change", renderTablaProductos);
 function renderTablaProductos() {
   const texto = buscarProducto.value.toLowerCase();
   const categoria = filtroCategoria.value;
+  const bajoStock = filtroBajoStock?.checked || false;
 
   const filtrados = productos.filter((p) => {
     const okNombre = p.nombre.toLowerCase().includes(texto);
     const okCat = !categoria || p.categoria === categoria;
-    return okNombre && okCat;
+    const okBajoStock = !bajoStock || p.stock <= umbralStock;
+    return okNombre && okCat && okBajoStock;
   });
+
+  // VERIFICAR STOCK BAJO (<= umbralStock)
+  const tieneStockBajo = productos.some(p => p.stock <= umbralStock);
+  const alertaStockBajo = document.getElementById("alertaStockBajo");
+  if (alertaStockBajo) {
+    alertaStockBajo.style.display = tieneStockBajo ? "inline-flex" : "none";
+    alertaStockBajo.title = `Hay productos con stock de ${umbralStock} o menos`;
+  }
 
   tablaProductosBody.innerHTML = "";
 
   filtrados.forEach((p) => {
+    const colorStock = p.stock <= umbralStock ? 'color: #ff4d4f; font-weight: bold;' : '';
+    
     tablaProductosBody.innerHTML += `
       <tr>
         <td>${p.nombre}</td>
         <td>${p.categoria || "-"}</td>
         <td>${p.codigo_barras || "-"}</td>
-        <td>${p.stock}</td>
+        <td style="${colorStock}">${p.stock}</td>
         <td>$${p.precio.toFixed(2)}</td>
         <td>
         <div class="acciones-productos">
           <button class="btn-editar" data-id="${p.id}">Editar</button>
-        </td>
         </div>
+        </td>
       </tr>
     `;
   });
@@ -247,17 +270,24 @@ function editarProducto(id) {
   stockProducto.value = p.stock;
   precioProducto.value = p.precio;
 
+  // Lógica stock a ingresar
+  document.getElementById("stockProducto").readOnly = true;
+  document.getElementById("labelStockProducto").textContent = "Stock actual";
+  document.getElementById("grupoStockIngresar").style.display = "block";
+  document.getElementById("stockIngresarProducto").value = "";
+
   modalProducto.style.display = "flex";
 }
 
 // ------------------------------
 // LIMPIAR FILTROS
 // ------------------------------
-document
+  document
   .getElementById("btnLimpiarFiltrosProd")
   .addEventListener("click", () => {
     buscarProducto.value = "";
     filtroCategoria.value = "";
+    if (filtroBajoStock) filtroBajoStock.checked = false;
     renderTablaProductos();
   });
 

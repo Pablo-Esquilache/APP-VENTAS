@@ -178,7 +178,7 @@ export const updateProducto = async (req, res) => {
       SET nombre = $1,
           categoria = $2,
           precio = $3,
-          stock = $4,
+          stock = stock + COALESCE($4::integer, 0),
           codigo_barras = $7
       WHERE id = $5 AND comercio_id = $6
       RETURNING *

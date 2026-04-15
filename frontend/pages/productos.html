@@ -24,12 +24,11 @@
         <li id="tab-clientes"><a href="clientes.html">Clientes</a></li>
         <li id="tab-gastos"><a href="gastos.html">Gastos</a></li>
         <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
-        <li class="app-navbar-refresh">
-          <button id="refresh-db-btn" title="Actualizar datos">
-            ⟳ Actualizar
-          </button>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
         </li>
-        <li><button id="logout-btn">Cerrar Sesión</button></li>
       </ul>
     </nav>
 
@@ -38,31 +37,41 @@
       <h1 class="app-title">Gestión de Productos</h1>
 
       <!-- CONTROLES SUPERIORES -->
-      <div class="app-controls">
-        <div>
-          <input
-            type="text"
-            id="buscarProducto"
-            class="app-input"
-            placeholder="Buscar producto..."
-          />
+      <div class="app-controls" style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: flex-start;">
+        <input
+          type="text"
+          id="buscarProducto"
+          class="app-input"
+          placeholder="Buscar producto..."
+          style="margin-bottom: 0;"
+        />
 
-          <select id="filtroCategoria" class="app-input">
-            <option value="">Todas las categorías</option>
-          </select>
+        <select id="filtroCategoria" class="app-input" style="margin-bottom: 0;">
+          <option value="">Todas las categorías</option>
+        </select>
 
-          <button id="btnLimpiarFiltrosProd" class="app-btn-secondary">
-            Limpiar filtros
-          </button>
+        <button id="btnLimpiarFiltrosProd" class="app-btn-secondary" style="margin-bottom: 0;">
+          Limpiar filtros
+        </button>
+
+        <button id="btnImportarExcel" class="app-btn-secondary" style="margin-bottom: 0;">
+          Importar Excel
+        </button>
+        
+        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px;">
+          <label style="display:flex; align-items:center; gap:5px; cursor:pointer; color:#eee; font-size: 0.85em; white-space: nowrap;">
+            <input type="checkbox" id="filtroBajoStock" />
+            Solo Bajo Stock
+          </label>
+          
+          <span id="alertaStockBajo" style="display: none; color: #ff4d4f; font-weight: bold; font-size: 0.85em; align-items: center; gap: 5px; white-space: nowrap;" title="Hay productos con stock de 3 o menos">
+            ⚠ Atención: Stock Bajo
+          </span>
         </div>
-        <div>
-          <button id="btnImportarExcel" class="app-btn-secondary">
-            Importar Excel
-          </button>
-          <button id="btnNuevoProducto" class="app-btn-primary">
-            Crear nuevo producto
-          </button>
-        </div>
+
+        <button id="btnNuevoProducto" class="app-btn-primary" style="margin-bottom: 0; margin-left: auto;">
+          Crear producto
+        </button>
       </div>
 
       <!-- TABLA -->
@@ -146,13 +155,23 @@
 
           <div class="app-form-row">
             <div class="app-form-group">
-              <label>Stock inicial</label>
+              <label id="labelStockProducto">Stock inicial</label>
               <input
                 type="number"
                 id="stockProducto"
                 min="0"
                 class="app-input"
                 required
+              />
+            </div>
+
+            <div class="app-form-group" id="grupoStockIngresar" style="display: none;">
+              <label>Stock a ingresar (+)</label>
+              <input
+                type="number"
+                id="stockIngresarProducto"
+                min="0"
+                class="app-input"
               />
             </div>
 
@@ -206,7 +225,6 @@
     </div>
     <script src="../js/libs/xlsx.full.min.js"></script>
     <script src="../js/auth-ui.js"></script>
-    <script type="module" src="../js/sync-ui.js"></script>
     <script type="module" src="../js/productos.js"></script>
     <script type="module" src="../js/logout.js"></script>
     <script type="module" src="../js/system.js"></script>
