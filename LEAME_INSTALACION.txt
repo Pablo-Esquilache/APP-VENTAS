@@ -87,15 +87,14 @@ PASO 7: CONECTAR LECTOR DE CÓDIGOS DE BARRA (HARDWARE)
 4. ¡Eso es todo! Para usarlo en esta App, sólo tenés que estar en la pantalla de Ventas o crear producto, y disparar el gatillo apuntando a la etiqueta. La pistola escribirá el número sola y enviará la orden (Enter) a la velocidad de la luz.
 
 ---
-PASO 8: CREAR USUARIOS PERSONALIZADOS (SOLO PARA EL INSTALADOR)
+PASO 8: GESTIÓN DE USUARIOS
 ---
-1. La base de datos "schema.sql" crea por defecto el usuario "admin" con la contraseña "admin". 
-2. Si el cliente solicita un usuario a medida (por ejemplo usuario "juan" y contraseña "suDNI"), NO debés instalar Node.js ni dejar el código fuente en la computadora del cliente.
-3. El proceso es: en TU computadora (la del instalador), abrís una terminal dentro de la carpeta "backend" del código fuente de la aplicación.
-4. Escribís el comando: node generar_pass.js <usuario_nuevo> <contraseña_nueva>
-5. Tu computadora generará una línea de comando SQL con la contraseña encriptada de forma segura.
-6. Copiás esa línea SQL y la pegás/ejecutás directamente en el DBeaver de la computadora del cliente.
-7. De esta manera, el cliente obtiene su usuario personalizado y tu código fuente/script generador queda protegido exclusivamente en tu computadora.
+1. La base de datos "schema.sql" crea por defecto un único usuario administrador.
+   - Usuario: admin
+   - Contraseña: 123
+2. Entrégale este usuario al dueño del local (Administrador).
+3. Una vez que inicie sesión, indícale que vaya a la pestaña "Ajustes". Desde allí encontrará el módulo "Usuarios del Sistema".
+4. Podrá crear todos los Vendedores que necesite (asignándoles su respectiva contraseña) e incluso podrá darle permisos de Administrador a otros socios. Ya no hace falta usar la consola para crear perfiles.
 
 ---
 PASO 9: SOLUCIÓN A BUG DE TEXTO EN MODALES (TECLA F9)
