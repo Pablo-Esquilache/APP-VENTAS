@@ -9,9 +9,11 @@ yarn-error.log
 .env.local
 .env.example
 
-# Logs
+# Logs y Backups
 logs/
+backups/
 *.log
+*.rar
 
 # Cache
 .cache/

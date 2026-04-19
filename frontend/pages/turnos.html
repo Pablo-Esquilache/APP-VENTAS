@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turnero</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/globals.css" />
+    <link rel="stylesheet" href="../css/turnos.css" />
+    <link rel="icon" href="../icons/icon-192.png" type="image/png" />
+  </head>
+  <body>
+    <nav class="app-navbar">
+      <div class="app-navbar-logo">MI APP</div>
+      <ul class="app-navbar-menu">
+        <li><a href="caja.html">Caja</a></li>
+        <li><a href="ventas.html">Ventas</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="gastos.html">Gastos</a></li>
+        <li id="tab-reportes"><a href="reportes.html">Reportes</a></li>
+        <li id="tab-turnero"><a href="turnos.html" class="app-active">Turnos</a></li>
+        <li id="tab-ajustes" class="app-admin-only"><a href="ajustes.html">Ajustes</a></li>
+        <li>
+          <span class="user-role-badge"></span>
+          <button id="logout-btn">Cerrar Sesión</button>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="app-container turnero-layout">
+      <!-- 1/3 IZQUIERDA: GESTIÓN DE HOY -->
+      <section class="turnero-panel-hoy">
+        <h2 class="app-subtitle" style="text-align: center; margin-bottom: 20px;">Turnos de Hoy</h2>
+        <p id="fechaHoyText" style="text-align: center; color: #ccc; margin-bottom: 20px; font-weight: bold;"></p>
+        
+        <div id="listaTurnosHoy" class="turnos-hoy-list">
+           <!-- Render dinámico de los turnos del día para marcar asistencia -->
+        </div>
+      </section>
+
+      <!-- 2/3 DERECHA: GRILLA DE AGENDAMIENTO -->
+      <section class="turnero-grilla-seccion">
+        <div class="grilla-header app-controls">
+          <button id="btnAyer" class="app-btn-secondary">◀ Día Anterior</button>
+          <input type="date" id="inputFechaGrilla" class="app-input" style="width: auto;" />
+          <button id="btnHoy" class="app-btn-primary">HOY</button>
+          <button id="btnManana" class="app-btn-secondary">Día Siguiente ▶</button>
+        </div>
+
+        <div class="grilla-container">
+           <table class="turnos-table">
+             <thead>
+               <tr>
+                 <th style="width: 100px;">Hora</th>
+                 <th>Disponibilidad / Turno</th>
+                 <th style="width: 120px;">Acción</th>
+               </tr>
+             </thead>
+             <tbody id="grillaTurnosBody">
+                <!-- Se dibuja según el intervalo y horas laborales -->
+             </tbody>
+           </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL NUEVO TURNO -->
+    <div id="modalNuevoTurno" class="app-modal">
+      <div class="app-modal-content" style="max-width: 500px">
+        <div class="app-modal-header">
+          <h2 class="app-subtitle" id="tituloModalTurno">Agendar Turno</h2>
+          <button type="button" class="app-close" id="cerrarModalNuevoTurno">Cerrar</button>
+        </div>
+
+        <form id="formTurno" style="display: flex; flex-direction: column; gap: 15px;">
+           <input type="hidden" id="turnoIdHidden" />
+           
+           <div class="app-form-group">
+              <label>Fecha y Hora</label>
+              <div style="display: flex; gap: 10px;">
+                <input type="date" id="turnoFechaInput" class="app-input" required readonly style="background: var(--bg-color); color: #888;" />
+                <input type="time" id="turnoHoraInput" class="app-input" required readonly style="background: var(--bg-color); color: #888;" />
+              </div>
+           </div>
+
+           <!-- Buscador de cliente o agregar nuevo -->
+           <div class="app-form-group">
+             <div style="display: flex; justify-content: space-between; align-items:flex-end;">
+               <label>Cliente</label>
+               <button type="button" id="btnNuevoClienteRapido" class="app-btn-secondary" style="padding: 4px 8px; font-size: 0.85em;">+ Crear Nuevo</button>
+             </div>
+             
+             <div style="position: relative;">
+               <!-- Buscador autocompletado nativo con datalist o select2 artesanal -->
+               <input type="text" id="buscadorClienteTurno" class="app-input" placeholder="Buscar cliente por nombre o teléfono..." autocomplete="off" style="width: 100%; box-sizing: border-box;" />
+               <input type="hidden" id="clienteIdSeleccionado" required />
+               <div id="dropdownClientes" class="dropdown-clientes-turno" style="display: none; width: 100%; box-sizing: border-box; margin-top: 0;"></div>
+             </div>
+             
+             <p id="clienteSeleccionadoTexto" style="color: #4CAF50; font-weight: bold; margin-top: 5px; font-size: 0.9em;"></p>
+           </div>
+
+           <div class="app-form-group">
+              <label>Motivo o Servicio</label>
+              <input type="text" id="turnoMotivoInput" class="app-input" placeholder="Ej: Recorte y lavado" />
+           </div>
+
+           <button type="submit" id="btnGuardarTurno" class="app-btn-primary">Guardar Turno</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL NUEVO CLIENTE RAPIDO (idéntico al de clientes.html) -->
+    <div id="modalClienteTurnero" class="app-modal">
+        <div class="app-modal-content">
+          <div class="app-modal-header">
+            <h2 class="app-subtitle">Crear Cliente</h2>
+            <button type="button" class="app-close" id="cerrarModalClienteTurnero">Cerrar</button>
+          </div>
+          <form id="formClienteTurnero" class="app-form-venta">
+            <div class="app-form-row">
+              <div class="app-form-group">
+                  <label>Nombre *</label>
+                  <input type="text" id="clienteNombreTurnero" class="app-input" required/>
+              </div>
+              <div class="app-form-group app-col">
+                  <label>Fecha de nacimiento</label>
+                  <input type="date" id="clienteNacimientoTurnero" class="app-input"/>
+              </div>
+              <div class="app-form-group app-col">
+                  <label>Género</label>
+                  <select id="clienteGeneroTurnero" class="app-input">
+                      <option value="">Seleccionar</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Otro">Otro</option>
+                  </select>
+              </div>
+            </div>
+
+            <div class="app-form-row">
+              <div class="app-form-group">
+                  <label>Teléfono</label>
+                  <input type="text" id="clienteTelefonoTurnero" class="app-input"/>
+              </div>
+              <div class="app-form-group">
+                  <label>Email</label>
+                  <input type="email" id="clienteEmailTurnero" class="app-input"/>
+              </div>
+              <div class="app-form-group">
+                  <label>Localidad</label>
+                  <div style="display: flex; gap: 8px; align-items: center">
+                    <select id="clienteLocalidadTurnero" class="app-input">
+                      <option value="">Seleccionar localidad</option>
+                    </select>
+                    <button type="button" id="btnNuevaLocalidadTurnero" class="app-btn-secondary">Nueva</button>
+                  </div>
+                  <input type="text" id="nuevaLocalidadTurnero" class="app-input" placeholder="Escribí nueva localidad" style="display: none; margin-top: 8px" />
+              </div>
+            </div>
+
+            <div class="app-form-row">
+              <div class="app-form-group">
+                  <label>Comentarios</label>
+                  <textarea id="clienteComentariosTurnero" class="app-input" rows="2"></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="app-btn-primary app-btn-guardar">Guardar cliente</button>
+          </form>
+        </div>
+    </div>
+
+
+    <script src="../js/auth-ui.js"></script>
+    <script type="module" src="../js/turnos.js"></script>
+    <script type="module" src="../js/system.js"></script>
+    <script type="module" src="../js/logout.js"></script>
+  </body>
+</html>

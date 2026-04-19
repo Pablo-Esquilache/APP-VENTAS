@@ -276,6 +276,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // ===== TURNERO CONFIG =====
+  const formTurnosConfig = document.getElementById("formTurnosConfig");
+  const turnosEnabledSwitch = document.getElementById("turnosEnabledSwitch");
+  const horaInicioTurnos = document.getElementById("horaInicioTurnos");
+  const horaFinTurnos = document.getElementById("horaFinTurnos");
+  const intervaloTurnos = document.getElementById("intervaloTurnos");
+  const solapamientoTurnosSwitch = document.getElementById("solapamientoTurnosSwitch");
+  const btnGuardarTurnosConfig = document.getElementById("btnGuardarTurnosConfig");
+
+  async function cargarTurnosConfig() {
+    try {
+      const res = await fetch(`/api/ajustes/turnos_config/${cid}`);
+      if (res.ok) {
+        const data = await res.json();
+        turnosEnabledSwitch.checked = data.modulo_habilitado;
+        horaInicioTurnos.value = data.hora_inicio_laboral ? data.hora_inicio_laboral.slice(0, 5) : "08:00";
+        horaFinTurnos.value = data.hora_fin_laboral ? data.hora_fin_laboral.slice(0, 5) : "20:00";
+        intervaloTurnos.value = data.intervalo_minutos || 30;
+        solapamientoTurnosSwitch.checked = data.permitir_solapamiento;
+      }
+    } catch (e) {
+      console.error("Error al cargar config de turnos", e);
+    }
+  }
+
+  formTurnosConfig.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const oldText = btnGuardarTurnosConfig.textContent;
+    btnGuardarTurnosConfig.textContent = "Guardando...";
+    btnGuardarTurnosConfig.disabled = true;
+
+    const payload = {
+      modulo_habilitado: turnosEnabledSwitch.checked,
+      hora_inicio_laboral: horaInicioTurnos.value,
+      hora_fin_laboral: horaFinTurnos.value,
+      intervalo_minutos: parseInt(intervaloTurnos.value),
+      permitir_solapamiento: solapamientoTurnosSwitch.checked,
+    };
+
+    try {
+      const res = await fetch(`/api/ajustes/turnos_config/${cid}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        alert("Configuración del Turnero guardada.");
+      } else {
+        alert("Error al guardar la configuración.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de red");
+    } finally {
+      btnGuardarTurnosConfig.textContent = oldText;
+      btnGuardarTurnosConfig.disabled = false;
+    }
+  });
+
   // ===== ALERTAS DE STOCK =====
   const inputUmbralStock = document.getElementById("inputUmbralStock");
   const btnGuardarUmbral = document.getElementById("btnGuardarUmbral");
@@ -416,6 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Init
   cargarConfigSync();
+  cargarTurnosConfig();
   cargarMetodos();
   cargarDescuentos();
   cargarCategoriasGasto();

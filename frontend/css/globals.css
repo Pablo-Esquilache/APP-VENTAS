@@ -313,6 +313,7 @@ body.role-admin #tab-ajustes {
   justify-content: center;
   align-items: center;
   padding-top: 55px;
+  z-index: 3000;
 }
 
 .app-modal-content {

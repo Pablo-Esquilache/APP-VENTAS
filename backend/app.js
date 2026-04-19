@@ -24,6 +24,7 @@ import devolucionesRoutes from "./routes/devoluciones.js";
 import syncConfigRoutes from "./routes/syncConfigRoutes.js";
 import backupRoutes from "./routes/backupRoutes.js";
 import ajustesRoutes from "./routes/ajustes.js";
+import turnosRoutes from "./routes/turnos.js";
 import { initSyncWorker } from "./services/syncWorker.js";
 import { initBackupCron } from "./services/backupService.js";
 
@@ -83,6 +84,7 @@ app.use("/api/cajas", cajasRoutes);
 app.use("/api/config-sync", syncConfigRoutes);
 app.use("/api/backup", backupRoutes);
 app.use("/api/ajustes", ajustesRoutes);
+app.use("/api/turnos", turnosRoutes);
 
 /* ===== FALLBACK SPA ===== */
 app.get("*", (req, res) => {

@@ -22,6 +22,7 @@
         <li><a href="clientes.html">Clientes</a></li>
         <li><a href="gastos.html">Gastos</a></li>
         <li><a href="reportes.html">Reportes</a></li>
+        <li id="tab-turnero"><a href="turnos.html">Turnos</a></li>
         <li class="app-admin-only"><a href="ajustes.html" class="app-active">Ajustes</a></li>
         <li>
           <span class="user-role-badge"></span>
@@ -93,6 +94,60 @@
           </form>
         </section>
 
+        <!-- TURNERO CONFIG -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Módulo Turnero</h2>
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+            Configuración de los turnos y la agenda.
+          </p>
+          <form id="formTurnosConfig" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="switch-container">
+               <label>Habilitar Turnero</label>
+               <label class="switch-ui">
+                 <input type="checkbox" id="turnosEnabledSwitch">
+                 <span class="slider">
+                   <span class="slider-dot"></span>
+                 </span>
+               </label>
+            </div>
+
+            <div class="app-form-group" style="display: flex; gap: 10px;">
+               <div style="flex: 1;">
+                 <label>Hora Inicio Laboral</label>
+                 <input type="time" id="horaInicioTurnos" class="app-input" required />
+               </div>
+               <div style="flex: 1;">
+                 <label>Hora Fin Laboral</label>
+                 <input type="time" id="horaFinTurnos" class="app-input" required />
+               </div>
+            </div>
+
+            <div class="app-form-group">
+               <label>Intervalo (Minutos)</label>
+               <select id="intervaloTurnos" class="app-input">
+                 <option value="15">15 Minutos</option>
+                 <option value="30">30 Minutos</option>
+                 <option value="45">45 Minutos</option>
+                 <option value="60">1 Hora</option>
+               </select>
+            </div>
+
+            <div class="switch-container">
+               <label>Permitir Solapamiento</label>
+               <label class="switch-ui">
+                 <input type="checkbox" id="solapamientoTurnosSwitch">
+                 <span class="slider">
+                   <span class="slider-dot"></span>
+                 </span>
+               </label>
+            </div>
+
+            <button type="submit" class="app-btn-primary" id="btnGuardarTurnosConfig">
+               Guardar Configuración
+            </button>
+          </form>
+        </section>
+
         <!-- 4. CATEGORÍAS DE GASTOS -->
         <section class="ajustes-card">
           <h2 class="app-subtitle">Categorías de Gastos</h2>
@@ -105,6 +160,18 @@
           </ul>
         </section>
 
+        <!-- 6. UMBRAL DE STOCK -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Alertas de Stock</h2>
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+            Define cuándo el stock figura como bajo.
+          </p>
+          <div class="app-form-group" style="display: flex; gap: 5px; align-items: center;">
+            <input type="number" id="inputUmbralStock" class="app-input" placeholder="Mínimo (Ej: 3)" style="flex:1;" />
+            <button id="btnGuardarUmbral" class="app-btn-secondary">Guardar</button>
+          </div>
+        </section>
+
         <!-- 5. SISTEMA / BD -->
         <section class="ajustes-card">
           <h2 class="app-subtitle">Sistema y Datos</h2>
@@ -115,18 +182,6 @@
             <button id="backup-btn" class="app-btn-secondary" title="Hacer un respaldo manual">
               💾 Descargar Backup
             </button>
-          </div>
-        </section>
-
-        <!-- 6. UMBRAL DE STOCK -->
-        <section class="ajustes-card">
-          <h2 class="app-subtitle">Alertas de Stock</h2>
-          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
-            Define cuándo el stock figura como bajo.
-          </p>
-          <div class="app-form-group" style="display: flex; gap: 5px; align-items: center;">
-            <input type="number" id="inputUmbralStock" class="app-input" placeholder="Mínimo (Ej: 3)" style="flex:1;" />
-            <button id="btnGuardarUmbral" class="app-btn-secondary">Guardar</button>
           </div>
         </section>
 

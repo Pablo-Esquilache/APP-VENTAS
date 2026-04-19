@@ -196,4 +196,45 @@ router.put("/umbral_stock/:comercioId", async (req, res) => {
   }
 });
 
+// --- TURNOS CONFIG ---
+
+router.get("/turnos_config/:comercioId", async (req, res) => {
+  const { comercioId } = req.params;
+  try {
+    let result = await pool.query("SELECT * FROM turnos_config WHERE comercio_id = $1", [comercioId]);
+    
+    if (result.rows.length === 0) {
+      result = await pool.query(
+        "INSERT INTO turnos_config (comercio_id) VALUES ($1) RETURNING *",
+        [comercioId]
+      );
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error al obtener configuracion de turnos:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+router.put("/turnos_config/:comercioId", async (req, res) => {
+  const { comercioId } = req.params;
+  const { modulo_habilitado, hora_inicio_laboral, hora_fin_laboral, intervalo_minutos, permitir_solapamiento } = req.body;
+  try {
+    const result = await pool.query(
+      `UPDATE turnos_config 
+       SET modulo_habilitado = COALESCE($1, modulo_habilitado), 
+           hora_inicio_laboral = COALESCE($2, hora_inicio_laboral), 
+           hora_fin_laboral = COALESCE($3, hora_fin_laboral), 
+           intervalo_minutos = COALESCE($4, intervalo_minutos), 
+           permitir_solapamiento = COALESCE($5, permitir_solapamiento)
+       WHERE comercio_id = $6 RETURNING *`,
+      [modulo_habilitado, hora_inicio_laboral, hora_fin_laboral, intervalo_minutos, permitir_solapamiento, comercioId]
+    );
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error al actualizar configuracion de turnos:", error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
 export default router;

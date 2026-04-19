@@ -191,6 +191,13 @@ export const CajasAPI = {
     apiFetch(`/cajas/cerrar/${id}`, { method: "PUT", body: data }),
 };
 
+export const TurnosAPI = {
+  getAll: (fecha, comercioId) => apiFetch(`/turnos?fecha=${fecha}&comercio_id=${comercioId}`),
+  create: (data) => apiFetch("/turnos", { method: "POST", body: data }),
+  update: (id, data) => apiFetch(`/turnos/${id}`, { method: "PUT", body: data }),
+  delete: (id, comercioId) => apiFetch(`/turnos/${id}?comercio_id=${comercioId}`, { method: "DELETE" })
+};
+
 export const SystemAPI = {
   refreshDb: () => apiFetch("/system/refresh-db"),
 };
