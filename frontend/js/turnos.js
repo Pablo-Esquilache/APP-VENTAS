@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
 
       if (!turnosConfig.modulo_habilitado) {
-        turneroLayout.innerHTML = "<h2 style='color:#ccc; text-align:center; width:100%; margin-top:50px;'>El Módulo de Turnero está desactivado. Actívalo en los Ajustes.</h2>";
+        turneroLayout.innerHTML = "<h2 style='color: #94a3b8; text-align:center; width:100%; margin-top:50px;'>El Módulo de Turnero está desactivado. Actívalo en los Ajustes.</h2>";
         return;
       }
 
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       listaTurnosHoy.innerHTML = "";
 
       if (res.length === 0) {
-        listaTurnosHoy.innerHTML = "<p style='text-align:center; color:#888;'>No hay turnos registrados para hoy.</p>";
+        listaTurnosHoy.innerHTML = "<p style='text-align:center; color: #64748b;'>No hay turnos registrados para hoy.</p>";
         return;
       }
 
@@ -107,8 +107,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             <span style="font-size:0.8em; font-weight:bold; color:${colorEstado}; text-transform:uppercase;">${turno.estado}</span>
           </div>
           <div class="turno-hoy-cliente">👤 ${turno.cliente_nombre}</div>
-          <div style="font-size:0.9em; color:#bbb;">📞 ${turno.cliente_telefono || 'Sin teléfono'}</div>
-          <div style="font-size:0.9em; color:#bbb; margin-top:5px;">📌 ${turno.servicio_motivo || 'Sin detalle'}</div>
+          <div style="font-size:0.9em; color: #64748b;">📞 ${turno.cliente_telefono || 'Sin teléfono'}</div>
+          <div style="font-size:0.9em; color: #64748b; margin-top:5px;">📌 ${turno.servicio_motivo || 'Sin detalle'}</div>
           
           ${turno.estado === 'reservado' ? `
             <div class="turno-hoy-actions">
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async () => {
            if(turnosConfig.permitir_solapamiento) {
              colsHTML += `<td><button class="app-btn-secondary btn-agendar-grilla" data-hora="${horaFranja}">+ Turno Extra</button></td>`;
            } else {
-             colsHTML += `<td><span style="color:#888;">Ocupado</span></td>`;
+             colsHTML += `<td><span style="color: #64748b;">Ocupado</span></td>`;
            }
         } else {
            colsHTML += `<td><span class="badge-libre">LIBRE</span></td>`;
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         dropdownClientes.innerHTML = "";
         if(filtrados.length === 0) {
-          dropdownClientes.innerHTML = `<div class="dropdown-item" style="color:#aaa;">No se encontraron resultados. Usa "+ Crear"</div>`;
+          dropdownClientes.innerHTML = `<div class="dropdown-item" style="color: #64748b;">No se encontraron resultados. Usa "+ Crear"</div>`;
         } else {
           filtrados.forEach(c => {
             const div = document.createElement("div");

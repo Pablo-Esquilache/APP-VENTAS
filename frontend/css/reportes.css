@@ -5,8 +5,8 @@
 .app-btn-secondary:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  border-color: #444;
-  color: #aaa;
+  border-color: #cbd5e1;
+  color: #64748b;
 }
 
 /* =========================================================
@@ -22,15 +22,16 @@
 ========================================================= */
 
 .r-card {
-  background: #2a2a2a;
+  background: #ffffff;
   padding: 22px;
   border-radius: 10px;
   margin-bottom: 26px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
 }
 
 .r-descripcion {
-  color: #cfcfcf;
+  color: #475569;
   line-height: 1.5;
   font-size: 0.95rem;
 }

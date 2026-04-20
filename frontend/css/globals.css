@@ -11,8 +11,8 @@
 ========================================================= */
 
 body {
-  background: #1f1f1f;
-  color: #f1f1f1;
+  background: #fafcfc;
+  color: #334155;
   font-family: Arial, sans-serif;
   margin: 0;
   padding-top: 64px;
@@ -33,12 +33,13 @@ body.role-admin #tab-ajustes {
 ========================================================= */
 
 .app-navbar {
-  background: #151515;
+  background: #ffffff;
   padding: 14px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e2e8f0;
   position: fixed;
   top: 0;
   left: 0;
@@ -48,7 +49,7 @@ body.role-admin #tab-ajustes {
 
 .app-navbar-logo {
   font-weight: 700;
-  color: #fff;
+  color: #1e293b;
 }
 
 .app-navbar-menu {
@@ -70,13 +71,14 @@ body.role-admin #tab-ajustes {
   align-items: center;
   height: 32px;
   font-size: 14px;
-  color: #c8c8c8;
+  color: #475569;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .app-navbar-menu a:hover,
 .app-active {
-  color: #3fd18c !important;
+  color: #e07a5f !important;
 }
 
 /* Logout */
@@ -111,9 +113,9 @@ body.role-admin #tab-ajustes {
 }
 
 #refresh-db-btn {
-  background: #222;
-  border: 1px solid #3fd18c;
-  color: #3fd18c;
+  background: #ffffff;
+  border: 1px solid #e07a5f;
+  color: #e07a5f;
   padding: 0 14px;
   height: 32px;
   border-radius: 6px;
@@ -121,11 +123,11 @@ body.role-admin #tab-ajustes {
   font-size: 14px;
   font-weight: 500;
   transition: 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 #refresh-db-btn:hover {
-  background: #3fd18c;
-  color: #000;
+  background: #fdf2ef;
 }
 
 #refresh-db-btn:active {
@@ -159,12 +161,13 @@ body.role-admin #tab-ajustes {
 }
 
 .app-input {
-  background: #222;
-  border: 1px solid #444;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   padding: 0.5rem 0.7rem;
-  color: #fff;
+  color: #1e293b;
   border-radius: 4px;
   min-width: 130px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
 }
 
 .app-input-small {
@@ -188,23 +191,26 @@ body.role-admin #tab-ajustes {
 /* Primario */
 
 .app-btn-primary {
-  background-color: #4caf50;
-  color: #000;
+  background-color: #e07a5f;
+  color: #fff;
+  font-weight: 500;
 }
 
 .app-btn-primary:hover {
-  background: #35c77f;
+  background: #d06a4f;
 }
 
 /* Secundario */
 
 .app-btn-secondary {
-  background: #333;
-  color: #f1f1f1;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .app-btn-secondary:hover {
-  background: #444;
+  background: #f8fafc;
 }
 
 /* Guardar */
@@ -280,9 +286,10 @@ body.role-admin #tab-ajustes {
 .app-tabla-container {
   max-height: 420px;
   overflow-y: auto;
-  border: 1px solid #444;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: #2a2a2a;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
 }
 
 .app-tabla {
@@ -294,11 +301,14 @@ body.role-admin #tab-ajustes {
 .app-tabla td {
   padding: 10px;
   text-align: left;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .app-tabla th {
-  background: #222;
-  font-weight: bold;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 /* =========================================================
@@ -317,7 +327,7 @@ body.role-admin #tab-ajustes {
 }
 
 .app-modal-content {
-  background: #1d1d1d;
+  background: #ffffff;
   width: 96%;
   max-width: 1200px;
   height: 90vh;
@@ -326,10 +336,11 @@ body.role-admin #tab-ajustes {
   flex-direction: column;
   padding: 1.5rem;
   overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .app-modal-content-producto {
-  background: #1d1d1d;
+  background: #ffffff;
   width: 48%;
   max-width: 1200px;
   height: 90vh;
@@ -338,6 +349,7 @@ body.role-admin #tab-ajustes {
   flex-direction: column;
   padding: 1.5rem;
   overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 /* #modalVerVentas .app-modal-content {
@@ -420,10 +432,10 @@ body.role-admin #tab-ajustes {
   flex: 2;
   min-height: 0;
   overflow-y: auto;
-  border: 1px solid #444;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
   margin-bottom: 1rem;
-  background: #111;
+  background: #ffffff;
 }
 
 /* =========================================================
@@ -435,15 +447,16 @@ body.role-admin #tab-ajustes {
   grid-template-columns: repeat(4, auto);
   align-items: center;
   gap: 12px 20px;
-  background: #181818;
+  background: #f8fafc;
   padding: 0.6rem 1rem;
   border-radius: 6px;
+  border: 1px solid #e2e8f0;
 }
 
 .app-total-final {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #3fd18c;
+  color: #e07a5f;
 }
 
 /* =========================================================
@@ -470,7 +483,7 @@ body.role-admin #tab-ajustes {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  border: 1px solid #444;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
 }
 
@@ -478,7 +491,7 @@ body.role-admin #tab-ajustes {
   font-size: 1.2rem;
   font-weight: bold;
   text-align: right;
-  color: #3fd18c;
+  color: #e07a5f;
 }
 
 /* =========================================================
@@ -512,14 +525,15 @@ body.role-admin #tab-ajustes {
 }
 
 .modal-contenido {
-  background: #1d1d1d;
-  color: #f1f1f1;
+  background: #ffffff;
+  color: #1e293b;
   padding: 2rem;
   width: 85%;
   max-width: 1200px;
   height: 85vh;
   border-radius: 12px;
-  border: 1px solid #333;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -549,8 +563,8 @@ body.role-admin #tab-ajustes {
 /* Botones devoluciones */
 
 .btn-primario {
-  background: #3fd18c;
-  color: #000;
+  background: #e07a5f;
+  color: #fff;
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
@@ -562,20 +576,20 @@ body.role-admin #tab-ajustes {
 }
 
 .btn-primario:hover {
-  background: #35c77f;
+  background: #d06a4f;
 }
 
 .btn-secundario {
-  background: #333;
-  color: #f1f1f1;
+  background: #ffffff;
+  color: #334155;
   padding: 8px 14px;
-  border: 1px solid #444;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .btn-secundario:hover {
-  background: #444;
+  background: #f8fafc;
 }
 
 /* Tablas devoluciones */
@@ -584,28 +598,30 @@ body.role-admin #tab-ajustes {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
-  background: #111;
+  background: #ffffff;
   border-radius: 6px;
   overflow: hidden;
   table-layout: fixed;
+  border: 1px solid #e2e8f0;
 }
 
 .tabla th,
 .tabla td {
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #e2e8f0;
   word-wrap: break-word;
 }
 
 .tabla th {
-  background: #222;
-  font-weight: bold;
-  border-bottom: 1px solid #333;
+  background: #f8fafc;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .tabla tr:hover {
-  background: #1a1a1a;
+  background: #f1f5f9;
 }
 
 /* Scroll contenedores */
@@ -624,9 +640,9 @@ body.role-admin #tab-ajustes {
   padding: 8px;
   margin-top: 8px;
   margin-bottom: 12px;
-  background: #222;
-  color: #fff;
-  border: 1px solid #444;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
 }
 
@@ -635,13 +651,13 @@ body.role-admin #tab-ajustes {
 #totalDevolucion {
   font-weight: bold;
   font-size: 18px;
-  color: #3fd18c;
+  color: #e07a5f;
   margin-top: 10px;
 }
 
 #modalDevolucion hr {
   border: none;
-  border-top: 1px solid #333;
+  border-top: 1px solid #e2e8f0;
   margin: 20px 0;
 }
 

@@ -216,7 +216,7 @@ function renderTablaProductos() {
   tablaProductosBody.innerHTML = "";
 
   filtrados.forEach((p) => {
-    const colorStock = p.stock <= umbralStock ? 'color: #ff4d4f; font-weight: bold;' : '';
+    const colorStock = p.stock <= umbralStock ? 'color: #ef4444; font-weight: bold;' : '';
     
     tablaProductosBody.innerHTML += `
       <tr>

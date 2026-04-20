@@ -8,8 +8,8 @@
 
 .turnero-panel-hoy {
   flex: 1; /* 1/3 */
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 20px;
   overflow-y: auto;
@@ -19,8 +19,8 @@
 
 .turnero-grilla-seccion {
   flex: 2; /* 2/3 */
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 20px;
   display: flex;
@@ -34,8 +34,8 @@
 }
 
 .turno-hoy-card {
-  background: #222;
-  border: 1px solid #444;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 15px;
   display: flex;
@@ -50,7 +50,7 @@
 .turno-hoy-hora {
   font-weight: bold;
   font-size: 1.1em;
-  color: #3fd18c;
+  color: #e07a5f;
 }
 
 .turno-hoy-cliente {
@@ -90,28 +90,28 @@
 
 .turnos-table th, .turnos-table td {
   padding: 12px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #cbd5e1;
   text-align: left;
 }
 
 .turnos-table th {
-  background-color: #222;
+  background: #ffffff;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 /* Colores de estado en la grilla */
-.badge-libre { background: #333; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
-.badge-reservado { background: #ffc107; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold;}
-.badge-completado { background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
-.badge-cancelado { background: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; text-decoration: line-through;}
+.badge-libre { background: #f1f5f9; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
+.badge-reservado { background: #ffc107; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold;}
+.badge-completado { background: #28a745; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; }
+.badge-cancelado { background: #dc3545; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; text-decoration: line-through;}
 
 /* Buscador Modal */
 .dropdown-clientes-turno {
   position: absolute;
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   width: calc(100% - 40px); /* Aproximado modal padding */
   max-height: 150px;
   overflow-y: auto;
@@ -123,9 +123,9 @@
 .dropdown-item {
   padding: 10px;
   cursor: pointer;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #cbd5e1;
 }
 
 .dropdown-item:hover {
-  background: #333;
+  background: #f1f5f9;
 }

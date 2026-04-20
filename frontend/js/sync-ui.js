@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         
         <div style="margin-top: 10px;">
-          <p style="font-size: 14px; text-align: left; margin-bottom: 15px; color: #aaa;">
+          <p style="font-size: 14px; text-align: left; margin-bottom: 15px; color: #64748b;">
             Configura el Token y la URL para sincronizar stock y precios en tiempo real.
           </p>
 
@@ -38,11 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <input type="text" id="apiTokenSync" class="app-input" placeholder="Ej: ext_1234abcd" autocomplete="off" />
             </div>
 
-            <div class="app-form-group" style="display: flex; justify-content: space-between; align-items: center; background: #222; padding: 10px; border-radius: 6px; margin-top: 5px;">
+            <div class="app-form-group" style="display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 10px; border-radius: 6px; margin-top: 5px;">
               <label style="margin: 0;">Sincronización Automática</label>
               <label class="switch-ui" style="position: relative; display: inline-block; width: 40px; height: 20px;">
                 <input type="checkbox" id="syncEnabledSwitch" style="opacity: 0; width: 0; height: 0;">
-                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 20px; transition: .4s;">
+                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #94a3b8; border-radius: 20px; transition: .4s;">
                   <span style="position: absolute; content: ''; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: .4s;"></span>
                 </span>
               </label>
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <!-- Estilo para el switch -->
     <style>
-      #syncEnabledSwitch:checked + span { background-color: #3fd18c; }
+      #syncEnabledSwitch:checked + span { background-color: #e07a5f; }
       #syncEnabledSwitch:checked + span span { transform: translateX(20px); }
     </style>
   `;

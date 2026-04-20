@@ -34,7 +34,7 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <main class="app-container">
       <h1 class="app-title">Ajustes Generales</h1>
-      <p style="color: #aaa; margin-bottom: 20px;">Opciones y configuraciones exclusivas para perfil Administrador.</p>
+      <p style="color: #64748b; margin-bottom: 20px;">Opciones y configuraciones exclusivas para perfil Administrador.</p>
 
       <div class="ajustes-grid">
         <!-- 1. MÉTODOS DE PAGO -->
@@ -64,7 +64,7 @@
         <!-- 3. E-COMMERCE -->
         <section class="ajustes-card">
           <h2 class="app-subtitle">Conexión E-Commerce</h2>
-          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #64748b;">
             Configura la sincronización con tu tienda web.
           </p>
           <form id="formCloudSync" style="display: flex; flex-direction: column; gap: 10px;">
@@ -97,7 +97,7 @@
         <!-- TURNERO CONFIG -->
         <section class="ajustes-card">
           <h2 class="app-subtitle">Módulo Turnero</h2>
-          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #64748b;">
             Configuración de los turnos y la agenda.
           </p>
           <form id="formTurnosConfig" style="display: flex; flex-direction: column; gap: 10px;">
@@ -160,18 +160,6 @@
           </ul>
         </section>
 
-        <!-- 6. UMBRAL DE STOCK -->
-        <section class="ajustes-card">
-          <h2 class="app-subtitle">Alertas de Stock</h2>
-          <p style="font-size: 0.9em; margin-bottom: 10px; color: #ccc;">
-            Define cuándo el stock figura como bajo.
-          </p>
-          <div class="app-form-group" style="display: flex; gap: 5px; align-items: center;">
-            <input type="number" id="inputUmbralStock" class="app-input" placeholder="Mínimo (Ej: 3)" style="flex:1;" />
-            <button id="btnGuardarUmbral" class="app-btn-secondary">Guardar</button>
-          </div>
-        </section>
-
         <!-- 5. SISTEMA / BD -->
         <section class="ajustes-card">
           <h2 class="app-subtitle">Sistema y Datos</h2>
@@ -185,11 +173,23 @@
           </div>
         </section>
 
+        <!-- 6. UMBRAL DE STOCK -->
+        <section class="ajustes-card">
+          <h2 class="app-subtitle">Alertas de Stock</h2>
+          <p style="font-size: 0.9em; margin-bottom: 10px; color: #64748b;">
+            Define cuándo el stock figura como bajo.
+          </p>
+          <div class="app-form-group" style="display: flex; gap: 5px; align-items: center;">
+            <input type="number" id="inputUmbralStock" class="app-input" placeholder="Mínimo (Ej: 3)" style="flex:1;" />
+            <button id="btnGuardarUmbral" class="app-btn-secondary">Guardar</button>
+          </div>
+        </section>
+
         <!-- 7. GESTIÓN DE USUARIOS -->
         <section class="ajustes-card" style="grid-column: 1 / -1;">
           <h2 class="app-subtitle">Usuarios del Sistema</h2>
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-            <p style="font-size: 0.9em; color: #ccc;">Administra los usuarios con acceso al sistema.</p>
+            <p style="font-size: 0.9em; color: #64748b;">Administra los usuarios con acceso al sistema.</p>
             <button id="btnNuevoUsuario" class="app-btn-primary">Crear Usuario</button>
           </div>
           <div class="app-tabla-container select-tabla-container" style="max-height: 250px;">
@@ -232,7 +232,7 @@
           <div class="app-form-group">
             <label>Contraseña</label>
             <input type="password" id="passwordInput" class="app-input" placeholder="***" autocomplete="new-password" />
-            <span style="font-size: 0.8em; color: #aaa;">Si estás editando, déjala vacía para no cambiarla.</span>
+            <span style="font-size: 0.8em; color: #64748b;">Si estás editando, déjala vacía para no cambiarla.</span>
           </div>
 
           <div class="app-form-group">

@@ -139,7 +139,7 @@ function renderGraficoVentasGastos(data) {
 
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           anchor: "end",
           align: "top",
           formatter: (value) =>
@@ -245,7 +245,7 @@ function renderTopProductos(data) {
 
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           anchor: "end",
           align: "right",
           formatter: (value, context) => {
@@ -355,7 +355,7 @@ function renderCategoriasVendidas(data) {
         },
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           formatter: (value) => `$${value}`,
         },
       },
@@ -452,7 +452,7 @@ function renderEdadEtarioGenero(data) {
         },
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           anchor: "end",
           align: "top",
           formatter: (value) => value,
@@ -531,7 +531,7 @@ function renderMetodosPago(data) {
         },
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           formatter: (value) => `$${value}`,
         },
       },
@@ -630,7 +630,7 @@ function renderGastosDescripcionTipo(data) {
 
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           anchor: "end",
           align: "top",
           formatter: (value) => formatoPesos.format(value),
@@ -720,7 +720,7 @@ function renderVentasPorLocalidad(data) {
         },
         datalabels: {
           display: true,
-          color: "#fff",
+          color: "#1e293b",
           anchor: "end",
           align: "top",
           formatter: (value) => value,

@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <input type="checkbox" ${m.activo ? "checked" : ""} data-id="${m.id}" class="toggle-metodo">
               <span class="slider"><span class="slider-dot"></span></span>
             </label>
-            <button class="btn-eliminar-metodo" data-id="${m.id}" style="background:transparent; border:none; color:#ff4d4f; cursor:pointer;" title="Eliminar">🗑</button>
+            <button class="btn-eliminar-metodo" data-id="${m.id}" style="background:transparent; border:none; color: #ef4444; cursor:pointer;" title="Eliminar">🗑</button>
           </div>
         `;
         listaMetodos.appendChild(li);
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <input type="checkbox" ${d.activo ? "checked" : ""} data-id="${d.id}" class="toggle-descuento">
               <span class="slider"><span class="slider-dot"></span></span>
             </label>
-            <button class="btn-eliminar-descuento" data-id="${d.id}" style="background:transparent; border:none; color:#ff4d4f; cursor:pointer;" title="Eliminar">🗑</button>
+            <button class="btn-eliminar-descuento" data-id="${d.id}" style="background:transparent; border:none; color: #ef4444; cursor:pointer;" title="Eliminar">🗑</button>
           </div>
         `;
         listaDescuentos.appendChild(li);
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <input type="checkbox" ${c.activo ? "checked" : ""} data-id="${c.id}" class="toggle-categoria-gasto">
               <span class="slider"><span class="slider-dot"></span></span>
             </label>
-            <button class="btn-eliminar-categoria-gasto" data-id="${c.id}" style="background:transparent; border:none; color:#ff4d4f; cursor:pointer;" title="Eliminar">🗑</button>
+            <button class="btn-eliminar-categoria-gasto" data-id="${c.id}" style="background:transparent; border:none; color: #ef4444; cursor:pointer;" title="Eliminar">🗑</button>
           </div>
         `;
         listaCategoriasGasto.appendChild(li);
@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td><span class="user-role-badge" style="background:${u.role==='admin'?'#3fd18c':'#666'}; padding:2px 6px; border-radius:4px; font-size:0.8em;">${u.role}</span></td>
           <td>
             <button class="btn-editar-usuario app-btn-secondary" data-id="${u.id}" style="padding:4px 8px; font-size:0.85em;">Editar</button>
-            <button class="btn-eliminar-usuario" data-id="${u.id}" style="background:transparent; border:none; color:#ff4d4f; cursor:pointer;" title="Eliminar">🗑</button>
+            <button class="btn-eliminar-usuario" data-id="${u.id}" style="background:transparent; border:none; color: #ef4444; cursor:pointer;" title="Eliminar">🗑</button>
           </td>
         `;
         tablaUsuariosBody.appendChild(fila);

@@ -3,10 +3,11 @@
 ========================================================= */
 
 .caja-card {
-  background: #2a2a2a;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 10px;
-  border: 1px solid #444;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 /* =========================================================
@@ -45,9 +46,9 @@
 .tabla-movimientos-container {
   max-height: 350px;
   overflow-y: auto;
-  border: 1px solid #444;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: #2a2a2a;
+  background: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -64,14 +65,20 @@
 }
 
 .tabla-movimientos th {
-  background: #222;
-  font-weight: bold;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
   position: sticky;
   top: 0;
 }
 
+.tabla-movimientos tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
 .tabla-movimientos tr:hover {
-  background: #1a1a1a;
+  background: #f1f5f9;
 }
 
 /* =========================================================
@@ -92,7 +99,7 @@
 }
 
 .resultado span {
-  color: #3fd18c;
+  color: #e07a5f;
   font-weight: bold;
 }
 
