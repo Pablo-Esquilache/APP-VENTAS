@@ -6,8 +6,8 @@
 }
 
 .ajustes-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: #2a2a2a;
+  border: 1px solid #444;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -32,7 +32,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #444;
   font-size: 0.95em;
 }
 
@@ -71,7 +71,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--border-color);
+  background-color: #444;
   border-radius: 20px;
   transition: 0.4s;
 }
@@ -89,7 +89,7 @@
 }
 
 .switch-ui input:checked + .slider {
-  background-color: var(--primary-color);
+  background-color: #3fd18c;
 }
 
 .switch-ui input:checked + .slider .slider-dot {

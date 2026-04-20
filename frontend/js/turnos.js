@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           
           ${turno.estado === 'reservado' ? `
             <div class="turno-hoy-actions">
-              <button class="app-btn-secondary btn-accion-estado" data-id="${turno.id}" data-estado="completado" style="background:#1e6b40; color:white; border:none;">Asistió ✅</button>
-              <button class="app-btn-secondary btn-accion-estado" data-id="${turno.id}" data-estado="cancelado" style="color:#ff4d4f; border-color:#ff4d4f;">Cancelar ❌</button>
+              <button class="app-btn-primary btn-accion-estado" data-id="${turno.id}" data-estado="completado">Asistió ✅</button>
+              <button class="btn-eliminar btn-accion-estado" data-id="${turno.id}" data-estado="cancelado" style="flex:1; margin-left:10px;">Cancelar ❌</button>
             </div>
           ` : ''}
         `;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const franjas = [];
       let actual = tInicio;
-      while(actual < tFin) { // simple string compare works perfectly for "HH:MM"
+      while(actual <= tFin) { // simple string compare works perfectly for "HH:MM"
         franjas.push(actual);
         actual = sumarMinutosTime(actual, inter);
       }
@@ -187,8 +187,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                <div style="margin-bottom:5px; display:flex; align-items:center; gap:10px;">
                  <span class="badge-${t.estado}">${t.estado.toUpperCase()}</span> 
                  <span style="flex:1;">${t.cliente_nombre} - ${t.servicio_motivo || ''}</span>
-                 ${t.estado === 'reservado' ? `<button class="app-btn-secondary btn-cancelar-grilla" data-id="${t.id}" style="padding: 2px 6px; font-size: 0.75em; color: #dc3545; border-color: #dc3545; cursor: pointer;">Cancelar</button>` : ''}
-                 ${t.estado === 'cancelado' ? `<button class="app-btn-secondary btn-limpiar-grilla" data-id="${t.id}" style="padding: 2px 6px; font-size: 0.75em; color: #ccc; cursor: pointer;">Limpiar</button>` : ''}
+                 ${t.estado === 'reservado' ? `<button class="btn-eliminar btn-cancelar-grilla" data-id="${t.id}" style="padding: 4px 8px; font-size: 0.8em; margin: 0;">Cancelar</button>` : ''}
+                 ${t.estado === 'cancelado' ? `<button class="app-btn-secondary btn-limpiar-grilla" data-id="${t.id}" style="padding: 4px 8px; font-size: 0.8em; margin: 0;">Limpiar</button>` : ''}
                </div>
              `;
            });
